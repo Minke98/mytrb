@@ -1,0 +1,77 @@
+part of 'app_pages.dart';
+
+abstract class Routes {
+  Routes._();
+  static const SPLASH = _Paths.SPLASH;
+  static const MAINTENANCE = _Paths.MAINTENANCE;
+  static const LOGIN = _Paths.LOGIN;
+  static const PROFILE = _Paths.PROFILE;
+  static const CHANGE_PICTURE_PROFILE = _Paths.CHANGE_PICTURE_PROFILE;
+  static const CHANGE_PASSWORD = _Paths.CHANGE_PASSWORD;
+  static const BIODATA = _Paths.BIODATA;
+  static const BIODATA_PARENT = _Paths.BIODATA_PARENT;
+  static const REGISTRATION = _Paths.REGISTRATION;
+  static const REGISTRATION_PROCEED = _Paths.REGISTRATION_PROCEED;
+  static const INDEX = _Paths.INDEX;
+  static const NEWS = _Paths.NEWS;
+  static const NEWS_DETAIL = _Paths.NEWS_DETAIL;
+  static const NEWS_CERTIFICATE = _Paths.NEWS_CERTIFICATE;
+  static const NEWS_CERTIFICATE_DETAIL = _Paths.NEWS_CERTIFICATE_DETAIL;
+  static const DIKLAT = _Paths.DIKLAT;
+  static const DIKLAT_PROCEED = _Paths.DIKLAT_PROCEED;
+  static const DIKLAT_REGISTRATION_SUCCESS = _Paths.DIKLAT_REGISTRATION_SUCCESS;
+  static const DIKLAT_REGISTRATION_FAILED = _Paths.DIKLAT_REGISTRATION_FAILED;
+  static const QUESTIONNAIRE = _Paths.QUESTIONNAIRE;
+  static const REPORT_EVALUATION = _Paths.REPORT_EVALUATION;
+  static const UPLOAD_REQUIREMENTS = _Paths.UPLOAD_REQUIREMENTS;
+  static const REQUIREMENTS_DETAIL = _Paths.REQUIREMENTS_DETAIL;
+  static const REQUIREMENTS_DETAIL_LIVE = _Paths.REQUIREMENTS_DETAIL_LIVE;
+  static const BILLING = _Paths.BILLING;
+  static const BILLING_DETAIL = _Paths.BILLING_DETAIL;
+  static const BILLING_WEB_VIEW = _Paths.BILLING_WEB_VIEW;
+  static const BILLING_CARD_WEB_VIEW = _Paths.BILLING_CARD_WEB_VIEW;
+  static const SCHEDULE_CHANGE = _Paths.SCHEDULE_CHANGE;
+  static const HISTORY = _Paths.HISTORY;
+  static const SEAT_INFORMATION = _Paths.SEAT_INFORMATION;
+  static const CERTIFICATE_DELIVERY = _Paths.CERTIFICATE_DELIVERY;
+  static const CERTIFICATE_DETAIL = _Paths.CERTIFICATE_DETAIL;
+  static const REPORT_EVALUATION_DETAIL = _Paths.REPORT_EVALUATION_DETAIL;
+}
+
+abstract class _Paths {
+  _Paths._();
+  static const SPLASH = '/';
+  static const MAINTENANCE = '/maintenance';
+  static const LOGIN = '/login';
+  static const PROFILE = '/profile';
+  static const CHANGE_PICTURE_PROFILE = '/change-picture-profile';
+  static const CHANGE_PASSWORD = '/change-password';
+  static const BIODATA = '/biodata';
+  static const BIODATA_PARENT = '/biodata-parent';
+  static const REGISTRATION = '/registration';
+  static const REGISTRATION_PROCEED = '/registration-proceed';
+  static const INDEX = '/index';
+  static const NEWS = '/news';
+  static const NEWS_DETAIL = '/news-detail';
+  static const NEWS_CERTIFICATE = '/news-certificate';
+  static const NEWS_CERTIFICATE_DETAIL = '/news-certificate-detail';
+  static const DIKLAT = '/diklat';
+  static const DIKLAT_PROCEED = '/diklat-proceed';
+  static const DIKLAT_REGISTRATION_SUCCESS = '/diklat-registration-success';
+  static const DIKLAT_REGISTRATION_FAILED = '/diklat-registration-failed';
+  static const QUESTIONNAIRE = '/questionnaire';
+  static const REPORT_EVALUATION = '/report-evaluation';
+  static const UPLOAD_REQUIREMENTS = '/upload-requirement';
+  static const REQUIREMENTS_DETAIL = '/requirement-detail';
+  static const REQUIREMENTS_DETAIL_LIVE = '/requirement-detail-live';
+  static const BILLING = '/billing';
+  static const BILLING_DETAIL = '/billing-detail';
+  static const BILLING_WEB_VIEW = '/billing-web-view';
+  static const BILLING_CARD_WEB_VIEW = '/billing-card-web-view';
+  static const SCHEDULE_CHANGE = '/schedule-change';
+  static const HISTORY = '/history';
+  static const SEAT_INFORMATION = '/seat-information';
+  static const CERTIFICATE_DELIVERY = '/certificate-delivery';
+  static const CERTIFICATE_DETAIL = '/certificate-detail';
+  static const REPORT_EVALUATION_DETAIL = '/report-evaluation-detail';
+}
