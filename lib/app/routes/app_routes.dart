@@ -36,6 +36,7 @@ abstract class Routes {
   static const CERTIFICATE_DELIVERY = _Paths.CERTIFICATE_DELIVERY;
   static const CERTIFICATE_DETAIL = _Paths.CERTIFICATE_DETAIL;
   static const REPORT_EVALUATION_DETAIL = _Paths.REPORT_EVALUATION_DETAIL;
+  static const EXAM = _Paths.EXAM;
 }
 
 abstract class _Paths {
@@ -74,4 +75,5 @@ abstract class _Paths {
   static const CERTIFICATE_DELIVERY = '/certificate-delivery';
   static const CERTIFICATE_DETAIL = '/certificate-detail';
   static const REPORT_EVALUATION_DETAIL = '/report-evaluation-detail';
+  static const EXAM = '/exam';
 }

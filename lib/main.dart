@@ -1,7 +1,3 @@
-import 'package:mytrb/app/modules/billing/controllers/billing_controller.dart';
-import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
-import 'package:mytrb/app/modules/news/controllers/news_controller.dart';
-import 'package:mytrb/app/modules/news_certificate/controllers/news_certificate_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,73 +40,73 @@ class MyApp extends StatelessWidget {
     OneSignal.Notifications.addClickListener((event) async {
       EasyLoading.show(status: 'Loading...');
 
-      final data = event.notification.additionalData;
-      String? type = data?['type'];
-      String? uc = data?['uc'];
-      String? ucPendaftaran = data?['uc_pendaftaran'];
+      // final data = event.notification.additionalData;
+      // String? type = data?['type'];
+      // String? uc = data?['uc'];
+      // String? ucPendaftaran = data?['uc_pendaftaran'];
 
-      if (type != null) {
-        switch (type) {
-          case 'news':
-            NewsController newsController = Get.find<NewsController>();
-            await newsController.fetchNews();
-            if (uc != null) {
-              var selectedNews = newsController.newsList.firstWhereOrNull(
-                (news) => news.uc == uc,
-              );
-              if (selectedNews != null) {
-                Get.toNamed(Routes.NEWS_DETAIL, arguments: selectedNews);
-              } else {
-                Get.toNamed(Routes.NEWS);
-              }
-            } else {
-              Get.toNamed(Routes.NEWS);
-            }
-            break;
+      // if (type != null) {
+      //   switch (type) {
+      //     case 'news':
+      //       NewsController newsController = Get.find<NewsController>();
+      //       await newsController.fetchNews();
+      //       if (uc != null) {
+      //         var selectedNews = newsController.newsList.firstWhereOrNull(
+      //           (news) => news.uc == uc,
+      //         );
+      //         if (selectedNews != null) {
+      //           Get.toNamed(Routes.NEWS_DETAIL, arguments: selectedNews);
+      //         } else {
+      //           Get.toNamed(Routes.NEWS);
+      //         }
+      //       } else {
+      //         Get.toNamed(Routes.NEWS);
+      //       }
+      //       break;
 
-          case 'news_certificate':
-            NewsCertificateController newsCertificateController =
-                Get.find<NewsCertificateController>();
-            await newsCertificateController.fetchNewsCertificate();
-            if (uc != null) {
-              var selectedNewsCert = newsCertificateController
-                  .newsCertificateList
-                  .firstWhereOrNull(
-                (cert) => cert.uc == uc,
-              );
-              if (selectedNewsCert != null) {
-                Get.toNamed(Routes.NEWS_CERTIFICATE_DETAIL,
-                    arguments: selectedNewsCert);
-              } else {
-                Get.toNamed(Routes.NEWS_CERTIFICATE);
-              }
-            } else {
-              Get.toNamed(Routes.NEWS_CERTIFICATE);
-            }
-            break;
+      //     case 'news_certificate':
+      //       NewsCertificateController newsCertificateController =
+      //           Get.find<NewsCertificateController>();
+      //       await newsCertificateController.fetchNewsCertificate();
+      //       if (uc != null) {
+      //         var selectedNewsCert = newsCertificateController
+      //             .newsCertificateList
+      //             .firstWhereOrNull(
+      //           (cert) => cert.uc == uc,
+      //         );
+      //         if (selectedNewsCert != null) {
+      //           Get.toNamed(Routes.NEWS_CERTIFICATE_DETAIL,
+      //               arguments: selectedNewsCert);
+      //         } else {
+      //           Get.toNamed(Routes.NEWS_CERTIFICATE);
+      //         }
+      //       } else {
+      //         Get.toNamed(Routes.NEWS_CERTIFICATE);
+      //       }
+      //       break;
 
-          case 'billing':
-            BillingController billingDetailController =
-                Get.find<BillingController>();
-            if (ucPendaftaran != null) {
-              await billingDetailController.fetchBillingDetail(ucPendaftaran);
-              Get.toNamed(Routes.BILLING_DETAIL, arguments: ucPendaftaran);
-            } else {
-              Get.toNamed(Routes.BILLING);
-            }
-            break;
+      //     case 'billing':
+      //       BillingController billingDetailController =
+      //           Get.find<BillingController>();
+      //       if (ucPendaftaran != null) {
+      //         await billingDetailController.fetchBillingDetail(ucPendaftaran);
+      //         Get.toNamed(Routes.BILLING_DETAIL, arguments: ucPendaftaran);
+      //       } else {
+      //         Get.toNamed(Routes.BILLING);
+      //       }
+      //       break;
 
-          default:
-            IndexController indexController = Get.find<IndexController>();
-            await indexController.loadUserInfo();
-            if (indexController.isLoggedIn.value) {
-              Get.toNamed(Routes.INDEX);
-            } else {
-              Get.toNamed(Routes.LOGIN);
-            }
-            break;
-        }
-      }
+      //     default:
+      //       IndexController indexController = Get.find<IndexController>();
+      //       await indexController.loadUserInfo();
+      //       if (indexController.isLoggedIn.value) {
+      //         Get.toNamed(Routes.INDEX);
+      //       } else {
+      //         Get.toNamed(Routes.LOGIN);
+      //       }
+      //       break;
+      //   }
+      // }
 
       EasyLoading.dismiss();
     });

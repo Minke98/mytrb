@@ -26,10 +26,10 @@ class MyDatabase {
   }
 
   Future<bool> isOpen() async {
-  MyDatabase mydb = MyDatabase.instance;
-  // Assuming `MyDatabase` has a method `isOpen()` that returns a boolean.
-  return await mydb.isOpen();
-}
+    MyDatabase mydb = MyDatabase.instance;
+    // Assuming `MyDatabase` has a method `isOpen()` that returns a boolean.
+    return await mydb.isOpen();
+  }
 
   Future<Database> initDatabase() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -48,7 +48,7 @@ class MyDatabase {
 
       // Copy from asset
       ByteData data =
-          await rootBundle.load(p.join("assets", "pub", "dbs", "tresea.db"));
+          await rootBundle.load(p.join("assets", "dbs", "tresea.db"));
       List<int> bytes =
           data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
@@ -83,21 +83,20 @@ class MyDatabase {
   }
 
   Future<bool> close3() async {
-  try {
-    if (_database != null) {
-      final db = await instance.database;
-      _database = null;
-      // log("mydb: CLOSING DB");
-      await db.close();
-      return true; // Berhasil menutup database
+    try {
+      if (_database != null) {
+        final db = await instance.database;
+        _database = null;
+        // log("mydb: CLOSING DB");
+        await db.close();
+        return true; // Berhasil menutup database
+      }
+      return false; // Database sudah ditutup sebelumnya
+    } catch (e) {
+      print("Error closing database: $e");
+      return false; // Gagal menutup database
     }
-    return false; // Database sudah ditutup sebelumnya
-  } catch (e) {
-    print("Error closing database: $e");
-    return false; // Gagal menutup database
   }
-}
-  
 }
 
 class MyDatabaseReadOnly {

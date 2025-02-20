@@ -32,6 +32,48 @@ class BaseClient {
       maxWidth: 90,
     ));
 
+  // static Future<bool> _refreshToken() async {
+  //   try {
+  //     Map tokenData = await UserRepository.getToken();
+  //     String refreshToken = tokenData['refreshToken'];
+
+  //     if (refreshToken.isNotEmpty) {
+  //       final response = await _dio.post(
+  //         Environment.refreshUrl,
+  //         data: {"time": DateTime.now().millisecondsSinceEpoch},
+  //         options: Options(headers: {"authorization": "Bearer $refreshToken"}),
+  //       );
+
+  //       if (response.statusCode == 200) {
+  //         String newToken = response.data['token'];
+  //         String newRefreshToken = response.data['refresh_token'];
+
+  //         await UserRepository.setToken(
+  //             token: newToken, refreshToken: newRefreshToken);
+  //         _dio.options.headers["authorization"] = "Bearer $newToken";
+  //         return true;
+  //       }
+  //     }
+  //   } catch (e) {
+  //     Logger().e('Error while refreshing token: $e');
+  //   }
+  //   return false;
+  // }
+
+  // /// Fungsi untuk mengulang request setelah token diperbarui
+  // static Future<Response> _retryRequest(RequestOptions requestOptions) async {
+  //   return await _dio.request(
+  //     requestOptions.path,
+  //     data: requestOptions.data,
+  //     queryParameters: requestOptions.queryParameters,
+  //     options: Options(
+  //       method: requestOptions.method,
+  //       headers: requestOptions.headers,
+  //       responseType: requestOptions.responseType,
+  //     ),
+  //   );
+  // }
+
   // request timeout (default 10 seconds)
   static const int _timeoutInSeconds = 10;
 

@@ -1,111 +1,56 @@
-import 'dart:convert';
-import 'package:mytrb/app/data/models/login.dart';
-import 'package:mytrb/app/services/base_client.dart';
-import 'package:mytrb/config/environment/environment.dart';
-import 'package:mytrb/config/storage/storage.dart';
-import 'package:mytrb/utils/auth_util.dart';
-import 'package:mytrb/utils/connection.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:mytrb/app/services/api_call_status.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:mytrb/app/Repository/news_repository.dart';
+import 'package:mytrb/app/Repository/repository.dart';
+import 'package:mytrb/app/Repository/sign_repository.dart';
+import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class IndexController extends GetxController {
-  ApiCallStatus apiCallStatus = ApiCallStatus.holding;
-  Rx<UserLogin?> currentUser = Rx<UserLogin?>(null);
-  var isLoggedIn = false.obs;
-  String? notificationType;
-  Map<String, String?> notificationData = {};
+  final SignRepository signRepository;
+  IndexController({required this.signRepository});
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   loadUserInfo();
-  //   getPlayerId();
-  // }
+  var isLoading = false.obs;
+  var signStatus = false.obs;
+  var signUc = ''.obs;
+  var fotoProfile = ''.obs;
+  var isNeedSync = false.obs;
+  var news = <Map>[].obs;
 
-  Future<void> getPlayerId() async {
-    try {
-      var deviceState = OneSignal.User.pushSubscription.id;
-      if (kDebugMode) {
-        print('PLAYER ID ::: $deviceState');
+  @override
+  void onInit() {
+    super.onInit();
+    initializeHome();
+  }
+
+  Future<void> initializeHome() async {
+    isLoading.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    String techUser = prefs.getString("userUc") ?? '';
+
+    var user = await UserRepository.getLocalUser(uc: techUser);
+    if (user['status'] == true) {
+      user = user['data'];
+      if (user['foto'] != null) {
+        prefs.setString("foto_profile", user['foto']);
+        fotoProfile.value = user['foto'];
       }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error getting playerId: $e');
-      }
     }
+
+    var getSignStatus =
+        await signRepository.getStatus(seafarerCode: user["seafarer_code"]);
+    bool needSync = await Repository.isNeedSync();
+    List<Map> getNews =
+        await NewsRepository.getNews(itemCount: 5, characterMax: 120);
+
+    signStatus.value = getSignStatus['status'];
+    signUc.value = getSignStatus["sign_uc"];
+    isNeedSync.value = needSync;
+    news.assignAll(getNews);
+
+    isLoading.value = false;
   }
 
-  Future<void> loadUserInfo() async {
-    final storage = await SharedPreferences.getInstance();
-    String? userInfo = storage.getString(StorageConfig.userInfo);
-
-    if (userInfo != null && userInfo.isNotEmpty) {
-      var userMap = jsonDecode(userInfo);
-      currentUser.value = UserLogin.fromJson(userMap);
-      isLoggedIn.value = currentUser.value != null;
-      if (kDebugMode) {
-        print('Current user: ${currentUser.value?.toJson()}');
-      } // Example usage
-    }
-  }
-
-  Future<void> statusApps(Map<String, dynamic> payload) async {
-    bool isConnected = await ConnectionUtils.checkInternetConnection();
-    if (!isConnected) {
-      ConnectionUtils.showNoInternetDialog(
-          'Please check your internet connection and try again.');
-    } else {
-      EasyLoading.show(status: 'Please wait...');
-      await BaseClient.safeApiCall(
-        Environment.updateBiodata,
-        RequestType.post,
-        data: payload,
-        isJson: false,
-        onLoading: () {
-          apiCallStatus = ApiCallStatus.loading;
-          update();
-        },
-        onSuccess: (response) async {
-          EasyLoading.dismiss();
-          var res = response.data;
-          var data = res['data'];
-          if (data != null && data['status'] == '1') {
-            Get.snackbar(
-              'Mohon Maaf',
-              'Sistem sedang dalam perbaikan',
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.green,
-              borderRadius: 20,
-              margin: const EdgeInsets.all(15),
-              colorText: Colors.white,
-              duration: const Duration(seconds: 2),
-              isDismissible: true,
-              dismissDirection: DismissDirection.horizontal,
-              forwardAnimationCurve: Curves.easeOutBack,
-            );
-          }
-        },
-        onError: (error) {
-          EasyLoading.dismiss();
-          BaseClient.handleApiError(error);
-          apiCallStatus = ApiCallStatus.error;
-          update();
-        },
-      );
-    }
-  }
-
-  void clearNotificationData() {
-    notificationType = null;
-    notificationData = {};
-  }
-
-  void signout() {
-    AuthUtil.signout();
+  Future<void> reInitializeHome() async {
+    await initializeHome();
   }
 }
