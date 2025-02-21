@@ -5,9 +5,8 @@ import 'package:mytrb/app/modules/task/controllers/task_controller.dart';
 class TaskBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => TaskRepository(), fenix: true);
-    Get.lazyPut(
-      () => TaskController(taskRepository: Get.find()),
-    );
+    Get.lazyPut<TaskRepository>(() => TaskRepository(), fenix: true);
+    Get.lazyPut<TaskController>(
+        () => TaskController(taskRepository: Get.find<TaskRepository>()));
   }
 }

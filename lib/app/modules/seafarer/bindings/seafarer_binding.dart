@@ -5,7 +5,8 @@ import 'package:mytrb/app/modules/seafarer/controllers/seafarer_controller.dart'
 class SeafererBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => UserRepository(), fenix: true);
-    Get.lazyPut(() => SeafererController(userRepository: Get.find()));
+    Get.lazyPut<UserRepository>(() => UserRepository(), fenix: true);
+    Get.lazyPut<SeafererController>(
+        () => SeafererController(userRepository: Get.find<UserRepository>()));
   }
 }

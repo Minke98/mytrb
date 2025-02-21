@@ -8,6 +8,6 @@ class SignoffBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<SignRepository>(() => SignRepository(), fenix: true);
     Get.lazyPut<SignoffController>(
-        () => SignoffController(signRepository: Get.find()));
+        () => SignoffController(signRepository: Get.find<SignRepository>()));
   }
 }

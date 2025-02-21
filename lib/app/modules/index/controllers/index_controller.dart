@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/news_repository.dart';
 import 'package:mytrb/app/Repository/repository.dart';
@@ -15,11 +16,22 @@ class IndexController extends GetxController {
   var fotoProfile = ''.obs;
   var isNeedSync = false.obs;
   var news = <Map>[].obs;
+  var rowInWrap = 1.obs;
+  var menuGridCount = 1.obs;
+  var scale = 1.obs;
+  var lastWidth = 1.obs;
+  var activeProfileFoto = ''.obs;
+  var currentIndex = 0.obs;
+  final CarouselController carouselController = CarouselController();
 
   @override
   void onInit() {
     super.onInit();
     initializeHome();
+  }
+
+  void changeCurrentIndex(int index) {
+    currentIndex.value = index;
   }
 
   Future<void> initializeHome() async {

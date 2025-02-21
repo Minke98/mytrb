@@ -8,8 +8,7 @@ class ExamBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<UserRepository>(() => UserRepository(), fenix: true);
     Get.lazyPut<ExamRepository>(() => ExamRepository(), fenix: true);
-
-    Get.lazyPut(() => ExamController(
+    Get.lazyPut<ExamController>(() => ExamController(
           userRepository: Get.find<UserRepository>(),
           examRepository: Get.find<ExamRepository>(),
         ));

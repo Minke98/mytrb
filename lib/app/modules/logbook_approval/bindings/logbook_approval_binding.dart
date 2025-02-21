@@ -6,7 +6,8 @@ class LogbookApprovalBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<LogBookRepository>(() => LogBookRepository(), fenix: true);
-    Get.lazyPut<LogbookApprovalController>(
-        () => LogbookApprovalController(logBookRepository: Get.find()));
+    Get.lazyPut<LogbookApprovalController>(() => LogbookApprovalController(
+          logBookRepository: Get.find<LogBookRepository>(),
+        ));
   }
 }

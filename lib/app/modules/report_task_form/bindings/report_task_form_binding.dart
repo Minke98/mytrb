@@ -5,7 +5,8 @@ import 'package:mytrb/app/modules/report_task_form/controllers/report_task_form_
 class ReportTaskFormBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => ReportRepository(), fenix: true);
-    Get.lazyPut(() => ReportTaskFormController(reportRepository: Get.find()));
+    Get.lazyPut<ReportRepository>(() => ReportRepository(), fenix: true);
+    Get.lazyPut<ReportTaskFormController>(() => ReportTaskFormController(
+        reportRepository: Get.find<ReportRepository>()));
   }
 }

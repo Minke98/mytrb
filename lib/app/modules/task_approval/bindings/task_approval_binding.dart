@@ -5,7 +5,8 @@ import 'package:mytrb/app/modules/task_approval/controllers/task_approval_contro
 class TaskApprovalBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => TaskRepository(), fenix: true);
-    Get.lazyPut(() => TaskApprovalController(taskRepository: Get.find()));
+    Get.lazyPut<TaskRepository>(() => TaskRepository(), fenix: true);
+    Get.lazyPut<TaskApprovalController>(() =>
+        TaskApprovalController(taskRepository: Get.find<TaskRepository>()));
   }
 }

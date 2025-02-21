@@ -6,7 +6,8 @@ class ReportTaskBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<ReportRepository>(() => ReportRepository(), fenix: true);
-    Get.lazyPut<ReportTaskController>(
-        () => ReportTaskController(reportRepository: Get.find()));
+    Get.lazyPut<ReportTaskController>(() => ReportTaskController(
+          reportRepository: Get.find<ReportRepository>(),
+        ));
   }
 }

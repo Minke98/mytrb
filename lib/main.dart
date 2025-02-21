@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mytrb/config/theme/theme_data.dart';
 import 'package:mytrb/utils/colors.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:responsive_framework/responsive_wrapper.dart';
 import 'app/data/local/my_shared_pref.dart';
 import 'app/modules/splash/bindings/splash_binding.dart';
 import 'app/routes/app_pages.dart';
@@ -118,19 +119,26 @@ class MyApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       rebuildFactor: (old, data) => true,
       builder: (context, widget) {
-        return GetMaterialApp(
-          title: 'mytrb',
-          useInheritedMediaQuery: true,
-          debugShowCheckedModeBanner: false,
-          defaultTransition: Transition.fade,
-          smartManagement: SmartManagement.keepFactory,
-          theme: ThemeConfig.lightTheme,
-          initialBinding: SplashBinding(),
-          initialRoute: AppPages.INITIAL,
-          getPages: AppPages.routes,
-          locale: MySharedPref.getCurrentLocal(),
-          translations: LocalizationService.getInstance(),
-          builder: EasyLoading.init(),
+        return ResponsiveWrapper.builder(
+          GetMaterialApp(
+            title: 'mytrb',
+            useInheritedMediaQuery: true,
+            debugShowCheckedModeBanner: false,
+            defaultTransition: Transition.fade,
+            smartManagement: SmartManagement.keepFactory,
+            theme: ThemeConfig.lightTheme,
+            initialBinding: SplashBinding(),
+            initialRoute: AppPages.INITIAL,
+            getPages: AppPages.routes,
+            locale: MySharedPref.getCurrentLocal(),
+            translations: LocalizationService.getInstance(),
+            builder: EasyLoading.init(),
+          ),
+          breakpoints: [
+            const ResponsiveBreakpoint.resize(350, name: MOBILE),
+            const ResponsiveBreakpoint.autoScale(600, name: TABLET),
+            const ResponsiveBreakpoint.autoScale(800, name: DESKTOP),
+          ],
         );
       },
     );

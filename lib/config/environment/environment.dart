@@ -112,6 +112,7 @@ class Environment {
   static const pressure = 'assets/vectors/pressure.svg';
   static const kemenhub = 'assets/images/logokemenhub.png';
   static const poltekpelBanten = 'assets/images/logo2.png';
+  static const stip = 'assets/images/LogoSTIP1.png';
 
   static const weatherAnimation = 'assets/data/weather_animation.json';
 }

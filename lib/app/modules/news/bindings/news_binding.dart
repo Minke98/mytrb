@@ -6,7 +6,8 @@ class NewsBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<NewsRepository>(() => NewsRepository(), fenix: true);
-    Get.lazyPut<NewsController>(
-        () => NewsController(newsRepository: Get.find()));
+    Get.lazyPut<NewsController>(() => NewsController(
+          newsRepository: Get.find<NewsRepository>(),
+        ));
   }
 }

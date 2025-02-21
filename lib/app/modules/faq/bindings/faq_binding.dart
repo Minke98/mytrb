@@ -6,8 +6,7 @@ class FaqBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<FaqRepository>(() => FaqRepository(), fenix: true);
-
-    Get.lazyPut(() => FaqController(
+    Get.lazyPut<FaqController>(() => FaqController(
           faqRepository: Get.find<FaqRepository>(),
         ));
   }

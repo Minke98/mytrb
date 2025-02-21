@@ -6,7 +6,8 @@ class ProfileBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<ProfileRepository>(() => ProfileRepository(), fenix: true);
-    Get.lazyPut<ProfileController>(
-        () => ProfileController(profileRepository: Get.find()));
+    Get.lazyPut<ProfileController>(() => ProfileController(
+          profileRepository: Get.find<ProfileRepository>(),
+        ));
   }
 }

@@ -5,7 +5,8 @@ import 'package:mytrb/app/modules/sync/controllers/sync_controller.dart';
 class SyncBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => SyncRepository(), fenix: true);
-    Get.lazyPut(() => SyncController(syncRepository: Get.find()));
+    Get.lazyPut<SyncRepository>(() => SyncRepository(), fenix: true);
+    Get.lazyPut(
+        () => SyncController(syncRepository: Get.find<SyncRepository>()));
   }
 }

@@ -6,7 +6,8 @@ class ReportRouteBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<ReportRepository>(() => ReportRepository(), fenix: true);
-    Get.lazyPut<ReportRouteController>(
-        () => ReportRouteController(reportRepository: Get.find()));
+    Get.lazyPut<ReportRouteController>(() => ReportRouteController(
+          reportRepository: Get.find<ReportRepository>(),
+        ));
   }
 }
