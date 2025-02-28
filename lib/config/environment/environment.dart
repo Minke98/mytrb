@@ -4,7 +4,7 @@ class Environment {
 
   // api urls
   // static const baseUrl = 'https://registration.poltekpel-banten.ac.id';
-  static const baseUrl = 'http://192.168.1.19';
+  static const baseUrl = 'http://192.168.100.38';
   static const apiUrl = '$baseUrl/trsea-api/api';
   // static const apiUrlTRB = '$baseUrlTRB/mytrb-api/api';
   // static const refreshUrl = '$baseUrlTRB/mytrb-api/api/auth/refresh';
