@@ -17,17 +17,17 @@ class FooterCopyrightLogin extends StatelessWidget {
         : '$yearOld - $year © $companyName. All rights reserved';
 
     return Container(
-      color: Colors.transparent,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      alignment: Alignment.center,
-      child: Text(
-        copyrightText,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
+        color: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            copyrightText,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+            ),
+          ),
+        ));
   }
 }

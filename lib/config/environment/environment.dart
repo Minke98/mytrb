@@ -3,13 +3,11 @@ class Environment {
   static const apiKey = '6f926d5c19164cdfa95205814242202';
 
   // api urls
-  // static const baseUrl = 'http://api.weatherapi.com/v1';
-  // static const baseUrl = 'https://pelaut.dephub.go.id';
-  static const baseUrl = 'https://registration.poltekpel-banten.ac.id';
-  static const baseUrlTRB = 'http://192.168.100.38';
-  static const apiUrl = '$baseUrl/airis-mobile/api';
-  static const apiUrlTRB = '$baseUrlTRB/mytrb-api/api';
-  static const refreshUrl = '$baseUrlTRB/mytrb-api/api/auth/refresh';
+  // static const baseUrl = 'https://registration.poltekpel-banten.ac.id';
+  static const baseUrl = 'http://192.168.1.19';
+  static const apiUrl = '$baseUrl/trsea-api/api';
+  // static const apiUrlTRB = '$baseUrlTRB/mytrb-api/api';
+  // static const refreshUrl = '$baseUrlTRB/mytrb-api/api/auth/refresh';
   static const baseline = '$apiUrl/sync/baseline';
   static const checkSeafarer = '$apiUrl/auth/CheckSeafarer';
   static const claim = '$apiUrl/auth/ClaimSeaferer2';
@@ -22,8 +20,8 @@ class Environment {
   static const getLecturerGroup = '$apiUrl/chat/getlecturergroup';
   static const leaveGroup = '$apiUrl/chat/leavegroup';
   static const contactSend = '$apiUrl/contact/send';
-  static const examinationCourse = '$apiUrlTRB/examination/course';
-  static const examinationGo = '$apiUrlTRB/examination/go';
+  static const examinationCourse = '$apiUrl/examination/course';
+  static const examinationGo = '$apiUrl/examination/go';
   static const getNew = '$apiUrl/news/getnew';
   static const updateUser = '$apiUrl/auth/updateuser';
   static const login = '$apiUrl/auth/login';

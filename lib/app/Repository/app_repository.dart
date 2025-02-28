@@ -11,8 +11,10 @@ import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
 class AppRepository {
-  Future getBaselineData(
-      {required userData, required StreamController<String> stream}) async {
+  Future getBaselineData({
+    required userData,
+    // required StreamController<String> stream
+  }) async {
     var con = await ConnectionTest.check();
     MyDatabase mydb = MyDatabase.instance;
     Database dbx = await mydb.database;
@@ -27,7 +29,7 @@ class AppRepository {
         log("appRepo: getVesselResult");
         // List<Map> resultVesselTest =
         //     await db.rawQuery("select * from tech_type_vessel limit 1");
-        stream.add("Sync Participant");
+        // stream.add("Sync Participant");
         List<Map> resultParticipant = await db.rawQuery(
             "select * from tech_participant where seafarer_code = ? limit 1",
             [userData["seafarer_code"]]);
@@ -57,7 +59,7 @@ class AppRepository {
         // bool status = resData['status']!;
         Map data = resData['data']!;
 
-        stream.add("Sync Vessel");
+        // stream.add("Sync Vessel");
         log("appRepo: techTypeVessel");
         List<Map> resultVessel =
             await db.rawQuery("select * from tech_type_vessel limit 1");
@@ -72,7 +74,7 @@ class AppRepository {
           finalResult['status_vessel'] = false;
         }
 
-        stream.add("Sync Server Journal Time");
+        // stream.add("Sync Server Journal Time");
         if (getBaseline == true) {
           var stamp = data['log_stamp'];
           List findLog = await db.rawQuery(
@@ -88,7 +90,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Instructor");
+        // stream.add("Sync Instructor");
         log("appRepo: techInstructor");
         List<Map> resultInstructor =
             await db.rawQuery("select * from tech_instructor limit 1");
@@ -108,7 +110,7 @@ class AppRepository {
           finalResult['status_instructor'] = false;
         }
 
-        stream.add("Sync Sign Data");
+        // stream.add("Sync Sign Data");
         log("appRepo: techSign");
         String? ucSign;
         List<Map> resultSign = await db.rawQuery(
@@ -175,7 +177,7 @@ class AppRepository {
           finalResult['tech_sign'] = false;
         }
 
-        stream.add("Sync Participant");
+        // stream.add("Sync Participant");
         Map m = {};
         if (getBaseline == true) {
           log("appRepo: techParticipant $data ${data['tech_participant']}");
@@ -228,7 +230,7 @@ class AppRepository {
           finalResult['status_trb_participant'] = true;
         }
 
-        stream.add("Sync Schedule");
+        // stream.add("Sync Schedule");
         finalResult['tech_trb_schedule'] = false;
         String? ucLevel;
         if (data.containsKey('tech_trb_schedule') && getBaseline == true) {
@@ -254,7 +256,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Level");
+        // stream.add("Sync Level");
         finalResult['status_tech_level'] = false;
         if (data.containsKey('tech_level') && getBaseline == true) {
           log("appRepo: tech_level");
@@ -274,7 +276,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Function");
+        // stream.add("Sync Function");
         finalResult['status_tech_function'] = false;
         if (data.containsKey('tech_function') && getBaseline == true) {
           log("appRepo: tech_function");
@@ -294,7 +296,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Competency");
+        // stream.add("Sync Competency");
         finalResult['status_tech_competency'] = false;
         if (data.containsKey('tech_competency') && getBaseline == true) {
           log("appRepo: tech_competency");
@@ -318,7 +320,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Sub Competency");
+        // stream.add("Sync Sub Competency");
         finalResult['status_tech_sub_competency'] = false;
         if (data.containsKey('tech_sub_competency') && getBaseline == true) {
           log("appRepo: tech_sub_competency");
@@ -341,7 +343,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Task");
+        // stream.add("Sync Task");
         finalResult['status_tech_task'] = false;
         if (data.containsKey('tech_task') && getBaseline == true) {
           log("appRepo: tech_task");
@@ -364,7 +366,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Task check");
+        // stream.add("Sync Task check");
         finalResult['status_tech_task_check'] = false;
         if (data.containsKey('tech_task_check') && getBaseline == true) {
           log("appRepo: tech_task_check");
@@ -404,7 +406,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Report List");
+        // stream.add("Sync Report List");
         finalResult['status_report_list'] = false;
         if (data.containsKey('tech_report_list') &&
             ucLevel != null &&
@@ -429,7 +431,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Report Route");
+        // stream.add("Sync Report Route");
         finalResult['tech_report_route'] = false;
         if (data.containsKey('tech_report_route') &&
             getBaseline == true &&
@@ -455,7 +457,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync Report Log");
+        // stream.add("Sync Report Log");
         finalResult['tech_report_log'] = false;
         if (data.containsKey('tech_report_log') &&
             getBaseline == true &&
@@ -466,7 +468,7 @@ class AppRepository {
               [ucSign]);
           if (getBaseline == true && checkData.isEmpty) {
             for (Map m in data['tech_report_log']) {
-              stream.add("Sync Report Log");
+              // stream.add("Sync Report Log");
               await db.rawInsert(
                   "insert into tech_report_log values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                   [
@@ -490,7 +492,7 @@ class AppRepository {
                     m['device_id'],
                   ]);
               if (m.containsKey('att')) {
-                stream.add("Sync Report Log Media");
+                // stream.add("Sync Report Log Media");
                 Map att = m['att'];
                 await db.rawInsert(
                     """ insert into tech_report_log_att values (?,?,?,?,?,?) """,
@@ -508,14 +510,14 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync News");
+        // stream.add("Sync News");
         finalResult['tech_news'] = false;
         if (data.containsKey('tech_news') && getBaseline == true) {
           // var formatParse = DateFormat('y-M-d H:m:s');
           log("appRepo: tech_news");
           if (getBaseline == true) {
             for (Map m in data['tech_news']) {
-              stream.add("Sync Tech News");
+              // stream.add("Sync Tech News");
               List<Map> tres = await db.rawQuery(
                   """ select * from tech_news where uc = ? limit 1""",
                   [m['uc']]);
@@ -533,7 +535,7 @@ class AppRepository {
           }
         }
 
-        stream.add("Sync News Status");
+        // stream.add("Sync News Status");
 
         final prefs = await SharedPreferences.getInstance();
         String userUc = prefs.getString('userUc')!;
@@ -544,7 +546,7 @@ class AppRepository {
           log("appRepo: tech_news_status");
           if (getBaseline == true) {
             for (Map m in data['tech_news_status']) {
-              stream.add("Sync Tech News Status");
+              // stream.add("Sync Tech News Status");
               List<Map> tres = await db.rawQuery(
                   """ select * from tech_news_status where uc = ? limit 1""",
                   [m['uc']]);
@@ -560,10 +562,10 @@ class AppRepository {
           }
         }
 
-        stream.add("Getting FAQ");
+        // stream.add("Getting FAQ");
         if (data.containsKey('tech_faq') && getBaseline == true) {
           for (Map m in data['tech_faq']) {
-            stream.add("Sync Tech Faq");
+            // stream.add("Sync Tech Faq");
             List<Map> tres = await db.rawQuery(
                 """ select * from tech_faq where uc = ? limit 1""", [m['uc']]);
             if (tres.isEmpty) {
@@ -576,10 +578,10 @@ class AppRepository {
           finalResult['tech_faq'] = true;
         }
 
-        stream.add("Getting Logbook");
+        // stream.add("Getting Logbook");
         if (data.containsKey('tech_logbook') && getBaseline == true) {
           for (Map m in data['tech_logbook']) {
-            stream.add("Sync Tech Logbook");
+            // stream.add("Sync Tech Logbook");
             List<Map> findLogbook = await db.rawQuery(
                 """ select * from tech_logbook where uc = ? limit 1""",
                 [m['uc']]);
@@ -610,7 +612,7 @@ class AppRepository {
           finalResult['tech_logbook'] = true;
         }
 
-        stream.add("Restoring Messages");
+        // stream.add("Restoring Messages");
         finalResult['messages'] = false;
         if (data.containsKey('chat_room') && getBaseline == true) {
           for (Map m in data['chat_room']) {
@@ -686,7 +688,7 @@ class AppRepository {
           finalResult['messages'] = true;
         }
 
-        stream.add("Finishing Login..");
+        // stream.add("Finishing Login..");
       });
       mydb.transaction = null;
       await dbx.execute("PRAGMA foreign_keys = ON");

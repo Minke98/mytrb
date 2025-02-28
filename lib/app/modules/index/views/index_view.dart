@@ -9,11 +9,12 @@ import 'package:mytrb/app/components/footer_copyright.dart';
 import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
 import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
 import 'package:mytrb/app/modules/sync/controllers/sync_controller.dart';
+import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:responsive_framework/responsive_value.dart'
     as responsive; // Tambah prefix
 
-class IndexView extends GetWidget<IndexController> {
+class IndexView extends GetView<IndexController> {
   final AuthController authController = Get.find<AuthController>();
   final SyncController syncController = Get.find<SyncController>();
   IndexView({Key? key}) : super(key: key);
@@ -21,14 +22,12 @@ class IndexView extends GetWidget<IndexController> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false, // Disable back button
+      onWillPop: () async => false,
       child: SafeArea(
         child: Scaffold(
           body: Column(
-            // Pakai Column biar footer tetap di bawah
             children: [
               Expanded(
-                // Bagian utama akan memenuhi sisa ruang
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -52,10 +51,12 @@ class IndexView extends GetWidget<IndexController> {
                                 menuGrid(context),
                                 const SizedBox(height: 10.0),
                                 signOffButton(context),
-                                const SizedBox(height: 10.0),
+                                const SizedBox(height: 15.0),
                                 const Text(
                                   "News",
-                                  style: TextStyle(fontSize: 16),
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Obx(() {
                                   if (controller.isLoading.value) {
@@ -181,10 +182,8 @@ class IndexView extends GetWidget<IndexController> {
         (userData['status'] == true)
             ? userData['data']['full_name'] ?? "UNKNOWN"
             : "UNKNOWN",
-        style: Theme.of(context)
-            .textTheme
-            .titleMedium!
-            .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+        style: Theme.of(context).textTheme.titleMedium!.copyWith(
+            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
       );
     });
   }
@@ -196,10 +195,8 @@ class IndexView extends GetWidget<IndexController> {
         (userData['status'] == true)
             ? "${userData['data']['seafarer_code']} - ${userData['data']['label']}"
             : "UNKNOWN",
-        style: Theme.of(context)
-            .textTheme
-            .titleSmall!
-            .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+        style: Theme.of(context).textTheme.titleSmall!.copyWith(
+            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
       );
     });
   }
@@ -214,13 +211,12 @@ class IndexView extends GetWidget<IndexController> {
         style: Theme.of(context)
             .textTheme
             .titleSmall!
-            .copyWith(color: Colors.white),
+            .copyWith(color: Colors.white, fontSize: 14),
       );
     });
   }
 
   Widget menuGrid(BuildContext context) {
-    // return Obx(() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       width: double.infinity,
@@ -231,64 +227,69 @@ class IndexView extends GetWidget<IndexController> {
       ),
       child: LayoutBuilder(
         builder: (context, constraint) {
-          if (controller.isLoading.value) {
-            return const Wrap(
+          return Obx(() {
+            if (controller.isLoading.value) {
+              return const Wrap(
+                alignment: WrapAlignment.spaceEvenly,
+                runSpacing: 20,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                ],
+              );
+            }
+
+            List<Widget> menus =
+                menuItemsBuilder(context, sigOn: controller.signStatus.value);
+            var constraintWidth = constraint.maxWidth;
+            int newInWrap = controller.menuGridCount ~/
+                (constraintWidth / (100 * controller.scale.value)).floor();
+            if (newInWrap < 1) {
+              newInWrap = 1;
+            }
+
+            if (controller.rowInWrap.value != newInWrap) {
+              controller.rowInWrap.value = newInWrap;
+            }
+
+            return Wrap(
               alignment: WrapAlignment.spaceEvenly,
               runSpacing: 20,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: SizedBox(
-                    height: 50,
-                    width: 50,
-                    child: CircularProgressIndicator(),
-                  ),
-                )
-              ],
+              children: menus,
             );
-          }
-
-          List<Widget> menus =
-              menuItemsBuilder(context, sigOn: controller.signStatus.value);
-          var constraintWidth = constraint.maxWidth;
-          int newInWrap = controller.menuGridCount ~/
-              (constraintWidth / (100 * controller.scale.value)).floor();
-          if (newInWrap < 1) {
-            newInWrap = 1;
-          }
-
-          if (controller.rowInWrap.value != newInWrap) {
-            controller.rowInWrap.value = newInWrap;
-          }
-
-          return Wrap(
-            alignment: WrapAlignment.spaceEvenly,
-            runSpacing: 20,
-            children: menus,
-          );
+          });
         },
       ),
     );
-    // });
   }
 
   Widget signOffButton(BuildContext context) {
     return Obx(() {
       if (controller.signStatus.value) {
         return Center(
-          child: ElevatedButton(
-            onPressed: () async {
-              var result = await Navigator.of(context).pushNamed("/signoff");
-              if (result != null && result is Map) {
-                if (result['signoffSuccess'] == true) {
-                  await controller.reInitializeHome();
+          child: SizedBox(
+            width: 200,
+            child: ElevatedButton(
+              onPressed: () async {
+                var result = await Navigator.of(context).pushNamed("/signoff");
+                if (result != null && result is Map) {
+                  if (result['signoffSuccess'] == true) {
+                    await controller.reInitializeHome();
+                  }
                 }
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(((50 / 100) * controller.lastWidth.value), 50),
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade900,
+                minimumSize: const Size.fromHeight(50),
+              ),
+              child: const Text("Sign Off"),
             ),
-            child: const Text("Sign Off"),
           ),
         );
       }
@@ -308,7 +309,7 @@ class IndexView extends GetWidget<IndexController> {
             IconButton(
               padding: EdgeInsets.zero,
               onPressed: () {
-                Get.toNamed("/sign")?.then((completion) {
+                Get.toNamed(Routes.SIGN_ON)?.then((completion) {
                   if (completion != null && completion is Map) {
                     if (completion['signSuccess'] == true) {
                       controller.reInitializeHome();
@@ -318,17 +319,12 @@ class IndexView extends GetWidget<IndexController> {
               },
               icon: Icon(
                 Icons.assignment,
-                size: 50,
-                color: Get.theme.colorScheme.primary,
-              ),
-              iconSize: 48,
-            ),
-            Text(
-              "Sign On",
-              style: Get.textTheme.bodyMedium!.copyWith(
-                color: Get.theme.colorScheme.onPrimaryContainer,
+                size: 40,
+                color: Colors.blue.shade900,
               ),
             ),
+            const Text("Sign On",
+                style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       );
@@ -341,22 +337,17 @@ class IndexView extends GetWidget<IndexController> {
           children: <Widget>[
             IconButton(
               padding: EdgeInsets.zero,
-              onPressed: () {
-                Get.toNamed("/history");
+              onPressed: () async {
+                await historySelection();
               },
               icon: Icon(
-                Icons.assignment,
-                size: 50,
-                color: Get.theme.colorScheme.primary,
-              ),
-              iconSize: 48,
-            ),
-            Text(
-              "History",
-              style: Get.textTheme.bodyMedium!.copyWith(
-                color: Get.theme.colorScheme.onPrimaryContainer,
+                Icons.history,
+                size: 40,
+                color: Colors.blue.shade900,
               ),
             ),
+            const Text("History",
+                style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       );
@@ -370,24 +361,18 @@ class IndexView extends GetWidget<IndexController> {
             IconButton(
               padding: EdgeInsets.zero,
               onPressed: () {
-                Get.toNamed("/report")?.then((value) {
+                Get.toNamed(Routes.REPORT)?.then((value) {
                   controller.reInitializeHome();
                 });
               },
               icon: Icon(
                 Icons.assignment, // Ganti dengan ikon yang diinginkan
-                size: 50,
-                color: Get.theme.colorScheme
-                    .primary, // Atur warna ikon jika diperlukan
-              ),
-              iconSize: 48,
-            ),
-            Text(
-              "Report",
-              style: Get.textTheme.bodyMedium!.copyWith(
-                color: Get.theme.colorScheme.onPrimaryContainer,
+                size: 40,
+                color: Colors.blue.shade900, // Atur warna ikon jika diperlukan
               ),
             ),
+            const Text("Report",
+                style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       );
@@ -407,17 +392,12 @@ class IndexView extends GetWidget<IndexController> {
               },
               icon: Icon(
                 Icons.chat,
-                size: 50,
-                color: Get.theme.colorScheme.primary,
-              ),
-              iconSize: 48,
-            ),
-            Text(
-              "Chat",
-              style: Get.textTheme.bodyMedium!.copyWith(
-                color: Get.theme.colorScheme.onPrimaryContainer,
+                size: 40,
+                color: Colors.blue.shade900,
               ),
             ),
+            const Text("Chat",
+                style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       );
@@ -435,17 +415,12 @@ class IndexView extends GetWidget<IndexController> {
               },
               icon: Icon(
                 Icons.task,
-                size: 50,
-                color: Get.theme.colorScheme.primary,
-              ),
-              iconSize: 48,
-            ),
-            Text(
-              "Task",
-              style: Get.textTheme.bodyMedium!.copyWith(
-                color: Get.theme.colorScheme.onPrimaryContainer,
+                size: 40,
+                color: Colors.blue.shade900,
               ),
             ),
+            const Text("Task",
+                style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       );
@@ -468,17 +443,13 @@ class IndexView extends GetWidget<IndexController> {
               },
               icon: Icon(
                 Icons.quiz, // Ikon untuk kuis atau ujian
-                size: 50,
-                color: Get.theme.colorScheme.primary,
+                size: 40,
+                color: Colors.blue.shade900,
               ),
               iconSize: 48,
             ),
-            Text(
-              "Exam",
-              style: Get.textTheme.bodyMedium!.copyWith(
-                color: Get.theme.colorScheme.onPrimaryContainer,
-              ),
-            ),
+            const Text("Exam",
+                style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       );
@@ -496,17 +467,12 @@ class IndexView extends GetWidget<IndexController> {
               },
               icon: Icon(
                 Icons.menu_book, // Ikon untuk log book
-                size: 50,
-                color: Get.theme.colorScheme.primary,
-              ),
-              iconSize: 48,
-            ),
-            Text(
-              "Log Book",
-              style: Get.textTheme.bodyMedium!.copyWith(
-                color: Get.theme.colorScheme.onPrimaryContainer,
+                size: 40,
+                color: Colors.blue.shade900,
               ),
             ),
+            const Text("Log Book",
+                style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       );
@@ -524,17 +490,12 @@ class IndexView extends GetWidget<IndexController> {
               },
               icon: Icon(
                 Icons.contact_page, // Ikon untuk contact
-                size: 50,
-                color: Get.theme.colorScheme.primary,
-              ),
-              iconSize: 48,
-            ),
-            Text(
-              "Contact",
-              style: Get.textTheme.bodyMedium!.copyWith(
-                color: Get.theme.colorScheme.onPrimaryContainer,
+                size: 40,
+                color: Colors.blue.shade900,
               ),
             ),
+            const Text("Contact",
+                style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       );
@@ -558,10 +519,9 @@ class IndexView extends GetWidget<IndexController> {
                     },
                     icon: Icon(
                       Icons.sync, // Ikon sinkronisasi
-                      size: 50,
-                      color: Get.theme.colorScheme.primary,
+                      size: 40,
+                      color: Colors.blue.shade900,
                     ),
-                    iconSize: 48,
                   ),
                   controller.isNeedSync.value
                       ? Positioned(
@@ -586,12 +546,8 @@ class IndexView extends GetWidget<IndexController> {
                 ],
               );
             }),
-            Text(
-              "Sync",
-              style: Get.textTheme.bodyMedium!.copyWith(
-                color: Get.theme.colorScheme.onPrimaryContainer,
-              ),
-            ),
+            const Text("Sync",
+                style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       );
@@ -600,24 +556,24 @@ class IndexView extends GetWidget<IndexController> {
     // Tambahkan daftar menu lainnya
     List<Widget> menus = <Widget>[];
 
-    // if (!sigOn) {
-    //   menus = <Widget>[
-    //     signButton(), // Harus dipanggil dengan ()
-    //     historyButton(),
-    //     syncButton(),
-    //   ];
-    // } else {
-    //   menus = <Widget>[
-    //     // signButton(),
-    //     reportButton(),
-    //     chatButton(),
-    //     taskButton(),
-    //     logButton(),
-    //     contactButton(),
-    //     syncButton(),
-    //     examButton(),
-    //   ];
-    // }
+    if (!sigOn) {
+      menus = <Widget>[
+        signButton(), // Harus dipanggil dengan ()
+        historyButton(),
+        syncButton(),
+      ];
+    } else {
+      menus = <Widget>[
+        // signButton(),
+        reportButton(),
+        chatButton(),
+        taskButton(),
+        logButton(),
+        contactButton(),
+        syncButton(),
+        examButton(),
+      ];
+    }
 
     return menus; // Pastikan selalu mengembalikan List<Widget>
   }
@@ -738,7 +694,7 @@ class IndexView extends GetWidget<IndexController> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(8.0),
-                  color: Get.theme.colorScheme.primary,
+                  color: Colors.blue.shade900,
                   child: Center(
                     child: Text(
                       "History",
@@ -777,17 +733,13 @@ class IndexView extends GetWidget<IndexController> {
                                     },
                               icon: Icon(
                                 Icons.task,
-                                size: 50,
-                                color: Get.theme.colorScheme.primary,
-                              ),
-                              iconSize: 48,
-                            ),
-                            Text(
-                              "Task",
-                              style: Get.textTheme.bodyMedium!.copyWith(
-                                color: Get.theme.colorScheme.onPrimaryContainer,
+                                size: 40,
+                                color: Colors.blue.shade900,
                               ),
                             ),
+                            const Text("Task",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 14)),
                           ],
                         ),
                         const SizedBox(width: 8.0),
@@ -813,17 +765,13 @@ class IndexView extends GetWidget<IndexController> {
                                     },
                               icon: Icon(
                                 Icons.report,
-                                size: 50,
-                                color: Get.theme.colorScheme.primary,
-                              ),
-                              iconSize: 48,
-                            ),
-                            Text(
-                              "Report",
-                              style: Get.textTheme.bodyMedium!.copyWith(
-                                color: Get.theme.colorScheme.onPrimaryContainer,
+                                size: 40,
+                                color: Colors.blue.shade900,
                               ),
                             ),
+                            const Text("Report",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 14)),
                           ],
                         ),
                       ],
@@ -981,19 +929,15 @@ class IndexView extends GetWidget<IndexController> {
 
   Widget _menuItem(IconData icon, String label) {
     return Container(
-      color: Get.theme.colorScheme.background,
+      color: Colors.white,
       padding: const EdgeInsets.all(8.0),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Row(
           children: [
-            Icon(icon, size: 30, color: Get.theme.colorScheme.primary),
+            Icon(icon, size: 25, color: Colors.black),
             const SizedBox(width: 10),
-            Text(
-              label,
-              style: Get.textTheme.bodyMedium!
-                  .copyWith(color: Get.theme.colorScheme.onBackground),
-            ),
+            Text(label, style: TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       ),

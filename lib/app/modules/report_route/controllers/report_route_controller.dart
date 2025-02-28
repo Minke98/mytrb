@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/report_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
@@ -9,24 +12,36 @@ class ReportRouteController extends GetxController {
 
   ReportRouteController({required this.reportRepository});
 
+  final TextEditingController locationController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   var isLoading = false.obs;
-  var routes = <Map<String, dynamic>>[].obs;
+  var routes = <dynamic>[].obs;
   var allowModify = true.obs;
   var errorMessage = ''.obs;
+  var ucSign = ''.obs;
+  var monthNumber = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
+    final args = Get.arguments;
+    if (args != null) {
+      ucSign.value = args['uc_sign'] ?? '';
+      monthNumber.value = args['month_number'] ?? 1;
+      print("REPORT_ROUTE: uc_sign=$ucSign, month_number=$monthNumber");
+    } else {
+      log("WARNING: Get.arguments is null!");
+    }
+    prepareReportRoute();
   }
 
-  Future<void> prepareReportRoute(
-      {required int month, required String ucSign}) async {
+  Future<void> prepareReportRoute() async {
     isLoading.value = true;
-    errorMessage.value = '';
 
     try {
-      List<Map<String, dynamic>> routesData = List<Map<String, dynamic>>.from(
-          await reportRepository.getRoutes(month: month, ucSign: ucSign));
+      List routesData = List.from(await reportRepository.getRoutes(
+          month: monthNumber.value, ucSign: ucSign.value));
 
       await UserRepository.getLocalUser(useAlternate: true);
       final prefs = await SharedPreferences.getInstance();
@@ -40,41 +55,41 @@ class ReportRouteController extends GetxController {
     }
   }
 
-  Future<void> saveRoute(
-      {required int month,
-      required String locationName,
-      required String ucSign}) async {
+  Future<void> saveRoute() async {
+    if (!formKey.currentState!.validate()) return;
+
     isLoading.value = true;
-    errorMessage.value = 'Mencari Lokasi Anda';
+    EasyLoading.show(status: 'Mencari Lokasi Anda');
 
     try {
-      Map<String, dynamic> location = await Location.getLocation();
+      Map location = await Location.getLocation();
       if (location['status'] == true) {
-        errorMessage.value = 'Menyimpan Rute';
-        Map<String, dynamic> saveLocation = await reportRepository.addRoute(
-          month: month,
-          locationName: locationName,
+        EasyLoading.show(status: 'Menyimpan Rute');
+
+        Map saveLocation = await reportRepository.addRoute(
+          month: monthNumber.value,
+          locationName: locationController.text,
           position: location['position'],
-          ucSign: ucSign,
+          ucSign: ucSign.value,
         );
 
         if (saveLocation['status'] == true) {
-          List<Map<String, dynamic>> updatedRoutes =
-              List<Map<String, dynamic>>.from(await reportRepository.getRoutes(
-                  month: month, ucSign: ucSign));
+          List updatedRoutes = List.from(await reportRepository.getRoutes(
+              month: monthNumber.value, ucSign: ucSign.value));
 
           routes.assignAll(updatedRoutes);
-          errorMessage.value = '';
+          EasyLoading.dismiss();
         } else {
-          errorMessage.value = saveLocation['message'];
+          EasyLoading.showError(saveLocation['message']);
         }
       } else {
-        errorMessage.value = location['message'];
+        EasyLoading.showError(location['message']);
       }
     } catch (e) {
-      errorMessage.value = "Gagal menyimpan rute";
+      EasyLoading.showError("Gagal menyimpan rute");
     } finally {
       isLoading.value = false;
+      EasyLoading.dismiss();
     }
   }
 }

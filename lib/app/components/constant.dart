@@ -1,4 +1,6 @@
 // ignore_for_file: constant_identifier_names
+import 'package:validators/sanitizers.dart';
+import 'package:validators/validators.dart';
 
 enum ConnectionType {
   wifi,
@@ -33,3 +35,19 @@ const List<Approval> REPORTLOGLECTAPPROVAL = [
   Approval(text: "Approved", value: 1),
   Approval(text: "Rejected", value: 2)
 ];
+
+extension EmailValidator on String {
+  bool isValidEmail() {
+    return RegExp(
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+        .hasMatch(this);
+  }
+
+  bool required() {
+    return trim(this) == "";
+  }
+
+  bool minimumChar({length = 0}) {
+    return isLength(this, length);
+  }
+}

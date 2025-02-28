@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart' as getx;
 import 'package:logger/logger.dart';
+import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/components/custom_snackbar.dart';
+import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
+import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:mytrb/config/translations/strings_enum.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'api_exceptions.dart';
@@ -22,66 +26,45 @@ class BaseClient {
         'Accept': 'application/json'
       },
     ),
-  )..interceptors.add(PrettyDioLogger(
-      requestHeader: true,
-      requestBody: true,
-      responseBody: true,
-      responseHeader: false,
-      error: true,
-      compact: true,
-      maxWidth: 90,
-    ));
+  )..interceptors.addAll([
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        responseHeader: false,
+        error: true,
+        compact: true,
+        maxWidth: 90,
+      ),
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          // Ambil token dari storage
+          Map tokenData = await UserRepository.getToken();
+          String accessToken = tokenData['token'];
 
-  // static Future<bool> _refreshToken() async {
-  //   try {
-  //     Map tokenData = await UserRepository.getToken();
-  //     String refreshToken = tokenData['refreshToken'];
+          if (accessToken.isNotEmpty) {
+            options.headers["authorization"] = "Bearer $accessToken";
+          }
+          handler.next(options);
+        },
+        onError: (DioException error, handler) async {
+          if (error.response?.statusCode == 401 ||
+              error.response?.statusCode == 403) {
+            // Langsung set unauthorized tanpa mencoba refresh token
+            getx.Get.find<AuthController>().logout();
+            getx.Get.offAllNamed(Routes.LOGIN);
+          }
+          handler.next(error);
+        },
+      )
+    ]);
 
-  //     if (refreshToken.isNotEmpty) {
-  //       final response = await _dio.post(
-  //         Environment.refreshUrl,
-  //         data: {"time": DateTime.now().millisecondsSinceEpoch},
-  //         options: Options(headers: {"authorization": "Bearer $refreshToken"}),
-  //       );
-
-  //       if (response.statusCode == 200) {
-  //         String newToken = response.data['token'];
-  //         String newRefreshToken = response.data['refresh_token'];
-
-  //         await UserRepository.setToken(
-  //             token: newToken, refreshToken: newRefreshToken);
-  //         _dio.options.headers["authorization"] = "Bearer $newToken";
-  //         return true;
-  //       }
-  //     }
-  //   } catch (e) {
-  //     Logger().e('Error while refreshing token: $e');
-  //   }
-  //   return false;
-  // }
-
-  // /// Fungsi untuk mengulang request setelah token diperbarui
-  // static Future<Response> _retryRequest(RequestOptions requestOptions) async {
-  //   return await _dio.request(
-  //     requestOptions.path,
-  //     data: requestOptions.data,
-  //     queryParameters: requestOptions.queryParameters,
-  //     options: Options(
-  //       method: requestOptions.method,
-  //       headers: requestOptions.headers,
-  //       responseType: requestOptions.responseType,
-  //     ),
-  //   );
-  // }
-
-  // request timeout (default 10 seconds)
   static const int _timeoutInSeconds = 10;
 
-  /// dio getter (used for testing)
   static Dio get dio => _dio;
 
   /// perform safe api request
-  static safeApiCall(
+  static Future<dynamic> safeApiCall(
     String url,
     RequestType requestType, {
     Map<String, dynamic>? headers,
@@ -89,57 +72,47 @@ class BaseClient {
     required Function(Response response) onSuccess,
     Function(ApiException)? onError,
     Function(int value, int progress)? onReceiveProgress,
-    Function(int total, int progress)?
-        onSendProgress, // while sending (uploading) progress
+    Function(int total, int progress)? onSendProgress,
     Function? onLoading,
     dynamic data,
-    bool isJson = false, // Tambahkan parameter isJson
+    bool isJson = false,
   }) async {
     try {
-      // 1) indicate loading state
-      await onLoading?.call();
-      // 2) try to perform http request
+      await onLoading?.call(); // Indikasikan loading
+
       late Response response;
       if (requestType == RequestType.get) {
         response = await _dio.get(
           url,
           onReceiveProgress: onReceiveProgress,
           queryParameters: queryParameters,
-          options: Options(
-            headers: headers,
-          ),
+          options: Options(headers: headers),
         );
       } else if (requestType == RequestType.post) {
         response = await _dio.post(
           url,
-          data: isJson
-              ? data
-              : FormData.fromMap(
-                  data), // Gunakan data atau FormData berdasarkan isJson
+          data: isJson ? data : FormData.fromMap(data),
           onReceiveProgress: onReceiveProgress,
           onSendProgress: onSendProgress,
           queryParameters: queryParameters,
           options: Options(
             headers: headers,
             contentType: isJson
-                ? Headers.jsonContentType // Set content type untuk JSON
+                ? Headers.jsonContentType
                 : Headers.formUrlEncodedContentType,
           ),
         );
       } else if (requestType == RequestType.put) {
         response = await _dio.put(
           url,
-          data: isJson
-              ? data
-              : FormData.fromMap(
-                  data), // Gunakan data atau FormData berdasarkan isJson
+          data: isJson ? data : FormData.fromMap(data),
           onReceiveProgress: onReceiveProgress,
           onSendProgress: onSendProgress,
           queryParameters: queryParameters,
           options: Options(
             headers: headers,
             contentType: isJson
-                ? Headers.jsonContentType // Set content type untuk JSON
+                ? Headers.jsonContentType
                 : Headers.formUrlEncodedContentType,
           ),
         );
@@ -148,15 +121,12 @@ class BaseClient {
           url,
           data: data,
           queryParameters: queryParameters,
-          options: Options(
-            headers: headers,
-            contentType:
-                Headers.formUrlEncodedContentType, // Set content type here
-          ),
+          options: Options(headers: headers),
         );
       }
-      // 3) return response (api done successfully)
-      await onSuccess(response);
+
+      // **Pastikan return dari onSuccess dikembalikan**
+      return onSuccess(response);
     } on DioException catch (error) {
       // dio error (api reach the server but not performed successfully
       _handleDioError(error: error, url: url, onError: onError);

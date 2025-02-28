@@ -62,9 +62,9 @@ class UserRepository {
     required String username,
     required String password,
     required String device_id,
-    required StreamController<String> stream,
+    // required StreamController<String> stream,
   }) async {
-    stream.add("Login.");
+    // stream.add("Login.");
     var ret;
     var con = await ConnectionTest.check();
     MyDatabase mydb = MyDatabase.instance;
@@ -72,7 +72,7 @@ class UserRepository {
     if (con) {
       try {
         Database db = await mydb.database;
-        stream.add("Login..");
+        // stream.add("Login..");
         await BaseClient.safeApiCall(
           Environment.login,
           RequestType.post,
@@ -89,7 +89,7 @@ class UserRepository {
             final encrypter = encrypt.Encrypter(encrypt.AES(key));
             final encrypted = encrypter.encrypt(password, iv: iv);
 
-            stream.add("Get BaseLine Data...");
+            // stream.add("Get BaseLine Data...");
             List<Map> result = await db.rawQuery(
                 "select * from tech_user where uc = ? limit 1", [data['uc']]);
 
@@ -159,7 +159,14 @@ class UserRepository {
             };
           },
           onError: (e) {
-            ret = {"status": false, "message": e.message};
+            if (e.response != null && e.response!.data is Map) {
+              ret = {
+                "status": false,
+                "message": e.response!.data["message"] ?? "Terjadi kesalahan"
+              };
+            } else {
+              ret = {"status": false, "message": e.message};
+            }
           },
         );
       } catch (e) {

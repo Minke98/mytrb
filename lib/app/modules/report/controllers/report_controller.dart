@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,16 +18,29 @@ class ReportController extends GetxController {
   var allowModify = true.obs;
   var bulanCount = 0.obs;
   var activeReport = [].obs;
+  var ucSign = ''.obs;
+  var monthNumber = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
     initializeReport();
+
+    // Ambil argument hanya jika ada
+    if (Get.arguments != null) {
+      setReportData(Get.arguments);
+    }
+  }
+
+  void setReportData(Map<String, dynamic> args) {
+    ucSign.value = args['uc_sign'] ?? '';
+    monthNumber.value = args['month_number'] ?? 1;
+    log("SET REPORT DATA: uc_sign=$ucSign, month_number=$monthNumber");
   }
 
   Future<void> initializeReport() async {
     isLoading.value = true;
-
+    // Ambil user data & sign data
     Map user = await UserRepository.getLocalUserReport(useAlternate: true);
     final prefs = await SharedPreferences.getInstance();
     allowModify.value = prefs.getBool("modifyTask") ?? true;

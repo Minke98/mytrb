@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 package="com.example.mytrb">
     <application
-        android:label="mytrb"
+        android:label="MyTRB"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

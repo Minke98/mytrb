@@ -5,11 +5,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mytrb/config/theme/theme_data.dart';
+import 'package:mytrb/main_binding.dart';
 import 'package:mytrb/utils/colors.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:responsive_framework/responsive_wrapper.dart';
 import 'app/data/local/my_shared_pref.dart';
-import 'app/modules/splash/bindings/splash_binding.dart';
 import 'app/routes/app_pages.dart';
 import 'config/translations/localization_service.dart';
 
@@ -127,7 +127,7 @@ class MyApp extends StatelessWidget {
             defaultTransition: Transition.fade,
             smartManagement: SmartManagement.keepFactory,
             theme: ThemeConfig.lightTheme,
-            initialBinding: SplashBinding(),
+            initialBinding: MainBinding(),
             initialRoute: AppPages.INITIAL,
             getPages: AppPages.routes,
             locale: MySharedPref.getCurrentLocal(),

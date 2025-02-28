@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/sync_repository.dart';
+import 'package:mytrb/app/routes/app_pages.dart';
 
 class SyncController extends GetxController {
   final SyncRepository syncRepository;
@@ -11,25 +13,31 @@ class SyncController extends GetxController {
 
   Future<void> startSyncing() async {
     isSyncing.value = true;
-    syncStatus.value = "Syncing";
 
-    StreamController<String> controller = StreamController<String>();
-    StreamSubscription streamSubscription = controller.stream.listen((event) {
-      syncStatus.value = event;
-    });
+    // Menampilkan loading indicator
+    EasyLoading.show(status: "Syncing...");
 
-    Map syncRes = await syncRepository.doSync(stream: controller);
+    Map syncRes = await syncRepository.doSync();
+
+    EasyLoading.dismiss(); // Menutup loading setelah proses selesai
 
     if (syncRes['status'] == false) {
       syncStatus.value = syncRes['message'];
+
+      // Menampilkan toast error
+      EasyLoading.showError(syncRes['message']);
     } else {
       syncStatus.value = "Sync Completed";
-      Future.delayed(
-          const Duration(seconds: 1), () => Get.offAllNamed('/home'));
+
+      // Menampilkan toast sukses
+      EasyLoading.showSuccess("Sync Completed");
+
+      // Tunggu sebentar sebelum navigasi ulang ke home
+      Future.delayed(const Duration(seconds: 1), () {
+        Get.offNamed(Routes.INDEX);
+      });
     }
 
-    streamSubscription.cancel();
-    controller.close();
     isSyncing.value = false;
   }
 }

@@ -19,7 +19,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as Path;
 
 class SyncRepository extends Repository {
-  Future doSync({required StreamController<String> stream}) async {
+  Future doSync() async {
     var con = await ConnectionTest.check();
     MyDatabase mydb = MyDatabase.instance;
     Database db = await mydb.database;
@@ -29,10 +29,10 @@ class SyncRepository extends Repository {
         throw CustomException(
             "Silahkan Hidupkan Koneksi Internet Untuk Melakukan Sinkronisasi");
       }
-      stream.add("Checking Server Changes");
-      var getNew = await SyncRepository.getServerJournal();
+      // stream.add("Checking Server Changes");
+      await getServerJournal();
 
-      bool serverSync = await fromServerSync(stream: stream);
+      await fromServerSync();
       // if (serverSync['status'] == false) {
       //   throw CustomException(serverSync["message"]);
       // }
@@ -49,41 +49,44 @@ class SyncRepository extends Repository {
           log("syncRepo: Item $item");
           switch (item["table_name"]) {
             case "tech_sign":
-              stream.add("Sync Sign ($syncCountProgres/$syncCount)");
+              // stream.add("Sync Sign ($syncCountProgres/$syncCount)");
               await techSign(item: item);
               break;
             case "tech_sign_att":
               // List<Map> testResTechSignAtt =
               //     await db.rawQuery(""" select * from tech_sign_att """);
               // log("syncRepo: resTestAtt $testResTechSignAtt");
-              stream.add("Sync Sign Media ($syncCountProgres/$syncCount)");
-              await techSignAtt(item: item, stream: stream);
+              // stream.add("Sync Sign Media ($syncCountProgres/$syncCount)");
+              await techSignAtt(
+                item: item,
+                // stream: stream
+              );
               break;
             case "tech_report_route":
               // List<Map> testResTechSignAtt =
               //     await db.rawQuery(""" select * from tech_report_route """);
               // log("syncRepo: resTestAtt $testResTechSignAtt");
-              stream.add("Sync Route ($syncCountProgres/$syncCount)");
+              // stream.add("Sync Route ($syncCountProgres/$syncCount)");
               await techReportRoute(item: item);
               break;
             case "tech_report_log":
-              stream.add("Sync Report ($syncCountProgres/$syncCount)");
+              // stream.add("Sync Report ($syncCountProgres/$syncCount)");
               await techReportLog(item: item);
               break;
             case "tech_report_log_att":
-              stream.add("Sync Report Media ($syncCountProgres/$syncCount)");
+              // stream.add("Sync Report Media ($syncCountProgres/$syncCount)");
               await techReportLogAtt(item: item);
               break;
             case "tech_task_check":
-              stream.add("Sync Task ($syncCountProgres/$syncCount)");
+              // stream.add("Sync Task ($syncCountProgres/$syncCount)");
               await techTaskCheck(item: item);
               break;
             case "tech_news_status":
-              stream.add("Sync News Status ($syncCountProgres/$syncCount)");
+              // stream.add("Sync News Status ($syncCountProgres/$syncCount)");
               await techNewsStatus(item: item);
               break;
             case "tech_logbook":
-              stream.add("Sync Log Book ($syncCountProgres/$syncCount)");
+              // stream.add("Sync Log Book ($syncCountProgres/$syncCount)");
               await techLogBook(item: item);
               break;
             default:
@@ -218,7 +221,7 @@ class SyncRepository extends Repository {
     return finalRes;
   }
 
-  Future fromServerSync({required StreamController<String> stream}) async {
+  Future fromServerSync() async {
     log("getServerJournal fromServerSync");
     var con = await ConnectionTest.check();
 
@@ -255,42 +258,42 @@ class SyncRepository extends Repository {
                     switch (item['table_name']) {
                       case "tech_user":
                         log("getServerJournal fromServerSync tech user ${resSign.data['data']}");
-                        stream.add("Sync Tech User");
+                        // stream.add("Sync Tech User");
                         await serverTechUser(
                             db: txn,
                             item: resSign.data['data'],
                             journalItem: item);
                         break;
                       case "tech_participant":
-                        stream.add("Sync Tech Participant");
+                        // stream.add("Sync Tech Participant");
                         await serverTechParticipant(
                             db: txn,
                             item: resSign.data['data'],
                             journalItem: item);
                         break;
                       case "tech_instructor":
-                        stream.add("Sync Tech Instructor");
+                        // stream.add("Sync Tech Instructor");
                         await serverTechInstructor(
                             db: txn,
                             item: resSign.data['data'],
                             journalItem: item);
                         break;
                       case "tech_task_check":
-                        stream.add("Sync Task CheckList Approval");
+                        // stream.add("Sync Task CheckList Approval");
                         await severTechTaskCheck(
                             db: txn,
                             item: resSign.data['data'],
                             journalItem: item);
                         break;
                       case "tech_report_log":
-                        stream.add("Sync Task Report Approval");
+                        // stream.add("Sync Task Report Approval");
                         await severTechReportLog(
                             db: txn,
                             item: resSign.data['data'],
                             journalItem: item);
                         break;
                       case "tech_type_vessel":
-                        stream.add("Sync Task Vessel");
+                        // stream.add("Sync Task Vessel");
                         await serverVesselType(
                             db: txn,
                             item: resSign.data['data'],
@@ -577,7 +580,10 @@ class SyncRepository extends Repository {
     }
   }
 
-  Future techSignAtt({required Map item, StreamController? stream}) async {
+  Future techSignAtt({
+    required Map item,
+    // StreamController? stream
+  }) async {
     log("syncRepo: tech_sign_att sync");
     MyDatabase mydb = MyDatabase.instance;
     Database db = await mydb.database;
@@ -910,7 +916,7 @@ class SyncRepository extends Repository {
     Database db = await mydb.database;
     Map ret;
     try {
-      Map token = await UserRepository.getToken();
+      // Map token = await UserRepository.getToken();
       await db.transaction((txn) async {
         mydb.transaction = txn;
         List<Map> res = await txn.rawQuery(

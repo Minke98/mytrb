@@ -1,10 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/app_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
+import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:mytrb/utils/dialog.dart';
 import 'package:mytrb/utils/get_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,27 +23,26 @@ class AuthController extends GetxController {
 
   AuthController({required this.userRepository, required this.appRepository});
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   // checkAuth(); // Cek autentikasi saat controller dimuat
-  // }
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    await checkAuth();
+  }
 
-  Future<void> login({
-    StreamController<String>? stream,
-  }) async {
-    // isCheckingAuth.value = true;
-
+  Future<void> login() async {
+    EasyLoading.show(status: 'Loading...');
     var deviceId = await getUniqueDeviceId();
+
     var res = await userRepository.login(
       username: usernameController.text,
       password: passwordController.text,
       device_id: deviceId,
-      stream: stream ?? StreamController<String>(),
+      // stream: _streamController!,
     );
 
+    EasyLoading.dismiss();
+
     if (res["status"] == false) {
-      isCheckingAuth.value = false;
       unauthorizedMessage.value = res['message'] ?? "Unknown Error";
       MyDialog.showErrorSnackbarRegist(unauthorizedMessage.value);
       isAuthorized.value = false;
@@ -53,52 +53,92 @@ class AuthController extends GetxController {
 
       await appRepository.getBaselineData(
         userData: userData['data'],
-        stream: stream ?? StreamController<String>(),
+        // stream: _streamController!,
       );
 
       user.value = userData;
       isAuthorized.value = true;
-      isCheckingAuth.value = false;
+
+      if (Get.currentRoute != Routes.INDEX && isAuthorized.value) {
+        Get.offAllNamed(Routes.INDEX);
+      }
     }
   }
 
   Future<void> logout() async {
+    EasyLoading.show(status: 'Logging out...');
     await userRepository.logOut();
     isAuthorized.value = false;
     user.clear();
+    EasyLoading.dismiss();
+
+    if (Get.currentRoute != Routes.LOGIN) {
+      Get.offAllNamed(Routes.LOGIN);
+    }
   }
 
-  // Future<void> checkAuth({
-  //   String? deviceId,
-  //   bool background = false,
-  //   StreamController<String>? stream,
-  // }) async {
-  //   isCheckingAuth.value = true;
-  //   await Future.delayed(const Duration(milliseconds: 300));
+  Future<void> checkAuth({bool background = false}) async {
+    if (isCheckingAuth.value) return;
 
-  //   var isAuth = await userRepository.checkAuth(
-  //     deviceId: deviceId ?? '',
-  //     fromBackround: background,
-  //   );
+    isCheckingAuth.value = true;
+    EasyLoading.show(status: 'Checking authentication...');
 
-  //   if (isAuth['status'] == false) {
-  //     unauthorizedMessage.value = isAuth['message'] ?? "";
-  //     isAuthorized.value = false;
-  //     user.clear();
-  //   } else {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     prefs.setString("userUc", isAuth['user'].uc);
-  //     var userData = await userRepository.getUserData(uc: isAuth['user'].uc);
-  //     var streamController = stream ?? StreamController<String>();
+    var deviceId = await getUniqueDeviceId();
+    var isAuth = await userRepository.checkAuth(
+      deviceId: deviceId,
+      fromBackround: background,
+    );
 
-  //     await appRepository.getBaselineData(
-  //       userData: userData['data'],
-  //       stream: streamController,
-  //     );
+    EasyLoading.dismiss();
 
-  //     user.value = userData;
-  //     isAuthorized.value = true;
-  //   }
-  //   isCheckingAuth.value = false;
-  // }
+    if (isAuth['status'] == false) {
+      unauthorizedMessage.value = isAuth['message'] ?? "";
+      isAuthorized.value = false;
+      user.clear();
+
+      if (Get.currentRoute != Routes.LOGIN) {
+        Get.toNamed(Routes.LOGIN);
+      }
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString("userUc", isAuth['user'].uc);
+      var userData = await userRepository.getUserData(uc: isAuth['user'].uc);
+
+      await appRepository.getBaselineData(
+        userData: userData['data'],
+      );
+
+      user.value = userData;
+      isAuthorized.value = true;
+
+      if (Get.currentRoute != Routes.INDEX && isAuthorized.value) {
+        Get.toNamed(Routes.INDEX);
+      }
+    }
+
+    isCheckingAuth.value = false;
+
+    // **Tampilkan dialog hanya jika ada pesan**
+    if (isAuth['message'] != null && isAuth['message'].toString().isNotEmpty) {
+      showAuthDialog(isAuth['message'].toString());
+    }
+  }
+
+  void showAuthDialog(String message) {
+    Get.dialog(
+      AlertDialog(
+        title: const Text(
+          "Informasi",
+          style: TextStyle(fontSize: 14),
+        ),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
 }

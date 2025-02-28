@@ -1,6 +1,6 @@
 class Instructor {
   String? uc;
-  String? category;
+  int? category;
   String? idNumber;
   String? fullName;
 
