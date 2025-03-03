@@ -12,58 +12,63 @@ class ClaimView extends GetView<ClaimController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Claim Seafarer")),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              seafererCode(context),
-              const SizedBox(height: 10),
-              seafarerButton(context),
-              const SizedBox(height: 40),
-              // Menambahkan jarak yang lebih kecil
-              Obx(() {
-                if (controller.seafarerAvailable.value) {
-                  return registerForm(context);
-                }
-                return const SizedBox.shrink();
-              }),
-
-              // Error Message
-              Obx(() {
-                if (controller.errorMessage.value.isNotEmpty) {
-                  return Center(
-                    child: Text(
-                      controller.errorMessage.value,
-                      style: const TextStyle(color: Colors.red, fontSize: 16),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              }),
-
-              // Success Snackbar & Redirect
-              Obx(() {
-                if (controller.isSuccess.value) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Get.snackbar(
-                      "Claim Successful",
-                      "Please Login",
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      colorText: Theme.of(context).colorScheme.onPrimary,
+    return GestureDetector(
+              onTap: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Claim Seafarer", style: TextStyle(fontSize: 16),)),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                seafererCode(context),
+                const SizedBox(height: 10),
+                seafarerButton(context),
+                const SizedBox(height: 40),
+                // Menambahkan jarak yang lebih kecil
+                Obx(() {
+                  if (controller.seafarerAvailable.value) {
+                    return registerForm(context);
+                  }
+                  return const SizedBox.shrink();
+                }),
+    
+                // Error Message
+                Obx(() {
+                  if (controller.errorMessage.value.isNotEmpty) {
+                    return Center(
+                      child: Text(
+                        controller.errorMessage.value,
+                        style: const TextStyle(color: Colors.red, fontSize: 16),
+                      ),
                     );
-                    Future.delayed(const Duration(seconds: 2), () {
-                      Get.offAllNamed(Routes.LOGIN);
+                  }
+                  return const SizedBox.shrink();
+                }),
+    
+                // Success Snackbar & Redirect
+                Obx(() {
+                  if (controller.isSuccess.value) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Get.snackbar(
+                        "Claim Successful",
+                        "Please Login",
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        colorText: Theme.of(context).colorScheme.onPrimary,
+                      );
+                      Future.delayed(const Duration(seconds: 2), () {
+                        Get.offAllNamed(Routes.LOGIN);
+                      });
                     });
-                  });
-                }
-                return const SizedBox.shrink();
-              }),
-            ],
+                  }
+                  return const SizedBox.shrink();
+                }),
+              ],
+            ),
           ),
         ),
       ),

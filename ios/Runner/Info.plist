@@ -35,13 +35,13 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>The app uses location services for specific features in Sign On, Task, Logbook, and Report.</string>
 	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>NSCameraUsageDescription</key>
 	<string>The app requires access to the camera to take photos for Sign On, Task, Logbook, and Report.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>The app requires access to the photo library to select photos for Sign On, Task, Logbook, and Report.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>The app requires access to save photos to the gallery after being used in Sign On, Task, Logbook, and Report.</string>
-	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>

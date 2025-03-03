@@ -68,6 +68,8 @@ PODS:
   - libwebp/sharpyuv (1.3.2)
   - libwebp/webp (1.3.2):
     - libwebp/sharpyuv
+  - local_auth_ios (0.0.1):
+    - Flutter
   - location (0.0.1):
     - Flutter
   - Mantle (2.2.0):
@@ -160,6 +162,7 @@ DEPENDENCIES:
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - local_auth_ios (from `.symlinks/plugins/local_auth_ios/ios`)
   - location (from `.symlinks/plugins/location/ios`)
   - onesignal_flutter (from `.symlinks/plugins/onesignal_flutter/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
@@ -205,6 +208,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
+  local_auth_ios:
+    :path: ".symlinks/plugins/local_auth_ios/ios"
   location:
     :path: ".symlinks/plugins/location/ios"
   onesignal_flutter:
@@ -239,6 +244,7 @@ SPEC CHECKSUMS:
   geolocator_apple: 1560c3c875af2a412242c7a923e15d0d401966ff
   image_picker_ios: 85f2b3c9fb98c09d63725c4d12ebd585b56ec35d
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
+  local_auth_ios: d3868cf20af969f410fef40b4cf29d72f7fa9876
   location: 155caecf9da4f280ab5fe4a55f94ceccfab838f8
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   onesignal_flutter: 5a1d26b973b26b77b522ed16fdfb0495cb9e980e
