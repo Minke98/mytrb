@@ -87,6 +87,9 @@ class AuthController extends GetxController {
       unauthorizedMessage.value = res['message'] ?? "Unknown Error";
       MyDialog.showErrorSnackbarRegist(unauthorizedMessage.value);
       isAuthorized.value = false;
+      EasyLoading.dismiss();
+      usernameController.clear();
+      passwordController.clear();
     } else {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString("userUc", res['user'].uc);
@@ -96,10 +99,11 @@ class AuthController extends GetxController {
         userData: userData['data'],
         // stream: _streamController!,
       );
-
       user.value = userData;
       isAuthorized.value = true;
       EasyLoading.dismiss();
+      usernameController.clear();
+      passwordController.clear();
 
       if (Get.currentRoute != Routes.INDEX && isAuthorized.value) {
         Get.offAllNamed(Routes.INDEX);

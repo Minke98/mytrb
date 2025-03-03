@@ -42,6 +42,8 @@
 	<string>The app requires access to the photo library to select photos for Sign On, Task, Logbook, and Report.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>The app requires access to save photos to the gallery after being used in Sign On, Task, Logbook, and Report.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>The app requires Face ID authentication to securely log in.</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>

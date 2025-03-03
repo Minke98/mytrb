@@ -65,7 +65,7 @@ class ClaimView extends GetView<ClaimController> {
                         colorText: Theme.of(context).colorScheme.onPrimary,
                       );
                       Future.delayed(const Duration(seconds: 2), () {
-                        Get.offAllNamed(Routes.LOGIN);
+                        Get.offNamed(Routes.LOGIN);
                       });
                     });
                   }
@@ -81,6 +81,7 @@ class ClaimView extends GetView<ClaimController> {
 
   Widget seafererCode(BuildContext context) {
     return TextFormField(
+      cursorColor: Colors.black,
       controller: controller.seafarerController,
       decoration: InputDecoration(
         labelText: "Seafarer",
@@ -149,6 +150,7 @@ class ClaimView extends GetView<ClaimController> {
               )),
           const SizedBox(height: 10),
           TextFormField(
+            cursorColor: Colors.black,
             keyboardType: TextInputType.emailAddress,
             controller: controller.emailController,
             decoration: InputDecoration(
@@ -163,6 +165,7 @@ class ClaimView extends GetView<ClaimController> {
           ),
           const SizedBox(height: 10),
           TextFormField(
+            cursorColor: Colors.black,
             controller: controller.usernameController,
             decoration: InputDecoration(
               labelText: "Username",
@@ -178,6 +181,7 @@ class ClaimView extends GetView<ClaimController> {
           ),
           const SizedBox(height: 10),
           TextFormField(
+            cursorColor: Colors.black,
             obscureText: !controller.passwordVisible.value,
             controller: controller.passwordController,
             decoration: InputDecoration(
@@ -207,6 +211,7 @@ class ClaimView extends GetView<ClaimController> {
           ),
           const SizedBox(height: 10),
           TextFormField(
+            cursorColor: Colors.black,
             obscureText: !controller.retypePasswordVisible.value,
             controller: controller.confirmpasswordController,
             decoration: InputDecoration(

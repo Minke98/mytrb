@@ -9,6 +9,7 @@ import 'package:mytrb/app/Repository/sign_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/data/models/instructor.dart';
 import 'package:mytrb/app/data/models/type_vessel.dart';
+import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:mytrb/utils/dialog.dart';
 import 'package:mytrb/utils/location.dart';
@@ -17,6 +18,10 @@ import 'package:geolocator/geolocator.dart';
 
 class SignController extends GetxController {
   final SignRepository signRepository;
+
+  SignController({required this.signRepository});
+  final IndexController indexController =
+      Get.put(IndexController(signRepository: Get.find()));
   final RxBool isLoading = false.obs;
   final RxBool isSaving = false.obs;
   final RxString errorMessage = ''.obs;
@@ -45,8 +50,7 @@ class SignController extends GetxController {
   var bukuPelautFotoError = ''.obs;
   var isSubmitting = false.obs;
   var isDropdownOpened = false.obs;
-
-  SignController({required this.signRepository});
+  final Rx<Size?> imageSize = Rx<Size?>(null);
 
   @override
   Future<void> onInit() async {
@@ -61,7 +65,28 @@ class SignController extends GetxController {
       initialDate: DateTime.now().toUtc(),
       firstDate: DateTime(DateTime.now().year - 100),
       lastDate: DateTime(DateTime.now().year + 100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.blue.shade900, // Warna header dan tombol OK
+              onPrimary: Colors.white, // Warna teks pada tombol OK
+              surface: Colors.white, // Warna background dialog
+              onSurface: Colors.black, // Warna teks di dalam dialog
+            ),
+            dialogBackgroundColor: Colors.white, // Warna background dialog
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor:
+                    Colors.blue.shade900, // Warna tombol BATAL & OK
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
+
     if (pickedDate != null) {
       selectedDate.value = pickedDate;
       dateController.text = DateFormat.yMMMMd().format(pickedDate);
@@ -131,7 +156,8 @@ class SignController extends GetxController {
       if (!res) throw "Gagal melakukan sign";
 
       // Jika berhasil, arahkan ke halaman INDEX
-      Get.toNamed(Routes.INDEX);
+      await Get.offAllNamed(Routes.INDEX);
+      // indexController.initializeHome();
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {

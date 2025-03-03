@@ -13,82 +13,94 @@ class SignView extends GetView<SignController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Sign On")),
-      body: SingleChildScrollView(
-        child: Obx(() {
-          if (controller.isLoading.value) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.only(top: 100),
-                child: CircularProgressIndicator(),
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+            title: const Text(
+          "Sign On",
+          style: TextStyle(fontSize: 16),
+        )),
+        body: SingleChildScrollView(
+          child: Obx(() {
+            if (controller.isLoading.value) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 100),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            return Container(
+              padding: const EdgeInsets.all(8),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    dateInput(context),
+                    mySpacer(),
+                    dosenInput(context),
+                    mySpacer(),
+                    vesselInput(context),
+                    mySpacer(),
+                    namaKapalInput(),
+                    mySpacer(),
+                    namaPerusahaanInput(),
+                    mySpacer(),
+                    imoNumberInput(),
+                    mySpacer(),
+                    mmsiNumberInput(),
+                    mySpacer(),
+                    errorFoto(context, controller.signOnError.value),
+                    signOnFotoWidget(context),
+                    mySpacer(),
+                    errorFoto(context, controller.mutasiOnError.value),
+                    mutasiOnWidget(context),
+                    mySpacer(),
+                    errorFoto(context, controller.imoFotoError.value),
+                    imoFotoWidget(context),
+                    mySpacer(),
+                    errorFoto(context, controller.crewListFotoError.value),
+                    crewListFotoWidget(context),
+                    mySpacer(),
+                    errorFoto(context, controller.bukuPelautFotoError.value),
+                    bukuPelautFotoWidget(context),
+                    mySpacer(height: 30),
+                    Obx(() {
+                      bool isFormValid = controller.isFormValid();
+                      return ElevatedButton(
+                        onPressed: isFormValid
+                            ? () => controller.submitSignForm()
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(55),
+                          backgroundColor:
+                              isFormValid ? Colors.blue.shade900 : Colors.grey,
+                          splashFactory: controller.isSubmitting.value
+                              ? NoSplash.splashFactory
+                              : InkSplash.splashFactory,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: controller.isSubmitting.value
+                            ? CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              )
+                            : const Text("Sign On"),
+                      );
+                    }),
+                    mySpacer(height: 30),
+                  ],
+                ),
               ),
             );
-          }
-
-          return Container(
-            padding: const EdgeInsets.all(8),
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  dateInput(context),
-                  mySpacer(),
-                  dosenInput(context),
-                  mySpacer(),
-                  vesselInput(context),
-                  mySpacer(),
-                  namaKapalInput(),
-                  mySpacer(),
-                  namaPerusahaanInput(),
-                  mySpacer(),
-                  imoNumberInput(),
-                  mySpacer(),
-                  mmsiNumberInput(),
-                  mySpacer(),
-                  errorFoto(context, controller.signOnError.value),
-                  signOnFotoWidget(context),
-                  mySpacer(),
-                  errorFoto(context, controller.mutasiOnError.value),
-                  mutasiOnWidget(context),
-                  mySpacer(),
-                  errorFoto(context, controller.imoFotoError.value),
-                  imoFotoWidget(context),
-                  mySpacer(),
-                  errorFoto(context, controller.crewListFotoError.value),
-                  crewListFotoWidget(context),
-                  mySpacer(),
-                  errorFoto(context, controller.bukuPelautFotoError.value),
-                  bukuPelautFotoWidget(context),
-                  mySpacer(height: 30),
-                  Obx(() {
-                    bool isFormValid = controller.isFormValid();
-                    return ElevatedButton(
-                      onPressed: isFormValid
-                          ? () => controller.submitSignForm()
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(55),
-                        backgroundColor:
-                            isFormValid ? Colors.blue.shade900 : Colors.grey,
-                        splashFactory: controller.isSubmitting.value
-                            ? NoSplash.splashFactory
-                            : InkSplash.splashFactory,
-                      ),
-                      child: controller.isSubmitting.value
-                          ? CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            )
-                          : const Text("Sign On"),
-                    );
-                  }),
-                  mySpacer(height: 30),
-                ],
-              ),
-            ),
-          );
-        }),
+          }),
+        ),
       ),
     );
   }
@@ -248,6 +260,7 @@ class SignView extends GetView<SignController> {
 
   Widget namaKapalInput() {
     return TextFormField(
+      cursorColor: Colors.black,
       controller: controller.namaKapalController,
       decoration: InputDecoration(
         labelText: "Vessel Name",
@@ -267,6 +280,7 @@ class SignView extends GetView<SignController> {
 
   Widget namaPerusahaanInput() {
     return TextFormField(
+      cursorColor: Colors.black,
       controller: controller.namaPerusahaanController,
       decoration: InputDecoration(
         labelText: "Company Name",
@@ -286,6 +300,7 @@ class SignView extends GetView<SignController> {
 
   Widget imoNumberInput() {
     return TextFormField(
+      cursorColor: Colors.black,
       keyboardType: TextInputType.number,
       controller: controller.imoNumberController,
       decoration: InputDecoration(
@@ -306,6 +321,7 @@ class SignView extends GetView<SignController> {
 
   Widget mmsiNumberInput() {
     return TextFormField(
+      cursorColor: Colors.black,
       keyboardType: TextInputType.number,
       controller: controller.mmsiNumberController,
       decoration: InputDecoration(
@@ -390,10 +406,14 @@ class SignView extends GetView<SignController> {
                     ? _displayUpload(context)
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: FittedBox(
-                          fit: BoxFit.contain, // Menjaga ukuran asli gambar
-                          child: Image.file(
-                            File(imageFile.value!.path),
+                        child: SizedBox(
+                          width: double.infinity, // atau berikan ukuran minimal
+                          height: double.infinity,
+                          child: FittedBox(
+                            fit: BoxFit.contain,
+                            child: Image.file(
+                              File(imageFile.value!.path),
+                            ),
                           ),
                         ),
                       ),
@@ -411,31 +431,38 @@ class SignView extends GetView<SignController> {
 
     return await showModalBottomSheet<XFile?>(
       useRootNavigator: false,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent, // Set agar bisa melihat efek rounded
       isDismissible: true,
       context: context,
       builder: (BuildContext context) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Ambil Foto'),
-              onTap: () async {
-                XFile? pickedFile =
-                    await picker.pickImage(source: ImageSource.camera);
-                Get.back(result: pickedFile);
-              },
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20)), // Rounded di atas
+          child: Container(
+            color: Colors.white, // Warna background tetap putih
+            child: Wrap(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.camera_alt),
+                  title: const Text('Ambil Foto'),
+                  onTap: () async {
+                    XFile? pickedFile =
+                        await picker.pickImage(source: ImageSource.camera);
+                    Get.back(result: pickedFile);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Pilih dari Galeri'),
+                  onTap: () async {
+                    XFile? pickedFile =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    Get.back(result: pickedFile);
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Pilih dari Galeri'),
-              onTap: () async {
-                XFile? pickedFile =
-                    await picker.pickImage(source: ImageSource.gallery);
-                Get.back(result: pickedFile);
-              },
-            ),
-          ],
+          ),
         );
       },
     );
