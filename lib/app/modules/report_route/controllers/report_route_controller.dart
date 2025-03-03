@@ -48,6 +48,7 @@ class ReportRouteController extends GetxController {
       allowModify.value = prefs.getBool("modifyTask") ?? true;
 
       routes.assignAll(routesData);
+      log("REPORT_ROUTE: Loaded routes: $routesData");
     } catch (e) {
       errorMessage.value = "Gagal memuat data rute";
     } finally {
@@ -56,8 +57,6 @@ class ReportRouteController extends GetxController {
   }
 
   Future<void> saveRoute() async {
-    if (!formKey.currentState!.validate()) return;
-
     isLoading.value = true;
     EasyLoading.show(status: 'Mencari Lokasi Anda');
 

@@ -6,12 +6,19 @@ import 'package:mytrb/app/modules/sync/controllers/sync_controller.dart';
 class IndexBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<IndexController>(
-        () => IndexController(signRepository: Get.find()));
-
+    Get.put<IndexController>(
+      IndexController(
+        signRepository: Get.find(),
+      ),
+      permanent: true,
+    );
+    Get.put<SyncController>(
+      SyncController(
+        syncRepository: Get.find(),
+      ),
+      permanent: true,
+    );
     Get.lazyPut<AuthController>(() =>
         AuthController(userRepository: Get.find(), appRepository: Get.find()));
-    Get.lazyPut<SyncController>(
-        () => SyncController(syncRepository: Get.find()));
   }
 }

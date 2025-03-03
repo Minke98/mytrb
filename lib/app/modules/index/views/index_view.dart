@@ -360,10 +360,9 @@ class IndexView extends GetView<IndexController> {
           children: <Widget>[
             IconButton(
               padding: EdgeInsets.zero,
-              onPressed: () {
-                Get.toNamed(Routes.REPORT)?.then((value) {
-                  controller.reInitializeHome();
-                });
+              onPressed: () async {
+                await Get.toNamed(Routes.REPORT);
+                controller.initializeHome();
               },
               icon: Icon(
                 Icons.assignment, // Ganti dengan ikon yang diinginkan
@@ -626,7 +625,7 @@ class IndexView extends GetView<IndexController> {
           controller.activeProfileFoto.value == ""
               ? const CircleAvatar(
                   radius: 50, // Jangan terlalu besar
-                  backgroundImage: AssetImage("assets/pub/images/profile.jpg"))
+                  backgroundImage: AssetImage("assets/images/profile1.png"))
               : ClipOval(
                   child: Image.file(
                     File(controller.activeProfileFoto.value),

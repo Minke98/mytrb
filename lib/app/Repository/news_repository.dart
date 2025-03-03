@@ -169,8 +169,8 @@ class NewsRepository extends Repository {
                         item['updated_at']
                       ]);
                 } else {
-                  await db.rawUpdate("""UPDATE tech_news 
-                  SET 
+                  await db.rawUpdate("""UPDATE tech_news
+                  SET
                     title = ?,
                     description = ?,
                     created_at = ?,
@@ -201,4 +201,81 @@ class NewsRepository extends Repository {
 
     return finalRes;
   }
+
+  // static Future<List<Map<String, dynamic>>> getNewNews() async {
+  //   final List<Map<String, dynamic>> finalNews = [];
+  //   MyDatabase mydb = MyDatabase.instance;
+  //   Database dbx = await mydb.database;
+  //   Database db = dbx;
+  //   String lastCreatedDate = "1980-01-01 00:00:00";
+
+  //   // List<Map> findNews = await db.rawQuery(
+  //   //     """SELECT * FROM tech_news ORDER BY created_at DESC LIMIT 1""");
+
+  //   // if (findNews.isNotEmpty) {
+  //   //   lastCreatedDate = findNews.first["created_at"];
+  //   // }
+
+  //   try {
+  //     await dbx.transaction((db) async {
+  //       mydb.transaction = db;
+
+  //       await BaseClient.safeApiCall(
+  //         Environment.getNew,
+  //         RequestType.get,
+  //         queryParameters: {
+  //           "last": lastCreatedDate,
+  //         },
+  //         onSuccess: (response) async {
+  //           log("get new news $response");
+
+  //           Map<String, dynamic> resp = response.data as Map<String, dynamic>;
+  //           if (resp['status'] == true && resp.containsKey('news')) {
+  //             for (var item in resp['news']) {
+  //               List<Map> findOldNews = await db.rawQuery(
+  //                   """SELECT * FROM tech_news WHERE uc = ? LIMIT 1""",
+  //                   [item['uc']]);
+
+  //               if (findOldNews.isEmpty) {
+  //                 await db.rawInsert(
+  //                     """INSERT INTO tech_news VALUES(?,?,?,?,?)""",
+  //                     [
+  //                       item['uc'],
+  //                       item['title'],
+  //                       item['description'],
+  //                       item['created_at'],
+  //                       item['updated_at']
+  //                     ]);
+  //               } else {
+  //                 await db.rawUpdate("""UPDATE tech_news
+  //                 SET
+  //                   title = ?,
+  //                   description = ?,
+  //                   created_at = ?,
+  //                   updated_at = ?
+  //                 WHERE uc = ?""", [
+  //                   item['title'],
+  //                   item['description'],
+  //                   item['created_at'],
+  //                   item['updated_at'],
+  //                   item['uc']
+  //                 ]);
+  //               }
+  //             }
+  //             finalNews.addAll(List<Map<String, dynamic>>.from(resp['news']));
+  //           }
+  //         },
+  //         onError: (error) {
+  //           throw Exception("Gagal mendapatkan berita: $error");
+  //         },
+  //       );
+  //     });
+  //   } catch (e) {
+  //     log("ERR $e");
+  //   } finally {
+  //     mydb.transaction = null;
+  //   }
+
+  //   return finalNews;
+  // }
 }

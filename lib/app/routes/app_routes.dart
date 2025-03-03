@@ -11,6 +11,7 @@ abstract class Routes {
   static const REPORT = _Paths.REPORT;
   static const REPORT_ADD = _Paths.REPORT_ADD;
   static const REPORT_ROUTE = _Paths.REPORT_ROUTE;
+  static const REPORT_TASK = _Paths.REPORT_TASK;
   static const NEWS = _Paths.NEWS;
   static const NEWS_DETAIL = _Paths.NEWS_DETAIL;
   static const EXAM = _Paths.EXAM;
@@ -27,6 +28,7 @@ abstract class _Paths {
   static const REPORT = '/report';
   static const REPORT_ADD = '/report-add';
   static const REPORT_ROUTE = '/report-route';
+  static const REPORT_TASK = '/report-task';
   static const NEWS = '/news';
   static const NEWS_DETAIL = '/news-detail';
   static const EXAM = '/exam';

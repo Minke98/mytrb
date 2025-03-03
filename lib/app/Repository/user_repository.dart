@@ -641,6 +641,153 @@ class UserRepository {
     return finalResult;
   }
 
+  // static Future<Map> getLocalUser({
+  //   String? uc,
+  //   bool closeDb = false,
+  //   bool closed = false,
+  //   bool withToken = false,
+  //   bool useAlternate = false,
+  // }) async {
+  //   MyDatabase mydb = MyDatabase.instance;
+  //   dynamic dbx;
+  //   final db = await mydb.database;
+
+  //   // Periksa apakah database terbuka atau tidak
+  //   closed = !db.isOpen;
+  //   if (closed) {
+  //     await mydb.close2();
+  //   }
+
+  //   // Tentukan apakah menggunakan transaksi atau langsung akses database
+  //   dbx = mydb.transaction ?? await mydb.database;
+
+  //   // Ambil user code (uc) jika null dari SharedPreferences
+  //   if (uc == null) {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     uc = prefs.getString('userUc');
+  //   }
+
+  //   Map finalResult = {};
+  //   try {
+  //     // Query utama untuk mengambil data user
+  //     String query = withToken
+  //         ? "SELECT uc AS uc_tech_user, uc_participant, user_name, full_name, email, foto, token, refresh_token FROM tech_user WHERE uc = ? LIMIT 1"
+  //         : "SELECT uc AS uc_tech_user, uc_participant, user_name, full_name, email, foto FROM tech_user WHERE uc = ? LIMIT 1";
+
+  //     List<Map> result = await dbx.rawQuery(query, [uc]);
+
+  //     if (result.isEmpty) throw "notfound";
+
+  //     var resUser = Map.from(result.first);
+
+  //     // Perbaiki path untuk foto user jika ada
+  //     if (resUser['foto'] != null) {
+  //       Directory appDocDir = await getApplicationDocumentsDirectory();
+  //       String appDocPath = appDocDir.path;
+  //       String savePath = Path.join(appDocPath, SIGN_PROFILE_FOLDER);
+  //       resUser['foto'] = Path.join(savePath, resUser['foto']);
+  //     }
+
+  //     log("getData: resUser $resUser");
+
+  //     Map ret = {...resUser};
+
+  //     // Ambil data TRB jika ada
+  //     List<Map> resultTrb = await dbx.rawQuery(
+  //       "SELECT uc_trb_schedule, uc_participant, uc_diklat_participant, seafarer_code FROM tech_trb_participant WHERE uc_participant = ? LIMIT 1",
+  //       [resUser['uc_participant']],
+  //     );
+
+  //     log("getData: participant $resultTrb");
+
+  //     if (resultTrb.isNotEmpty) {
+  //       Map resTrb = Map.from(resultTrb.first);
+  //       ret.addAll(resTrb);
+
+  //       // Ambil data participant jika ada
+  //       List<Map> resultParticipant = await dbx.rawQuery(
+  //         "SELECT * FROM tech_participant WHERE uc = ? LIMIT 1",
+  //         [resUser['uc_participant']],
+  //       );
+
+  //       if (resultParticipant.isNotEmpty) {
+  //         Map resParticipant = Map.from(resultParticipant.first);
+  //         resParticipant.remove("uc");
+  //         ret.addAll(resParticipant);
+  //       }
+
+  //       // Ambil data jadwal jika ada
+  //       String ucTrbSchedule = resTrb['uc_trb_schedule'].toString();
+  //       List<Map> resultSchedule = await dbx.rawQuery(
+  //         """
+  //       SELECT
+  //         tech_trb_schedule.title,
+  //         tech_trb_schedule.date_start,
+  //         tech_trb_schedule.date_finish,
+  //         tech_trb_schedule.uc_upt,
+  //         tech_trb_schedule.uc_pukp,
+  //         tech_trb_schedule.uc_level,
+  //         tech_level.label
+  //       FROM tech_trb_schedule
+  //       INNER JOIN tech_level ON tech_trb_schedule.uc_level = tech_level.uc
+  //       WHERE tech_trb_schedule.uc = ?
+  //       LIMIT 1;
+  //       """,
+  //         [ucTrbSchedule],
+  //       );
+
+  //       if (resultSchedule.isNotEmpty) {
+  //         ret.addAll(resultSchedule.first);
+  //       }
+
+  //       // Proses data sign (kehadiran) jika ada
+  //       ret['sign'] = false;
+  //       ret['sign_uc'] = null;
+  //       ret['sign_off'] = false;
+  //       ret['sign_uc_local'] = null;
+
+  //       final prefs = await SharedPreferences.getInstance();
+  //       prefs.setBool("modifyTask", true);
+
+  //       List<Map> resultSign = await dbx.rawQuery(
+  //         "SELECT uc, local_uc FROM tech_sign WHERE seafarer_code = ? AND sign_on_date IS NOT NULL AND sign_off_date IS NULL ORDER BY sign_on_date DESC, sign_on_stamp DESC LIMIT 1",
+  //         [ret['seafarer_code']],
+  //       );
+
+  //       if (resultSign.isNotEmpty) {
+  //         Map resSign = resultSign.first;
+  //         ret['sign'] = true;
+  //         ret['sign_off'] = false;
+  //         ret['sign_uc'] = resSign['uc'];
+  //         ret['sign_uc_local'] = resSign['local_uc'];
+  //         prefs.setBool("modifyTask", true);
+  //       } else if (useAlternate) {
+  //         List<Map> resultSign2 = await dbx.rawQuery(
+  //           "SELECT uc, local_uc FROM tech_sign WHERE seafarer_code = ? AND sign_on_date IS NOT NULL AND sign_off_date IS NOT NULL ORDER BY sign_on_date DESC, sign_on_stamp DESC LIMIT 1",
+  //           [ret['seafarer_code']],
+  //         );
+
+  //         log("taskRepo R2 $resultSign2 ${ret['seafarer_code']}");
+
+  //         if (resultSign2.isNotEmpty) {
+  //           Map resSign2 = resultSign2.first;
+  //           ret['sign'] = true;
+  //           ret['sign_off'] = true;
+  //           ret['sign_uc'] = resSign2['uc'];
+  //           ret['sign_uc_local'] = resSign2['local_uc'];
+  //           prefs.setBool("modifyTask", false);
+  //         }
+  //       }
+  //     }
+
+  //     finalResult = {'status': true, "data": ret};
+  //   } catch (e) {
+  //     finalResult = {'status': false, 'message': e.toString()};
+  //   }
+
+  //   return finalResult;
+  // }
+
   static Future<Map> getLocalUserReport(
       {String? uc,
       bool closeDb = false,

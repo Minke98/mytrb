@@ -12,19 +12,25 @@ class ReportView extends GetView<ReportController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Report")),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              signData(),
-              const SizedBox(height: 10),
-              reportGrid(controller, context),
-            ],
+    return WillPopScope(
+      onWillPop: () async {
+        controller.initializeReport();
+        return true; // Mengizinkan pengguna untuk kembali
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Report")),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                signData(),
+                const SizedBox(height: 10),
+                reportGrid(controller, context),
+              ],
+            ),
           ),
         ),
       ),

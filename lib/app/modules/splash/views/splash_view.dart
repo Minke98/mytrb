@@ -25,7 +25,7 @@ class SplashView extends GetWidget<SplashController> {
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(top: 150.0),
+                        padding: const EdgeInsets.only(top: 150.0),
                         child: Image.asset(
                           Environment.stip,
                           height: 180,

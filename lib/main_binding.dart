@@ -20,6 +20,8 @@ class MainBinding extends Bindings {
     // Repository yang sering digunakan langsung diinisialisasi
     Get.put<UserRepository>(UserRepository());
     Get.put<AppRepository>(AppRepository());
+    Get.put<SignRepository>(SignRepository());
+    Get.put<SyncRepository>(SyncRepository());
 
     // Repository lain hanya dibuat saat dibutuhkan
     Get.lazyPut<ProfileRepository>(() => ProfileRepository(), fenix: true);
@@ -32,7 +34,6 @@ class MainBinding extends Bindings {
     Get.lazyPut<LogBookRepository>(() => LogBookRepository(), fenix: true);
     Get.lazyPut<NewsRepository>(() => NewsRepository(), fenix: true);
     Get.lazyPut<ReportRepository>(() => ReportRepository(), fenix: true);
-    Get.lazyPut<SignRepository>(() => SignRepository(), fenix: true);
     Get.lazyPut<SyncRepository>(() => SyncRepository(), fenix: true);
     Get.lazyPut<TaskRepository>(() => TaskRepository(), fenix: true);
   }

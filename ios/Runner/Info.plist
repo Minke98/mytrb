@@ -31,10 +31,16 @@
 	<key>UIBackgroundModes</key>
 	<array/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Aplikasi ini memerlukan akses lokasi untuk mendeteksi koneksi jaringan dan lokasi pengguna.</string>
+	<string>The app requires location access to detect network connection and user location for Sign On, Task, Logbook, and Report.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Aplikasi ini menggunakan lokasi untuk fitur tertentu.</string>
+	<string>The app uses location services for specific features in Sign On, Task, Logbook, and Report.</string>
 	<key>UILaunchStoryboardName</key>
+	<key>NSCameraUsageDescription</key>
+	<string>The app requires access to the camera to take photos for Sign On, Task, Logbook, and Report.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The app requires access to the photo library to select photos for Sign On, Task, Logbook, and Report.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>The app requires access to save photos to the gallery after being used in Sign On, Task, Logbook, and Report.</string>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/modules/report_route/controllers/report_route_controller.dart';
@@ -15,7 +17,21 @@ class ReportRouteView extends GetView<ReportRouteController> {
         if (controller.allowModify.isFalse) return const SizedBox.shrink();
 
         return FloatingActionButton.extended(
-          onPressed: () => addRouteDialog(context),
+          onPressed: () async {
+            Map? dialog = await addRouteDialog(context);
+            log("reportRoute: SAVE $dialog");
+            if (dialog != null && dialog['status'] == true) {
+              if (context.mounted) {
+                log("reportRoute: SAVE TRIGGER BLOC");
+                controller.saveRoute();
+
+                log("reportRoute: SAVE TRIGGER BLOC AFTER");
+                // timer.cancel();
+              }
+              // });
+              // });
+            }
+          },
           label: const Text("Add"),
           icon: const Icon(Icons.add),
         );
@@ -34,10 +50,35 @@ class ReportRouteView extends GetView<ReportRouteController> {
           itemCount: controller.routes.length,
           itemBuilder: (context, index) {
             final item = controller.routes[index];
-            return Card(
-              child: ListTile(
-                title: Text(item['item']),
-                leading: Text("${index + 1}"),
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: SizedBox(
+                height: 50,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 16), // Padding agar lebih rapi
+                    child: Row(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.center, // Pastikan sejajar tengah
+                      children: [
+                        Text(
+                          "${index + 1}.",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        const SizedBox(
+                            width: 16), // Jarak antara nomor dan teks
+                        Text(
+                          item['item'],
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             );
           },
@@ -47,7 +88,6 @@ class ReportRouteView extends GetView<ReportRouteController> {
   }
 
   Future addRouteDialog(BuildContext context, {String error = ""}) async {
-    final TextEditingController locationController = TextEditingController();
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     return await showGeneralDialog(
@@ -70,7 +110,7 @@ class ReportRouteView extends GetView<ReportRouteController> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextFormField(
-                        controller: locationController,
+                        controller: controller.locationController,
                         decoration:
                             const InputDecoration(labelText: "Location Name"),
                         validator: (value) {
@@ -87,8 +127,8 @@ class ReportRouteView extends GetView<ReportRouteController> {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () {
-                                locationController.text = "";
-                                Navigator.of(context).pop();
+                                controller.locationController.text = "";
+                                Get.back();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
@@ -110,7 +150,8 @@ class ReportRouteView extends GetView<ReportRouteController> {
                                 if (formKey.currentState!.validate()) {
                                   Navigator.of(context).pop({
                                     "status": true,
-                                    "location_name": locationController.text,
+                                    "location_name":
+                                        controller.locationController.text,
                                   });
                                 }
                               },

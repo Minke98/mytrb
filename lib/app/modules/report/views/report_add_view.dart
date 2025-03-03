@@ -63,7 +63,7 @@ class ReportAddView extends GetView<ReportAddController> {
     return Card(
       child: InkWell(
         onTap: () {
-          Get.toNamed("/reporttask",
+          Get.toNamed(Routes.REPORT_TASK,
               arguments: {"month_number": monthNumber, "uc_sign": ucSign});
         },
         child: Padding(

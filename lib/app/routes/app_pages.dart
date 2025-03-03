@@ -9,6 +9,8 @@ import 'package:mytrb/app/modules/report/views/report_add_view.dart';
 import 'package:mytrb/app/modules/report/views/report_view.dart';
 import 'package:mytrb/app/modules/report_route/bindings/report_route_binding.dart';
 import 'package:mytrb/app/modules/report_route/views/report_route_view.dart';
+import 'package:mytrb/app/modules/report_task/bindings/report_task_binding.dart';
+import 'package:mytrb/app/modules/report_task/views/report_task_view.dart';
 import 'package:mytrb/app/modules/sign_on/bindings/sign_on_binding.dart';
 import 'package:mytrb/app/modules/sign_on/views/sign_on_view.dart';
 // import 'package:mytrb/app/modules/exam/bindings/exam_binding.dart';
@@ -71,6 +73,11 @@ class AppPages {
       name: _Paths.REPORT_ROUTE,
       page: () => const ReportRouteView(),
       binding: ReportRouteBinding(),
+    ),
+    GetPage(
+      name: _Paths.REPORT_TASK,
+      page: () => const ReportTaskView(),
+      binding: ReportTaskBinding(),
     ),
     // GetPage(
     //   name: _Paths.EXAM,

@@ -6,7 +6,8 @@ class ReportBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<ReportController>(
-        () => ReportController(reportRepository: Get.find()));
+      () => ReportController(reportRepository: Get.find()),
+    );
     Get.lazyPut<ReportAddController>(
         () => ReportAddController(reportRepository: Get.find()));
   }

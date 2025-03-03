@@ -117,28 +117,27 @@ class ClaimView extends GetView<ClaimController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFormField(
-            keyboardType: TextInputType.name,
-            initialValue: controller.nama.value,
-            decoration: InputDecoration(
-              labelText: "Name",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            enabled: false,
-          ),
+          Obx(() => TextFormField(
+                controller: TextEditingController(text: controller.nama.value),
+                decoration: InputDecoration(
+                  labelText: "Name",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                enabled: false,
+              )),
           const SizedBox(height: 10),
-          TextFormField(
-            initialValue: controller.nik.value,
-            decoration: InputDecoration(
-              labelText: "NIK",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            enabled: false,
-          ),
+          Obx(() => TextFormField(
+                controller: TextEditingController(text: controller.nik.value),
+                decoration: InputDecoration(
+                  labelText: "NIK",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                enabled: false,
+              )),
           const SizedBox(height: 10),
           TextFormField(
             keyboardType: TextInputType.emailAddress,

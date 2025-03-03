@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:mytrb/app/Repository/app_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
+import 'package:mytrb/utils/connection.dart';
 import 'package:mytrb/utils/dialog.dart';
 import 'package:mytrb/utils/get_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,8 +31,49 @@ class AuthController extends GetxController {
     await checkAuth();
   }
 
+  Future<bool> authenticateUser() async {
+    final LocalAuthentication auth = LocalAuthentication();
+    bool isAuthenticated = false;
+
+    try {
+      isAuthenticated = await auth.authenticate(
+        localizedReason: 'Gunakan biometrik untuk login',
+        options: const AuthenticationOptions(
+          biometricOnly: true,
+          useErrorDialogs: true,
+          stickyAuth: true,
+        ),
+      );
+    } catch (e) {
+      print("Error biometrik: $e");
+    }
+
+    return isAuthenticated;
+  }
+
   Future<void> login() async {
-    EasyLoading.show(status: 'Loading...');
+    bool isAuthenticated = await authenticateUser();
+    if (!isAuthenticated) {
+      EasyLoading.showError('Autentikasi biometrik gagal');
+      return;
+    }
+    bool isConnected = await ConnectionUtils.checkInternetConnection();
+    if (!isConnected) {
+      ConnectionUtils.showNoInternetDialog(
+        "Apologies, the login process requires an internet connection.",
+      );
+      return;
+    }
+
+    EasyLoading.show(status: 'Please wait...');
+    bool isFastConnection = await ConnectionUtils.isConnectionFast();
+    if (!isFastConnection) {
+      ConnectionUtils.showNoInternetDialog(
+        "Apologies, the login process requires a stable internet connection.",
+        isSlowConnection: true,
+      );
+      return;
+    }
     var deviceId = await getUniqueDeviceId();
 
     var res = await userRepository.login(
@@ -39,8 +82,6 @@ class AuthController extends GetxController {
       device_id: deviceId,
       // stream: _streamController!,
     );
-
-    EasyLoading.dismiss();
 
     if (res["status"] == false) {
       unauthorizedMessage.value = res['message'] ?? "Unknown Error";
@@ -58,6 +99,7 @@ class AuthController extends GetxController {
 
       user.value = userData;
       isAuthorized.value = true;
+      EasyLoading.dismiss();
 
       if (Get.currentRoute != Routes.INDEX && isAuthorized.value) {
         Get.offAllNamed(Routes.INDEX);
@@ -78,6 +120,29 @@ class AuthController extends GetxController {
   }
 
   Future<void> checkAuth({bool background = false}) async {
+    // bool isAuthenticated = await authenticateUser();
+    // if (!isAuthenticated) {
+    //   EasyLoading.showError('Autentikasi biometrik gagal');
+    //   return;
+    // }
+    // bool isConnected = await ConnectionUtils.checkInternetConnection();
+    // if (!isConnected) {
+    //   ConnectionUtils.showNoInternetDialog(
+    //     "Apologies, the login process requires an internet connection.",
+    //   );
+    //   return;
+    // }
+
+    // EasyLoading.show(status: 'Please wait...');
+    // bool isFastConnection = await ConnectionUtils.isConnectionFast();
+    // if (!isFastConnection) {
+    //   ConnectionUtils.showNoInternetDialog(
+    //     "Apologies, the login process requires a stable internet connection.",
+    //     isSlowConnection: true,
+    //   );
+    //   return;
+    // }
+    // EasyLoading.dismiss();
     if (isCheckingAuth.value) return;
 
     isCheckingAuth.value = true;
