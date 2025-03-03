@@ -13,11 +13,15 @@ class ClaimView extends GetView<ClaimController> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-              onTap: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
       child: Scaffold(
-        appBar: AppBar(title: const Text("Claim Seafarer", style: TextStyle(fontSize: 16),)),
+        appBar: AppBar(
+            title: const Text(
+          "Claim Seafarer",
+          style: TextStyle(fontSize: 16),
+        )),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -35,7 +39,7 @@ class ClaimView extends GetView<ClaimController> {
                   }
                   return const SizedBox.shrink();
                 }),
-    
+
                 // Error Message
                 Obx(() {
                   if (controller.errorMessage.value.isNotEmpty) {
@@ -48,7 +52,7 @@ class ClaimView extends GetView<ClaimController> {
                   }
                   return const SizedBox.shrink();
                 }),
-    
+
                 // Success Snackbar & Redirect
                 Obx(() {
                   if (controller.isSuccess.value) {
