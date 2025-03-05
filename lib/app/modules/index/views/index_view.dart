@@ -8,7 +8,6 @@ import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/components/footer_copyright.dart';
 import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
 import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
-import 'package:mytrb/app/modules/sync/controllers/sync_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:responsive_framework/responsive_value.dart'
@@ -16,7 +15,6 @@ import 'package:responsive_framework/responsive_value.dart'
 
 class IndexView extends GetView<IndexController> {
   final AuthController authController = Get.find<AuthController>();
-  final SyncController syncController = Get.find<SyncController>();
   IndexView({Key? key}) : super(key: key);
 
   @override
@@ -277,12 +275,13 @@ class IndexView extends GetView<IndexController> {
             width: 200,
             child: ElevatedButton(
               onPressed: () async {
-                var result = await Navigator.of(context).pushNamed("/signoff");
-                if (result != null && result is Map) {
-                  if (result['signoffSuccess'] == true) {
-                    await controller.reInitializeHome();
-                  }
-                }
+                // var result =
+                await Get.toNamed(Routes.SIGN_OFF);
+                // if (result != null && result is Map) {
+                //   if (result['signoffSuccess'] == true) {
+                //     await controller.reInitializeHome();
+                //   }
+                // }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue.shade900,
@@ -513,7 +512,7 @@ class IndexView extends GetView<IndexController> {
                     padding: EdgeInsets.zero,
                     onPressed: () {
                       if (controller.isNeedSync.value) {
-                        syncController.startSyncing();
+                        controller.startSyncing();
                       }
                     },
                     icon: Icon(

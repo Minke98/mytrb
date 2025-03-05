@@ -849,11 +849,10 @@ class SyncRepository extends Repository {
               }
             }
 
-            FormData formData = FormData.fromMap(data);
             await BaseClient.safeApiCall(
               Environment.syncReportLog,
               RequestType.post,
-              data: formData,
+              data: data,
               onSuccess: (Response response) async {
                 log("serverData ${response.data}");
                 Map toServerData = response.data;

@@ -1,14 +1,17 @@
 import 'package:carousel_slider/carousel_controller.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/news_repository.dart';
 import 'package:mytrb/app/Repository/repository.dart';
 import 'package:mytrb/app/Repository/sign_repository.dart';
+import 'package:mytrb/app/Repository/sync_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class IndexController extends GetxController {
   final SignRepository signRepository;
-  IndexController({required this.signRepository});
+  final SyncRepository syncRepository;
+  IndexController({required this.signRepository, required this.syncRepository});
 
   var isLoading = false.obs;
   var signStatus = false.obs;
@@ -23,6 +26,8 @@ class IndexController extends GetxController {
   var activeProfileFoto = ''.obs;
   var currentIndex = 0.obs;
   final CarouselController carouselController = CarouselController();
+  var syncStatus = ''.obs;
+  var isSyncing = false.obs;
 
   @override
   void onInit() {
@@ -64,5 +69,36 @@ class IndexController extends GetxController {
 
   Future<void> reInitializeHome() async {
     await initializeHome();
+  }
+
+  Future<void> startSyncing() async {
+    isSyncing.value = true;
+
+    // Menampilkan loading indicator
+    EasyLoading.show(status: "Syncing...");
+
+    Map syncRes = await syncRepository.doSync();
+
+    EasyLoading.dismiss(); // Menutup loading setelah proses selesai
+
+    if (syncRes['status'] == false) {
+      syncStatus.value = syncRes['message'];
+
+      // Menampilkan toast error
+      EasyLoading.showError(syncRes['message']);
+    } else {
+      syncStatus.value = "Sync Completed";
+
+      // Menampilkan toast sukses
+      EasyLoading.showSuccess("Sync Completed");
+      isNeedSync.value = false;
+
+      // Tunggu sebentar sebelum navigasi ulang ke home
+      // Future.delayed(const Duration(seconds: 1), () {
+      //   Get.offNamed(Routes.INDEX);
+      // });
+    }
+
+    isSyncing.value = false;
   }
 }

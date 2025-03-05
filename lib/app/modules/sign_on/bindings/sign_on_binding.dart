@@ -7,7 +7,7 @@ class SignBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<SignController>(
         () => SignController(signRepository: Get.find()));
-    Get.lazyPut<IndexController>(
-        () => IndexController(signRepository: Get.find()));
+    Get.lazyPut<IndexController>(() => IndexController(
+        signRepository: Get.find(), syncRepository: Get.find()));
   }
 }

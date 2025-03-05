@@ -53,15 +53,16 @@ dependencies:
   validators: ^3.0.0
   flutter_launcher_icons: ^0.13.1
   flutter_typeahead: ^4.3.6
+  html_editor_enhanced: ^2.5.1
 
   # Date & Time formatting
   intl: ^0.18.0
 
   # File Handling
-  file_picker: ^8.0.0
   flutter_image_compress: ^2.3.0
   image_picker: ^1.0.7
   image: ^4.1.4
+  path_provider: ^2.0.12
 
   # Device Info & Permissions
   device_info_plus: ^9.1.2

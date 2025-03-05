@@ -7,9 +7,9 @@ import 'package:mytrb/app/data/models/instructor.dart';
 import 'package:mytrb/app/data/models/type_vessel.dart';
 import 'package:mytrb/app/modules/sign_on/controllers/sign_on_controller.dart';
 
-class SignView extends GetView<SignController> {
+class SignOnView extends GetView<SignController> {
   final formKey = GlobalKey<FormState>();
-  SignView({super.key});
+  SignOnView({super.key});
 
   @override
   Widget build(BuildContext context) {

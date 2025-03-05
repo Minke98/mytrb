@@ -31,7 +31,8 @@ class ReportTaskController extends GetxController {
     try {
       isLoading.value = true;
       errorMessage.value = '';
-      var response = await reportRepository.getReportList(month: monthNumber);
+      var response =
+          await reportRepository.getReportList(month: monthNumber.value);
       if (response['status'] == true) {
         reportList.assignAll(response['data']);
       } else {

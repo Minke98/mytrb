@@ -20,8 +20,8 @@ class SignController extends GetxController {
   final SignRepository signRepository;
 
   SignController({required this.signRepository});
-  final IndexController indexController =
-      Get.put(IndexController(signRepository: Get.find()));
+  final IndexController indexController = Get.put(
+      IndexController(signRepository: Get.find(), syncRepository: Get.find()));
   final RxBool isLoading = false.obs;
   final RxBool isSaving = false.obs;
   final RxString errorMessage = ''.obs;
@@ -154,10 +154,12 @@ class SignController extends GetxController {
       );
 
       if (!res) throw "Gagal melakukan sign";
-
-      // Jika berhasil, arahkan ke halaman INDEX
       await Get.offAllNamed(Routes.INDEX);
-      // indexController.initializeHome();
+
+      // Jalankan initializeHome setelah navigasi selesai
+      // Future.delayed(Duration.zero, () {
+      //   indexController.initializeHome();
+      // });
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {
