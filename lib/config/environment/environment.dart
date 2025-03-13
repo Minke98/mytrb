@@ -3,11 +3,9 @@ class Environment {
   static const apiKey = '6f926d5c19164cdfa95205814242202';
 
   // api urls
-  // static const baseUrl = 'https://registration.poltekpel-banten.ac.id';
-  static const baseUrl = 'http://192.168.1.19';
+  static const baseUrl = 'http://192.168.100.38';
   static const apiUrl = '$baseUrl/trsea-api/api';
-  // static const apiUrlTRB = '$baseUrlTRB/mytrb-api/api';
-  // static const refreshUrl = '$baseUrlTRB/mytrb-api/api/auth/refresh';
+  static const refreshUrl = '$apiUrl/auth/refresh';
   static const baseline = '$apiUrl/sync/baseline';
   static const checkSeafarer = '$apiUrl/auth/CheckSeafarer';
   static const claim = '$apiUrl/auth/ClaimSeaferer2';

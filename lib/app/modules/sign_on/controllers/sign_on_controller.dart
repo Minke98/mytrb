@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,8 @@ import 'package:mytrb/app/data/models/instructor.dart';
 import 'package:mytrb/app/data/models/type_vessel.dart';
 import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
+import 'package:mytrb/utils/auth_biometric.dart';
+import 'package:mytrb/utils/connection.dart';
 import 'package:mytrb/utils/dialog.dart';
 import 'package:mytrb/utils/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -113,7 +116,35 @@ class SignController extends GetxController {
 
   Future<void> submitSignForm() async {
     isSubmitting.value = true;
+    EasyLoading.show(status: 'Please wait...');
+
     try {
+      bool isAuthenticated = await BiometricAuth.authenticateUser(
+          'Use biometric authentication to login');
+      if (!isAuthenticated) {
+        EasyLoading.showError('Autentikasi biometrik gagal');
+        return;
+      }
+
+      bool isConnected = await ConnectionUtils.checkInternetConnection();
+      if (!isConnected) {
+        EasyLoading.dismiss();
+        ConnectionUtils.showNoInternetDialog(
+          "Apologies, the login process requires an internet connection.",
+        );
+        return;
+      }
+
+      bool isFastConnection = await ConnectionUtils.isConnectionFast();
+      if (!isFastConnection) {
+        EasyLoading.dismiss();
+        ConnectionUtils.showNoInternetDialog(
+          "Apologies, the login process requires a stable internet connection.",
+          isSlowConnection: true,
+        );
+        return;
+      }
+
       final prefs = await SharedPreferences.getInstance();
       var user =
           await UserRepository.getLocalUser(uc: prefs.getString("userUc"));
@@ -123,6 +154,7 @@ class SignController extends GetxController {
       String signOnDbFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
       Map getPos = await Location.getLocation();
       if (getPos['status'] == false) {
+        EasyLoading.dismiss();
         if (Get.context != null) {
           MyDialog.showError(Get.context!, getPos['message']);
         }
@@ -154,15 +186,14 @@ class SignController extends GetxController {
       );
 
       if (!res) throw "Gagal melakukan sign";
-      await Get.offAllNamed(Routes.INDEX);
 
-      // Jalankan initializeHome setelah navigasi selesai
-      // Future.delayed(Duration.zero, () {
-      //   indexController.initializeHome();
-      // });
+      EasyLoading.dismiss();
+      await Get.offAllNamed(Routes.INDEX);
     } catch (e) {
       errorMessage.value = e.toString();
+      EasyLoading.showError(errorMessage.value);
     } finally {
+      EasyLoading.dismiss();
       isSubmitting.value = false; // Reset setelah selesai
     }
   }

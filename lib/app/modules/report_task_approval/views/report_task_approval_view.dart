@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
@@ -82,66 +81,27 @@ class ReportTaskApprovalView extends GetView<ReportTaskApprovalController> {
                   ),
                   const SizedBox(height: 10),
                   Obx(() {
-                    return DropdownButtonHideUnderline(
-                      child: DropdownButton2<int>(
-                        isExpanded: true,
-                        hint: const Text(
-                          "Select Approval",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        value: controller.selectedApproval.value,
-                        items: controller.selection.map((approval) {
-                          return DropdownMenuItem<int>(
-                            value: approval.value,
-                            child: Text(approval.text),
-                          );
-                        }).toList(),
-                        onChanged: (int? value) {
-                          controller.selectedApproval.value = value;
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          height: 56,
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.black38),
+                    return Row(
+                      children: controller.selection.map((approval) {
+                        return Expanded(
+                          child: Row(
+                            children: [
+                              Radio<int>(
+                                value: approval.value,
+                                groupValue: controller.selectedApproval.value,
+                                onChanged: (int? value) {
+                                  controller.selectedApproval.value = value!;
+                                },
+                              ),
+                              Expanded(
+                                  child: Text(
+                                approval.text,
+                                style: const TextStyle(fontSize: 14),
+                              )), // Agar teks tidak terpotong
+                            ],
                           ),
-                          elevation: 0,
-                        ),
-                        iconStyleData: IconStyleData(
-                          icon: Obx(() => Icon(
-                                controller.isDropdownOpened.value
-                                    ? Icons.arrow_drop_up
-                                    : Icons.arrow_drop_down,
-                              )),
-                          iconSize: 24,
-                          iconEnabledColor: Colors.black,
-                          iconDisabledColor: Colors.grey,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: Colors.black26),
-                            color: Colors.white,
-                          ),
-                          offset: const Offset(0, 5),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all<double>(6),
-                            thumbVisibility:
-                                MaterialStateProperty.all<bool>(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                        ),
-                        onMenuStateChange: (isOpen) {
-                          controller.isDropdownOpened.value = isOpen;
-                        },
-                      ),
+                        );
+                      }).toList(),
                     );
                   }),
                   const SizedBox(height: 10),

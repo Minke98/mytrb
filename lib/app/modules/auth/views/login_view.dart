@@ -61,17 +61,20 @@ class LoginView extends GetView<AuthController> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 20, 10, 5),
                                   child: TextFormField(
-                                    autofillHints: const [AutofillHints.username],
+                                    autofillHints: const [
+                                      AutofillHints.username
+                                    ],
                                     controller: controller.usernameController,
                                     style: const TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
                                       hintText: 'Username',
-                                      labelStyle:
-                                          const TextStyle(color: Colors.white70),
-                                      hintStyle:
-                                          const TextStyle(color: Colors.white54),
+                                      labelStyle: const TextStyle(
+                                          color: Colors.white70),
+                                      hintStyle: const TextStyle(
+                                          color: Colors.white54),
                                       filled: true,
                                       fillColor: Colors.grey[700],
                                       border: OutlineInputBorder(
@@ -85,7 +88,9 @@ class LoginView extends GetView<AuthController> {
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 10, 10, 20),
                                   child: TextFormField(
-                                    autofillHints: const [AutofillHints.password],
+                                    autofillHints: const [
+                                      AutofillHints.password
+                                    ],
                                     controller: controller.passwordController,
                                     obscureText: true,
                                     enableSuggestions: false,
@@ -93,10 +98,10 @@ class LoginView extends GetView<AuthController> {
                                     style: const TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
                                       hintText: 'Password',
-                                      labelStyle:
-                                          const TextStyle(color: Colors.white70),
-                                      hintStyle:
-                                          const TextStyle(color: Colors.white54),
+                                      labelStyle: const TextStyle(
+                                          color: Colors.white70),
+                                      hintStyle: const TextStyle(
+                                          color: Colors.white54),
                                       filled: true,
                                       fillColor: Colors.grey[700],
                                       border: OutlineInputBorder(
@@ -107,8 +112,8 @@ class LoginView extends GetView<AuthController> {
                                   ),
                                 ),
                                 Obx(() => Padding(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 10, 10, 0),
                                       child: ElevatedButton(
                                         onPressed: () async {
                                           controller.login();
@@ -116,10 +121,12 @@ class LoginView extends GetView<AuthController> {
                                               ?.unfocus();
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue.shade800,
-                                          minimumSize: const Size.fromHeight(55),
+                                          backgroundColor: Colors.blue.shade900,
+                                          minimumSize:
+                                              const Size.fromHeight(55),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
                                         ),
                                         child: controller.isCheckingAuth.value
@@ -128,8 +135,8 @@ class LoginView extends GetView<AuthController> {
                                               )
                                             : const Text(
                                                 "Login",
-                                                style:
-                                                    TextStyle(color: Colors.white),
+                                                style: TextStyle(
+                                                    color: Colors.white),
                                               ),
                                       ),
                                     )),
@@ -137,7 +144,8 @@ class LoginView extends GetView<AuthController> {
                                 RichText(
                                   text: TextSpan(
                                     text: "Don't Have an Account Yet?",
-                                    style: const TextStyle(color: Colors.white70),
+                                    style:
+                                        const TextStyle(color: Colors.white70),
                                     children: [
                                       TextSpan(
                                         text: " Claim Now",

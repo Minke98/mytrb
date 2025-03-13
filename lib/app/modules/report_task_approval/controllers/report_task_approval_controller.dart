@@ -67,7 +67,7 @@ class ReportTaskApprovalController extends GetxController {
       Map res = await reportRepository.saveApproval(
         foto: File(uploadFoto.value!.path),
         month: monthNumber.value,
-        approvalStatus: selectedApproval.value ?? 1,
+        approvalStatus: selectedApproval.value ?? 0,
         ucReportList: ucReport.value,
         namaInstruktur: namaInstruktur.text,
         komentarInstruktur: komentarInstruktur,

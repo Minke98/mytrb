@@ -149,7 +149,7 @@ class LogBookRepository extends Repository {
         DateTime currentTime = DateTime.now().toUtc();
         var format = DateFormat('yyyy-MM-dd HH:mm:ss');
         String currentTimeFormated = format.format(currentTime);
-        String deviceId = await getUniqueDeviceId();
+        // String deviceId = await getUniqueDeviceId();
         await dbx.rawUpdate(""" update tech_logbook 
             set app_inst_status = ?, 
             app_inst_name = ?, 

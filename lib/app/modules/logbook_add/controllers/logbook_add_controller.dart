@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:mytrb/app/Repository/logbook_repository.dart';
 
 class LogbookAddController extends GetxController {
@@ -13,14 +15,32 @@ class LogbookAddController extends GetxController {
   var dateObj = Rxn<DateTime>();
   var dateText = ''.obs;
   var html = ''.obs;
-  var uc = RxnString();
+  var uc = Rxn<String>(); // Inisialisasi sebagai nullable
+  final TextEditingController dateController = TextEditingController();
+  final HtmlEditorController hcontroller = HtmlEditorController();
+  var initText = "".obs;
 
-  void prepare({String? uc}) async {
+  @override
+  void onInit() {
+    super.onInit();
+    final args = Get.arguments;
+    if (args != null) {
+      uc.value = args['uc'] ?? null; // Set ke null jika args['uc'] tidak ada
+      log("REPORT_TASK: uc=${uc.value}");
+    } else {
+      log("WARNING: Get.arguments is null!");
+      uc.value = null; // Pastikan null untuk operasi create
+    }
+    prepare();
+  }
+
+  void prepare() async {
     isLoading.value = true;
-    log("preparing $uc");
+    log("preparing ${uc.value}");
 
-    if (uc != null) {
-      Map<String, dynamic> data = await logBookRepository.loadOne(uc: uc);
+    if (uc.value != null && uc.value!.isNotEmpty) {
+      Map<String, dynamic> data =
+          await logBookRepository.loadOne(uc: uc.value!);
       if (data['status'] == false) {
         isLoading.value = false;
         Get.snackbar("Error", "Data tidak ditemukan");
@@ -30,13 +50,13 @@ class LogbookAddController extends GetxController {
         dateObj.value = logData['date_parsed'];
         dateText.value = logData['log_date'];
         html.value = logData['log_activity'];
-        this.uc.value = uc;
+        uc.value = uc.value;
       }
     } else {
       dateObj.value = null;
       dateText.value = "";
       html.value = "";
-      this.uc.value = null;
+      uc.value = null; // Pastikan null untuk operasi create
     }
     isLoading.value = false;
   }
@@ -52,7 +72,7 @@ class LogbookAddController extends GetxController {
       date: date,
       keterangan: keterangan,
       pos: pos,
-      uc: uc,
+      uc: uc, // Kirim null untuk create
     );
 
     if (ret['status'] == true) {

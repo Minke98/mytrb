@@ -77,7 +77,7 @@ class ReportTaskAddFormView extends GetView<ReportTaskAddFormController> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: FractionallySizedBox(
-                      widthFactor: 0.5,
+                      widthFactor: 1,
                       child: ElevatedButton(
                         onPressed: () async {
                           String data = await controller.hcontroller.getText();
@@ -97,8 +97,15 @@ class ReportTaskAddFormView extends GetView<ReportTaskAddFormController> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            backgroundColor: Colors.blue.shade900,
                             minimumSize: const Size.fromHeight(50)),
-                        child: const Text("Save"),
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(fontSize: 14),
+                        ),
                       ),
                     ),
                   )

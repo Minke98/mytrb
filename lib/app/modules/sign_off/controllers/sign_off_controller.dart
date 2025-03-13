@@ -12,6 +12,8 @@ import 'package:mytrb/app/components/constant.dart';
 import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:mytrb/app/services/base_client.dart';
+import 'package:mytrb/utils/auth_biometric.dart';
+import 'package:mytrb/utils/connection.dart';
 import 'package:mytrb/utils/dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,6 +71,29 @@ class SignoffController extends GetxController {
   }
 
   Future<void> signOff() async {
+    bool isAuthenticated = await BiometricAuth.authenticateUser(
+        'Use biometric authentication to login');
+    if (!isAuthenticated) {
+      EasyLoading.showError('Autentikasi biometrik gagal');
+      return;
+    }
+    bool isConnected = await ConnectionUtils.checkInternetConnection();
+    if (!isConnected) {
+      ConnectionUtils.showNoInternetDialog(
+        "Apologies, the login process requires an internet connection.",
+      );
+      return;
+    }
+
+    EasyLoading.show(status: 'Please wait...');
+    bool isFastConnection = await ConnectionUtils.isConnectionFast();
+    if (!isFastConnection) {
+      ConnectionUtils.showNoInternetDialog(
+        "Apologies, the login process requires a stable internet connection.",
+        isSlowConnection: true,
+      );
+      return;
+    }
     Map getPos = await Location.getLocation();
     if (getPos['status'] == false) {
       if (Get.context != null) {

@@ -385,8 +385,10 @@ class IndexView extends GetView<IndexController> {
           children: <Widget>[
             IconButton(
               padding: EdgeInsets.zero,
-              onPressed: () {
-                Get.toNamed("/chat");
+              onPressed: () async {
+                controller.openWhatsAppGroup();
+                // await Get.toNamed(Routes.CHAT);
+                // controller.initializeHome();
               },
               icon: Icon(
                 Icons.chat,
@@ -408,8 +410,9 @@ class IndexView extends GetView<IndexController> {
           children: <Widget>[
             IconButton(
               padding: EdgeInsets.zero,
-              onPressed: () {
-                Get.toNamed("/task");
+              onPressed: () async {
+                await Get.toNamed(Routes.TASK);
+                controller.initializeHome();
               },
               icon: Icon(
                 Icons.task,
@@ -460,8 +463,9 @@ class IndexView extends GetView<IndexController> {
           children: <Widget>[
             IconButton(
               padding: EdgeInsets.zero,
-              onPressed: () {
-                Get.toNamed("/logbook"); // Navigasi dengan GetX
+              onPressed: () async {
+                await Get.toNamed(Routes.LOGBOOK);
+                controller.initializeHome();
               },
               icon: Icon(
                 Icons.menu_book, // Ikon untuk log book
@@ -483,8 +487,9 @@ class IndexView extends GetView<IndexController> {
           children: <Widget>[
             IconButton(
               padding: EdgeInsets.zero,
-              onPressed: () {
-                Get.toNamed("/contact"); // Navigasi menggunakan GetX
+              onPressed: () async {
+                await Get.toNamed(Routes.CONTACT);
+                controller.initializeHome();
               },
               icon: Icon(
                 Icons.contact_page, // Ikon untuk contact

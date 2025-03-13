@@ -7,7 +7,9 @@ import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/components/custom_snackbar.dart';
 import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
+import 'package:mytrb/config/environment/environment.dart';
 import 'package:mytrb/config/translations/strings_enum.dart';
+import 'package:mytrb/utils/connection.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'api_exceptions.dart';
 
@@ -19,6 +21,7 @@ enum RequestType {
 }
 
 class BaseClient {
+  static bool isRefreshing = false;
   static final Dio _dio = Dio(
     BaseOptions(
       headers: {
@@ -36,28 +39,108 @@ class BaseClient {
         compact: true,
         maxWidth: 90,
       ),
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          // Ambil token dari storage
-          Map tokenData = await UserRepository.getToken();
-          String accessToken = tokenData['token'];
+      InterceptorsWrapper(onRequest: (options, handler) async {
+        Map tokenData = await UserRepository.getToken();
+        String accessToken = tokenData['token'];
 
-          if (accessToken.isNotEmpty) {
-            options.headers["authorization"] = "Bearer $accessToken";
+        if (accessToken.isNotEmpty) {
+          options.headers["authorization"] = "Bearer $accessToken";
+        }
+        handler.next(options);
+      }, onError: (DioException error, handler) async {
+        if (error.response?.statusCode == 401 ||
+            error.response?.statusCode == 403) {
+          if (isRefreshing) {
+            return handler
+                .reject(error); // Jangan refresh ulang jika sudah berjalan
           }
-          handler.next(options);
-        },
-        onError: (DioException error, handler) async {
-          if (error.response?.statusCode == 401 ||
-              error.response?.statusCode == 403) {
-            // Langsung set unauthorized tanpa mencoba refresh token
-            getx.Get.find<AuthController>().logout();
-            getx.Get.offAllNamed(Routes.LOGIN);
+
+          bool refreshed = await _refreshToken();
+          if (refreshed) {
+            try {
+              final newRequest = await _retry(error.requestOptions);
+              return handler.resolve(newRequest);
+            } catch (e) {
+              _logout();
+            }
+          } else {
+            _logout();
           }
-          handler.next(error);
-        },
-      )
+        }
+        handler.next(error);
+      })
     ]);
+
+  static Future<bool> _refreshToken() async {
+    if (isRefreshing) return false; // Mencegah refresh ganda
+    isRefreshing = true;
+
+    try {
+      bool isConnected = await ConnectionUtils.checkInternetConnection();
+      if (!isConnected) {
+        isRefreshing = false;
+        return true; // Jangan logout, tetap pakai token lama
+      }
+
+      Map tokenData = await UserRepository.getToken();
+      String refreshToken = tokenData['refreshToken'];
+
+      if (refreshToken.isEmpty) {
+        isRefreshing = false;
+        return false;
+      }
+
+      return await BaseClient.safeApiCall(
+        Environment.refreshUrl,
+        RequestType.post,
+        data: {"time": DateTime.now().millisecondsSinceEpoch.toString()},
+        onSuccess: (response) async {
+          await UserRepository.setToken(
+            token: response.data['token'],
+            refreshToken: response.data['refresh_token'],
+          );
+          isRefreshing = false;
+          return true;
+        },
+        onError: (error) {
+          isRefreshing = false;
+          return false;
+        },
+      );
+    } catch (e) {
+      isRefreshing = false;
+      return false;
+    }
+  }
+
+  static void _logout() {
+    getx.Get.find<AuthController>().logout();
+    getx.Get.offAllNamed(Routes.LOGIN);
+  }
+
+  static Future<Response> _retry(RequestOptions requestOptions) async {
+    Map tokenData = await UserRepository.getToken();
+    String newToken = tokenData['token'];
+
+    if (newToken.isEmpty) {
+      _logout();
+      throw DioException(
+          requestOptions: requestOptions,
+          message: "Token is empty after refresh");
+    }
+
+    final options = Options(
+      method: requestOptions.method,
+      headers: {...requestOptions.headers, "authorization": "Bearer $newToken"},
+    );
+
+    return _dio.request(
+      requestOptions.path,
+      data: requestOptions.data,
+      queryParameters: requestOptions.queryParameters,
+      options: options,
+    );
+  }
 
   static const int _timeoutInSeconds = 10;
 

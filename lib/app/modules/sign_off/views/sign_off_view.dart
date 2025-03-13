@@ -212,7 +212,8 @@ class SignoffView extends GetView<SignoffController> {
               await controller.signOff();
             }
           },
-          child: const Text("Sign Off", style: TextStyle(color: Colors.white)),
+          child: const Text("Sign Off",
+              style: TextStyle(color: Colors.white, fontSize: 14)),
         ),
       );
     });
@@ -279,18 +280,22 @@ class SignoffView extends GetView<SignoffController> {
 
   Future<bool> _showConfirmSignOff() async {
     return await Get.defaultDialog<bool>(
-          title: "Sign Off?",
+          title: "Confirm Sign Off",
           titleStyle: TextStyle(
-            fontSize: 18,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
             color: Get.theme.colorScheme.error,
           ),
-          middleText: "",
+          middleText: "Are you sure you want to sign off?",
+          middleTextStyle: const TextStyle(fontSize: 14, color: Colors.black87),
           backgroundColor: Colors.white,
           barrierDismissible: false,
-          textCancel: "Tidak",
-          textConfirm: "Ya",
-          confirmTextColor: Colors.blue.shade900,
+          radius: 8,
+          textCancel: "No",
+          textConfirm: "Yes",
+          confirmTextColor: Colors.white,
           cancelTextColor: Colors.red,
+          buttonColor: Colors.blue.shade900,
           onCancel: () => Get.back(result: false),
           onConfirm: () => Get.back(result: true),
         ) ??

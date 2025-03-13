@@ -4,6 +4,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/report_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
+import 'package:mytrb/utils/auth_biometric.dart';
 import 'package:mytrb/utils/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,6 +58,12 @@ class ReportRouteController extends GetxController {
   }
 
   Future<void> saveRoute() async {
+    bool isAuthenticated = await BiometricAuth.authenticateUser(
+        'Use biometric authentication to login');
+    if (!isAuthenticated) {
+      EasyLoading.showError('Autentikasi biometrik gagal');
+      return;
+    }
     isLoading.value = true;
     EasyLoading.show(status: 'Mencari Lokasi Anda');
 
@@ -77,6 +84,7 @@ class ReportRouteController extends GetxController {
               month: monthNumber.value, ucSign: ucSign.value));
 
           routes.assignAll(updatedRoutes);
+          locationController.clear();
           EasyLoading.dismiss();
         } else {
           EasyLoading.showError(saveLocation['message']);

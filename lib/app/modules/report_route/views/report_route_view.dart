@@ -17,6 +17,7 @@ class ReportRouteView extends GetView<ReportRouteController> {
         if (controller.allowModify.isFalse) return const SizedBox.shrink();
 
         return FloatingActionButton.extended(
+          backgroundColor: Colors.blue.shade900,
           onPressed: () async {
             Map? dialog = await addRouteDialog(context);
             log("reportRoute: SAVE $dialog");
@@ -100,7 +101,6 @@ class ReportRouteView extends GetView<ReportRouteController> {
           position: Tween(begin: const Offset(1, 0), end: const Offset(0, 0))
               .animate(animation),
           child: Dialog(
-            backgroundColor: Theme.of(context).colorScheme.background,
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -134,12 +134,13 @@ class ReportRouteView extends GetView<ReportRouteController> {
                                 backgroundColor:
                                     Theme.of(context).colorScheme.error,
                                 minimumSize: const Size.fromHeight(50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
-                              child: Text(
+                              child: const Text(
                                 "Cancel",
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onError),
+                                style: TextStyle(fontSize: 14),
                               ),
                             ),
                           ),
@@ -156,8 +157,16 @@ class ReportRouteView extends GetView<ReportRouteController> {
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size.fromHeight(50)),
-                              child: const Text("Save"),
+                                backgroundColor: Colors.blue.shade900,
+                                minimumSize: const Size.fromHeight(50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                "Save",
+                                style: TextStyle(fontSize: 14),
+                              ),
                             ),
                           ),
                         ],

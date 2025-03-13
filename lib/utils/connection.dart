@@ -1,4 +1,3 @@
-import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -78,7 +77,7 @@ class ConnectionUtils {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Get.toNamed(Routes.LOGIN);
+                Get.back();
               },
               child: const Text(
                 "Close",

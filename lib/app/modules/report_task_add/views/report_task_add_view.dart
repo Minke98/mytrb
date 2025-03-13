@@ -288,6 +288,7 @@ class ReportTaskAddView extends GetView<ReportTaskAddController> {
             Align(
               alignment: Alignment.bottomRight,
               child: FloatingActionButton.extended(
+                backgroundColor: Colors.blue.shade900,
                 heroTag: 'menuButton',
                 onPressed: controller.toggleMenuVisibility,
                 label: const Text('Menu'),
@@ -304,6 +305,7 @@ class ReportTaskAddView extends GetView<ReportTaskAddController> {
                   child: Visibility(
                     visible: controller.menuVisible.value,
                     child: FloatingActionButton.extended(
+                      backgroundColor: Colors.blue.shade900,
                       heroTag: 'approvalButton',
                       onPressed: () {
                         Get.toNamed(Routes.REPORT_TASK_APPROVAL, arguments: {
@@ -329,6 +331,7 @@ class ReportTaskAddView extends GetView<ReportTaskAddController> {
                   child: Visibility(
                     visible: controller.menuVisible.value,
                     child: FloatingActionButton.extended(
+                      backgroundColor: Colors.blue.shade900,
                       heroTag: 'addButton',
                       onPressed: () {
                         Get.toNamed(Routes.REPORT_TASK_ADD_FORM, arguments: {

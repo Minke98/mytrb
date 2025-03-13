@@ -6,7 +6,10 @@ import 'package:mytrb/app/Repository/repository.dart';
 import 'package:mytrb/app/Repository/sign_repository.dart';
 import 'package:mytrb/app/Repository/sync_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
+import 'package:mytrb/utils/auth_biometric.dart';
+import 'package:mytrb/utils/connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class IndexController extends GetxController {
   final SignRepository signRepository;
@@ -72,6 +75,29 @@ class IndexController extends GetxController {
   }
 
   Future<void> startSyncing() async {
+    bool isAuthenticated = await BiometricAuth.authenticateUser(
+        'Use biometric authentication to syncing');
+    if (!isAuthenticated) {
+      EasyLoading.showError('Autentikasi biometrik gagal');
+      return;
+    }
+    bool isConnected = await ConnectionUtils.checkInternetConnection();
+    if (!isConnected) {
+      ConnectionUtils.showNoInternetDialog(
+        "Apologies, the syncing process requires an internet connection.",
+      );
+      return;
+    }
+
+    EasyLoading.show(status: 'Please wait...');
+    bool isFastConnection = await ConnectionUtils.isConnectionFast();
+    if (!isFastConnection) {
+      ConnectionUtils.showNoInternetDialog(
+        "Apologies, the syncing process requires a stable internet connection.",
+        isSlowConnection: true,
+      );
+      return;
+    }
     isSyncing.value = true;
 
     // Menampilkan loading indicator
@@ -100,5 +126,16 @@ class IndexController extends GetxController {
     }
 
     isSyncing.value = false;
+  }
+
+  void openWhatsAppGroup() async {
+    const String groupUrl = "https://chat.whatsapp.com/HVgP8i0EH1BBuZYtKVZElA";
+    final Uri uri = Uri.parse(groupUrl);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      Get.snackbar("Error", "Tidak dapat membuka WhatsApp");
+    }
   }
 }

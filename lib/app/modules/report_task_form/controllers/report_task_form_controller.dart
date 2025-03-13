@@ -10,6 +10,7 @@ import 'package:mytrb/app/Repository/sign_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/modules/report_task_add/controllers/report_task_add_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
+import 'package:mytrb/utils/auth_biometric.dart';
 import 'package:mytrb/utils/get_device_id.dart';
 import 'package:mytrb/utils/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,6 +63,12 @@ class ReportTaskAddFormController extends GetxController {
     String? ucAtt,
   }) async {
     try {
+      bool isAuthenticated = await BiometricAuth.authenticateUser(
+          'Use biometric authentication to login');
+      if (!isAuthenticated) {
+        EasyLoading.showError('Autentikasi biometrik gagal');
+        return;
+      }
       EasyLoading.show(status: 'Menyimpan...'); // Menampilkan loading
 
       status.value = ReportTaskFormStatus.saving;

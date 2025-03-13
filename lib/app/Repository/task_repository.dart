@@ -5,6 +5,7 @@ import 'package:mytrb/app/Repository/repository.dart';
 import 'package:mytrb/app/Repository/sign_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/components/constant.dart';
+import 'package:mytrb/app/data/models/task_item.dart';
 import 'package:mytrb/config/database/my_db.dart';
 import 'package:mytrb/utils/get_device_id.dart';
 import 'package:path_provider/path_provider.dart';
@@ -174,6 +175,72 @@ GROUP BY
     }
     log("taskRepo $resTaskList | $ucSign | $ucSubCompetency");
     return resTaskList;
+  }
+
+  Future<TaskItem?> getSingleTask({required String ucTask}) async {
+    MyDatabase mydb = MyDatabase.instance;
+    var db = mydb.transaction ?? await mydb.database;
+
+    Map userData = await UserRepository.getLocalUser(useAlternate: true);
+    if (userData['status'] == false) throw ("Cannot Find User Data");
+    if (userData['data']['sign'] == false) throw ("User Not Sign");
+
+    String ucSign = userData['data']['sign_uc'];
+
+    List<Map<String, dynamic>> taskData = await db.rawQuery("""
+    SELECT
+      tt.*, 
+      CASE WHEN tc.uc IS NULL THEN 0 ELSE 1 END AS isChecked,
+      CASE WHEN tc.app_inst_status IS NULL THEN 0 ELSE tc.app_inst_status END AS status,
+      CASE WHEN tc.app_lect_status IS NULL THEN 0 ELSE tc.app_lect_status END AS lect_status,
+      tc.app_inst_time as instTime,
+      tc.app_lect_time as lectTime,
+      tc.notes AS note,
+      tc.att_url AS url
+    FROM tech_task AS tt
+    LEFT JOIN tech_task_check AS tc 
+    ON tc.uc_task = tt.uc AND tc.uc_sign = ?
+    WHERE tt.uc = ?
+    ORDER BY tt.updated_at DESC
+    LIMIT 1
+  """, [ucSign, ucTask]);
+
+    print("taskData: $taskData"); // Debug print untuk cek hasil query
+
+    if (taskData.isEmpty) return null;
+
+    Map<String, dynamic> task = Map<String, dynamic>.from(taskData.first);
+
+    List<Map<String, dynamic>> taskCheckData = await db.rawQuery("""
+    SELECT 
+      app_inst_local_photo, app_inst_comment, app_inst_name, 
+      app_inst_photo, local_photo, att_photo 
+    FROM tech_task_check 
+    WHERE uc_task = ? AND uc_sign = ?
+  """, [ucTask, ucSign]);
+
+    print(
+        "taskCheckData: $taskCheckData"); // Debug print untuk cek data tambahan
+
+    if (taskCheckData.isNotEmpty) {
+      task["app_inst_local_photo"] = taskCheckData[0]["app_inst_local_photo"];
+      task["app_inst_comment"] = taskCheckData[0]["app_inst_comment"];
+      task["app_inst_name"] = taskCheckData[0]["app_inst_name"];
+      task["app_inst_photo"] = taskCheckData[0]["app_inst_photo"];
+      task["local_photo"] = taskCheckData[0]["local_photo"];
+      task["att_photo"] = taskCheckData[0]["att_photo"];
+    } else {
+      task["app_inst_local_photo"] = null;
+      task["app_inst_comment"] = null;
+      task["app_inst_name"] = null;
+      task["app_inst_photo"] = null;
+      task["local_photo"] = null;
+      task["att_photo"] = null;
+    }
+
+    print(
+        "Final task: $task"); // Debug print untuk melihat hasil akhir sebelum dikembalikan
+    return TaskItem.fromMap(task);
   }
 
   Future countCheck({required String ucSubCompetency, String? uc}) async {
@@ -398,6 +465,7 @@ GROUP BY
       String savePath = Path.join(appDocPath, TASK_APPROVAL_FOTO_FOLDER);
       Directory(savePath).createSync(recursive: true);
       String fotoExt = Path.extension(foto.path);
+
       await db.transaction((dbx) async {
         mydb.transaction = dbx;
 
@@ -416,18 +484,17 @@ GROUP BY
         String? uc;
         String? ucLokal;
         List<Map> taskChecklist = await dbx.rawQuery(
-            "select * from tech_task_check where uc_task = ? and uc_sign = ? limit 1 ",
+            "SELECT * FROM tech_task_check WHERE uc_task = ? AND uc_sign = ? LIMIT 1",
             [taskUc, ucSign]);
-        bool newCheckList = false;
-        if (taskChecklist.isEmpty) {
+
+        bool newCheckList = taskChecklist.isEmpty;
+        if (newCheckList) {
           uc = "${ucSignLocal}_${uuid.v1()}_$taskUc";
           ucLokal = uc;
-          newCheckList = true;
         } else {
           Map taskCheckListData = taskChecklist.first;
           uc = taskCheckListData['uc'];
           ucLokal = taskCheckListData['local_uc'];
-          newCheckList = false;
         }
 
         String deviceId = await getUniqueDeviceId();
@@ -435,22 +502,39 @@ GROUP BY
         foto.copySync("$savePath/$fotoName");
 
         if (newCheckList) {
-          await dbx.rawInsert(
-              """insert into tech_task_check (uc, local_uc, uc_sign, uc_task, local_photo, device_id) values (?,?,?,?,?,?)""",
-              [uc, ucLokal, ucSign, taskUc, fotoName, deviceId]);
+          await dbx.rawInsert("""INSERT INTO tech_task_check 
+                (uc, local_uc, uc_sign, uc_task, local_photo, device_id, app_inst_status, app_lect_status, app_inst_time) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", [
+            uc,
+            ucLokal,
+            ucSign,
+            taskUc,
+            fotoName,
+            deviceId,
+            0,
+            0,
+            DateTime.now().toString()
+          ]);
           await journalIt(
               tableName: "tech_task_check",
               actionType: "c",
               tableKey: ucLokal,
               db: dbx);
         } else {
-          await dbx.rawUpdate(""" update tech_task_check set 
-              uc_sign = ?, 
-              uc_task = ?,
-              local_photo = ?,
-              device_id = ?
-              where local_uc = ?
-              """, [ucSign, taskUc, fotoName, deviceId, ucLokal]);
+          await dbx.rawUpdate("""UPDATE tech_task_check SET 
+            uc_sign = ?, 
+            uc_task = ?,
+            local_photo = ?,
+            device_id = ?,
+            app_inst_time = ?
+            WHERE local_uc = ?""", [
+            ucSign,
+            taskUc,
+            fotoName,
+            deviceId,
+            DateTime.now().toString(),
+            ucLokal
+          ]);
           await journalIt(
               tableName: "tech_task_check",
               actionType: "u",
@@ -458,62 +542,38 @@ GROUP BY
               db: dbx);
         }
 
-        List<Map> tmpResTaskList = await dbx.rawQuery(
-            // """ SELECT * FROM `tech_task` WHERE `uc_sub_competency` = ? """,
-            """ SELECT
+        // Update updated_at pada tech_task
+        await dbx.rawUpdate("UPDATE tech_task SET updated_at = ? WHERE uc = ?",
+            [DateTime.now().toString(), taskUc]);
+
+        List<Map> tmpResTaskList = await dbx.rawQuery(""" SELECT
             tt.*,
-          CASE
-              WHEN tc.uc IS NULL THEN
-              0 ELSE 1 
-            END AS isChecked,
-          CASE
-              WHEN tc.app_inst_status IS NULL THEN
-              0 ELSE tc.app_inst_status
-            END AS status,
-          tc.app_inst_time as instTime,
-          tc.app_lect_time as lectTime,
-          tc.notes AS note
-          FROM
-            tech_task AS tt
-            LEFT JOIN tech_task_check AS tc 
-            on tc.uc_task = tt.uc and tc.uc_sign = ?
-          WHERE
-            tt.uc = ? """,
-            [ucSign, taskUc]);
+            CASE WHEN tc.uc IS NULL THEN 0 ELSE 1 END AS isChecked,
+            CASE WHEN tc.app_inst_status IS NULL THEN 0 ELSE tc.app_inst_status END AS status,
+            CASE WHEN tc.app_lect_status IS NULL THEN 0 ELSE tc.app_lect_status END AS lectStatus,
+            tc.app_inst_time as instTime,
+            tc.app_lect_time as lectTime,
+            tc.notes AS note
+          FROM tech_task AS tt
+          LEFT JOIN tech_task_check AS tc ON tc.uc_task = tt.uc AND tc.uc_sign = ?
+          WHERE tt.uc = ? """, [ucSign, taskUc]);
+
         List<Map> resTaskList = [];
         for (Map item in tmpResTaskList) {
           Map tmp = Map.from(item);
           var formatParse = DateFormat('yyyy-MM-dd HH:mm:ss');
           if (tmp['instTime'] != null) {
             DateTime instTime = formatParse.parse(tmp['instTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
-            tmp["instTime"] = format.format(instTime);
+            tmp["instTime"] = DateFormat.yMMMMd().add_Hm().format(instTime);
           }
           if (tmp['lectTime'] != null) {
             DateTime lectTime = formatParse.parse(tmp['lectTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
-            tmp["lectTime"] = format.format(lectTime);
+            tmp["lectTime"] = DateFormat.yMMMMd().add_Hm().format(lectTime);
           }
           tmp["local_photo"] = fotoName;
           resTaskList.add(tmp);
         }
-        // List<Map> resTaskList = await dbx.rawQuery(""" SELECT
-        //     tt.*,
-        //   CASE
-        //       WHEN tc.uc IS NULL THEN
-        //       0 ELSE 1
-        //     END AS isChecked,
-        //   CASE
-        //       WHEN tc.app_inst_status IS NULL THEN
-        //       0 ELSE tc.app_inst_status
-        //     END AS status,
-        //     tc.app_inst_time as instTime,
-        //   FROM
-        //     tech_task AS tt
-        //     LEFT JOIN tech_task_check AS tc
-        //     on tc.uc_task = tt.uc and tc.uc_sign = ?
-        //   WHERE
-        //     tt.uc = ?""", [ucSign, taskUc]);
+
         Map? resTask;
         if (resTaskList.isNotEmpty) {
           resTask = resTaskList.first;
@@ -523,8 +583,8 @@ GROUP BY
         finalres['status'] = true;
         finalres['data'] = resTask;
       });
-    } catch (e) {
-      log("ERROR $e");
+    } catch (e, stacktrace) {
+      log("ERROR: $e\nSTACKTRACE: $stacktrace");
       finalres['status'] = false;
       finalres['message'] = e.toString();
     } finally {
@@ -876,28 +936,6 @@ GROUP BY
           resTask = resTaskList.first;
         }
         log("taskRepo approve $resTask");
-        // List<Map> resTaskList = await dbx.rawQuery(""" SELECT
-        //     tt.*,
-        //   CASE
-        //       WHEN tc.uc IS NULL THEN
-        //       0 ELSE 1
-        //     END AS isChecked,
-        //   CASE
-        //       WHEN tc.app_inst_status IS NULL THEN
-        //       0 ELSE tc.app_inst_status
-        //     END AS status,
-        //     tc.notes AS note
-        //   FROM
-        //     tech_task AS tt
-        //     LEFT JOIN tech_task_check AS tc
-        //     on tc.uc_task = tt.uc and tc.uc_sign = ?
-        //   WHERE
-        //     tt.uc = ?""", [ucSign, taskUc]);
-        // Map? resTask;
-        // if (resTaskList.isNotEmpty) {
-        //   resTask = resTaskList.first;
-        // }
-        // log("taskRepo $resTask");
 
         finalres['status'] = true;
         finalres['data'] = resTask;

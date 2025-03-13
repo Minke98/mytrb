@@ -1,21 +1,21 @@
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/chat_repository.dart';
 
 class ChatController extends GetxController {
   final ChatRepository chatRepository;
-
-  var isLoading = false.obs;
   var conversations = [].obs;
 
   ChatController({required this.chatRepository});
 
   @override
   void onInit() {
+    initializeConversations();
     super.onInit();
   }
 
-  Future<void> initializeConversations({bool showLoading = false}) async {
-    isLoading.value = showLoading;
+  Future<void> initializeConversations() async {
+    EasyLoading.show(status: "Loading...");
 
     var conversationSearch = await chatRepository.getConversations();
 
@@ -23,6 +23,6 @@ class ChatController extends GetxController {
       conversations.value = conversationSearch['conversations'];
     }
 
-    isLoading.value = false;
+    EasyLoading.dismiss();
   }
 }

@@ -91,7 +91,10 @@ class SignOnView extends GetView<SignController> {
                             ? CircularProgressIndicator(
                                 color: Theme.of(context).colorScheme.onPrimary,
                               )
-                            : const Text("Sign On"),
+                            : const Text(
+                                "Sign On",
+                                style: TextStyle(fontSize: 14),
+                              ),
                       );
                     }),
                     mySpacer(height: 30),

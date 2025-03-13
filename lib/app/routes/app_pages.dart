@@ -1,9 +1,21 @@
 import 'package:mytrb/app/modules/auth/bindings/auth_binding.dart';
 import 'package:mytrb/app/modules/auth/views/login_view.dart';
+import 'package:mytrb/app/modules/chat/bindings/chat_binding.dart';
+import 'package:mytrb/app/modules/chat/views/chat_view.dart';
+import 'package:mytrb/app/modules/chat_message/bindings/chat_message_binding.dart';
+import 'package:mytrb/app/modules/chat_message/views/chat_message_view.dart';
 import 'package:mytrb/app/modules/claim/bindings/claim_binding.dart';
 import 'package:mytrb/app/modules/claim/views/claim_view.dart';
+import 'package:mytrb/app/modules/contact/bindings/contact_binding.dart';
+import 'package:mytrb/app/modules/contact/views/contact_view.dart';
 import 'package:mytrb/app/modules/index/bindings/index_binding.dart';
 import 'package:mytrb/app/modules/index/views/index_view.dart';
+import 'package:mytrb/app/modules/logbook/bindings/logbook_binding.dart';
+import 'package:mytrb/app/modules/logbook/views/logbook_view.dart';
+import 'package:mytrb/app/modules/logbook_add/bindings/logbook_add_binding.dart';
+import 'package:mytrb/app/modules/logbook_add/views/logbook_add_view.dart';
+import 'package:mytrb/app/modules/logbook_approval/bindings/logbook_approval_binding.dart';
+import 'package:mytrb/app/modules/logbook_approval/views/logbook_approval_view.dart';
 import 'package:mytrb/app/modules/report/bindings/report_binding.dart';
 import 'package:mytrb/app/modules/report/views/report_add_view.dart';
 import 'package:mytrb/app/modules/report/views/report_view.dart';
@@ -27,6 +39,14 @@ import 'package:mytrb/app/modules/sign_on/views/sign_on_view.dart';
 
 import 'package:mytrb/app/modules/splash/views/maintenance_view.dart';
 import 'package:get/get.dart';
+import 'package:mytrb/app/modules/task/bindings/task_binding.dart';
+import 'package:mytrb/app/modules/task/views/task_view.dart';
+import 'package:mytrb/app/modules/task_approval/bindings/task_approval_binding.dart';
+import 'package:mytrb/app/modules/task_approval/views/task_approval_view.dart';
+import 'package:mytrb/app/modules/task_checklist/bindings/task_checklist_binding.dart';
+import 'package:mytrb/app/modules/task_checklist/views/task_checklist_view.dart';
+import 'package:mytrb/app/modules/task_sub/bindings/task_sub_binding.dart';
+import 'package:mytrb/app/modules/task_sub/views/task_sub_view.dart';
 // import 'package:mytrb/app/modules/profile/views/profile_views.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
@@ -110,8 +130,58 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.REPORT_TASK_APPROVAL,
-      page: () => ReportTaskApprovalView(),
+      page: () => const ReportTaskApprovalView(),
       binding: ReportTaskApprovalBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHAT,
+      page: () => const ChatView(),
+      binding: ChatBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHAT_MESSAGE,
+      page: () => const ChatMessageView(),
+      binding: ChatMessageBinding(),
+    ),
+    GetPage(
+      name: _Paths.TASK,
+      page: () => const TaskView(),
+      binding: TaskBinding(),
+    ),
+    GetPage(
+      name: _Paths.TASK_SUB,
+      page: () => const TaskSubView(),
+      binding: TaskSubBinding(),
+    ),
+    GetPage(
+      name: _Paths.TASK_CHECK,
+      page: () => const TaskChecklistView(),
+      binding: TaskChecklistBinding(),
+    ),
+    GetPage(
+      name: _Paths.TASK_APPROVAL,
+      page: () => TaskApprovalView(),
+      binding: TaskApprovalBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOGBOOK,
+      page: () => const LogbookView(),
+      binding: LogbookBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOGBOOK_ADD,
+      page: () => LogBookAddView(),
+      binding: LogbookAddBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOGBOOK_APPROVAL,
+      page: () => LogbookApprovalView(),
+      binding: LogbookApprovalBinding(),
+    ),
+    GetPage(
+      name: _Paths.CONTACT,
+      page: () => ContactView(),
+      binding: ContactBinding(),
     ),
     // GetPage(
     //   name: _Paths.EXAM,
