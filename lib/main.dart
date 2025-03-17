@@ -4,6 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:mytrb/app/Repository/news_repository.dart';
+import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
+import 'package:mytrb/app/modules/news/controllers/news_controller.dart';
 import 'package:mytrb/config/theme/theme_data.dart';
 import 'package:mytrb/main_binding.dart';
 import 'package:mytrb/utils/colors.dart';
@@ -17,7 +20,7 @@ void main() async {
   // Tunggu hingga binding selesai
   WidgetsFlutterBinding.ensureInitialized();
   OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  OneSignal.initialize('f8f6161c-7908-4cd2-9f3e-1ebc2a8ad21b');
+  OneSignal.initialize('4284524e-f812-4080-9898-e321ab1b31d4');
   OneSignal.Notifications.requestPermission(true);
 
   await Geolocator.requestPermission();
@@ -41,73 +44,41 @@ class MyApp extends StatelessWidget {
     OneSignal.Notifications.addClickListener((event) async {
       EasyLoading.show(status: 'Loading...');
 
-      // final data = event.notification.additionalData;
-      // String? type = data?['type'];
-      // String? uc = data?['uc'];
-      // String? ucPendaftaran = data?['uc_pendaftaran'];
+      final data = event.notification.additionalData;
+      String? type = data?['type'];
+      String? uc = data?['uc'];
 
-      // if (type != null) {
-      //   switch (type) {
-      //     case 'news':
-      //       NewsController newsController = Get.find<NewsController>();
-      //       await newsController.fetchNews();
-      //       if (uc != null) {
-      //         var selectedNews = newsController.newsList.firstWhereOrNull(
-      //           (news) => news.uc == uc,
-      //         );
-      //         if (selectedNews != null) {
-      //           Get.toNamed(Routes.NEWS_DETAIL, arguments: selectedNews);
-      //         } else {
-      //           Get.toNamed(Routes.NEWS);
-      //         }
-      //       } else {
-      //         Get.toNamed(Routes.NEWS);
-      //       }
-      //       break;
+      if (type != null) {
+        switch (type) {
+          case 'news':
+            NewsController newsController = Get.find<NewsController>();
+            await NewsRepository.getNewNews();
+            if (uc != null) {
+              var selectedNews = newsController.newsList.firstWhereOrNull(
+                (news) => news['uc'] == uc,
+              );
+              if (selectedNews != null) {
+                await newsController.setRead(uc);
+                Get.toNamed(Routes.NEWS_DETAIL, arguments: selectedNews);
+              } else {
+                Get.toNamed(Routes.NEWS);
+              }
+            } else {
+              Get.toNamed(Routes.NEWS);
+            }
+            break;
 
-      //     case 'news_certificate':
-      //       NewsCertificateController newsCertificateController =
-      //           Get.find<NewsCertificateController>();
-      //       await newsCertificateController.fetchNewsCertificate();
-      //       if (uc != null) {
-      //         var selectedNewsCert = newsCertificateController
-      //             .newsCertificateList
-      //             .firstWhereOrNull(
-      //           (cert) => cert.uc == uc,
-      //         );
-      //         if (selectedNewsCert != null) {
-      //           Get.toNamed(Routes.NEWS_CERTIFICATE_DETAIL,
-      //               arguments: selectedNewsCert);
-      //         } else {
-      //           Get.toNamed(Routes.NEWS_CERTIFICATE);
-      //         }
-      //       } else {
-      //         Get.toNamed(Routes.NEWS_CERTIFICATE);
-      //       }
-      //       break;
-
-      //     case 'billing':
-      //       BillingController billingDetailController =
-      //           Get.find<BillingController>();
-      //       if (ucPendaftaran != null) {
-      //         await billingDetailController.fetchBillingDetail(ucPendaftaran);
-      //         Get.toNamed(Routes.BILLING_DETAIL, arguments: ucPendaftaran);
-      //       } else {
-      //         Get.toNamed(Routes.BILLING);
-      //       }
-      //       break;
-
-      //     default:
-      //       IndexController indexController = Get.find<IndexController>();
-      //       await indexController.loadUserInfo();
-      //       if (indexController.isLoggedIn.value) {
-      //         Get.toNamed(Routes.INDEX);
-      //       } else {
-      //         Get.toNamed(Routes.LOGIN);
-      //       }
-      //       break;
-      //   }
-      // }
+          default:
+            AuthController authController = Get.find<AuthController>();
+            var authResult = await authController.checkAuth();
+            if (authResult) {
+              Get.toNamed(Routes.LOGIN);
+            } else {
+              Get.toNamed(Routes.INDEX);
+            }
+            break;
+        }
+      }
 
       EasyLoading.dismiss();
     });

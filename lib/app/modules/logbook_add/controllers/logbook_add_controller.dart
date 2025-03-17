@@ -1,21 +1,28 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
+import 'package:intl/intl.dart';
 import 'package:mytrb/app/Repository/logbook_repository.dart';
+import 'package:mytrb/app/modules/logbook/controllers/logbook_controller.dart';
+import 'package:mytrb/utils/dialog.dart';
+import 'package:mytrb/utils/location.dart';
 
 class LogbookAddController extends GetxController {
   final LogBookRepository logBookRepository;
 
   LogbookAddController({required this.logBookRepository});
-
+  final LogbookController logbookController = Get.find<LogbookController>();
   var isLoading = false.obs;
   var isSaving = false.obs;
   var dateObj = Rxn<DateTime>();
   var dateText = ''.obs;
   var html = ''.obs;
-  var uc = Rxn<String>(); // Inisialisasi sebagai nullable
+  var isFormValid = false.obs;
+  var uc = Rxn<String>();
+  var isSubmitting = false.obs;
   final TextEditingController dateController = TextEditingController();
   final HtmlEditorController hcontroller = HtmlEditorController();
   var initText = "".obs;
@@ -61,25 +68,42 @@ class LogbookAddController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<void> submit({
-    required String date,
-    required String keterangan,
-    required Position pos,
-    String? uc,
-  }) async {
-    isSaving.value = true;
+  Future<void> submit() async {
+    EasyLoading.show(status: 'Processing...');
+
+    Map getPos = await Location.getLocation();
+    if (getPos['status'] == false) {
+      EasyLoading.dismiss();
+      if (Get.context != null) {
+        MyDialog.showError(Get.context!, getPos['message']);
+      }
+      return;
+    }
+
+    var formattedDate = DateFormat('yyyy-MM-dd').format(dateObj.value!);
+    Position pos = getPos['position'];
+    String keterangan = await hcontroller.getText();
+
     Map ret = await logBookRepository.save(
-      date: date,
+      date: formattedDate,
       keterangan: keterangan,
       pos: pos,
-      uc: uc, // Kirim null untuk create
+      uc: uc.value, // Kirim null untuk create
     );
 
+    EasyLoading.dismiss();
+
     if (ret['status'] == true) {
-      Get.snackbar("Success", "Logbook berhasil disimpan");
+      EasyLoading.showSuccess("Logbook berhasil disimpan");
+      Get.back();
+      logbookController.initLogBook();
     } else {
-      Get.snackbar("Failed", ret['message']);
+      EasyLoading.showError(ret['message']);
     }
-    isSaving.value = false;
+  }
+
+  Future<void> validateForm() async {
+    String keterangan = await hcontroller.getText();
+    isFormValid.value = dateObj.value != null && keterangan.isNotEmpty;
   }
 }

@@ -129,7 +129,7 @@ class SignController extends GetxController {
       bool isConnected = await ConnectionUtils.checkInternetConnection();
       if (!isConnected) {
         EasyLoading.dismiss();
-        ConnectionUtils.showNoInternetDialog(
+        ConnectionUtils().showNoInternetDialog(
           "Apologies, the login process requires an internet connection.",
         );
         return;
@@ -138,7 +138,7 @@ class SignController extends GetxController {
       bool isFastConnection = await ConnectionUtils.isConnectionFast();
       if (!isFastConnection) {
         EasyLoading.dismiss();
-        ConnectionUtils.showNoInternetDialog(
+        ConnectionUtils().showNoInternetDialog(
           "Apologies, the login process requires a stable internet connection.",
           isSlowConnection: true,
         );

@@ -6,6 +6,7 @@ abstract class Routes {
   static const MAINTENANCE = _Paths.MAINTENANCE;
   static const LOGIN = _Paths.LOGIN;
   static const INDEX = _Paths.INDEX;
+  static const PROFILE = _Paths.PROFILE;
   static const CLAIM = _Paths.CLAIM;
   static const SIGN_ON = _Paths.SIGN_ON;
   static const SIGN_OFF = _Paths.SIGN_OFF;
@@ -18,6 +19,7 @@ abstract class Routes {
   static const REPORT_TASK_RESULT = _Paths.REPORT_TASK_RESULT;
   static const REPORT_TASK_APPROVAL = _Paths.REPORT_TASK_APPROVAL;
   static const CHAT = _Paths.CHAT;
+  static const CHAT_WEB = _Paths.CHAT_WEB;
   static const CHAT_MESSAGE = _Paths.CHAT_MESSAGE;
   static const TASK = _Paths.TASK;
   static const TASK_SUB = _Paths.TASK_SUB;
@@ -30,6 +32,8 @@ abstract class Routes {
   static const NEWS = _Paths.NEWS;
   static const NEWS_DETAIL = _Paths.NEWS_DETAIL;
   static const EXAM = _Paths.EXAM;
+  static const EXAM_WEB = _Paths.EXAM_WEB;
+  static const FAQ = _Paths.FAQ;
 }
 
 abstract class _Paths {
@@ -38,6 +42,7 @@ abstract class _Paths {
   static const MAINTENANCE = '/maintenance';
   static const LOGIN = '/login';
   static const INDEX = '/index';
+  static const PROFILE = '/profile';
   static const CLAIM = '/claim';
   static const SIGN_ON = '/sign-on';
   static const SIGN_OFF = '/sign-off';
@@ -50,6 +55,7 @@ abstract class _Paths {
   static const REPORT_TASK_RESULT = '/report-task-result';
   static const REPORT_TASK_APPROVAL = '/report-task-approval';
   static const CHAT = '/chat';
+  static const CHAT_WEB = '/chat-web';
   static const CHAT_MESSAGE = '/chat-message';
   static const TASK = '/task';
   static const TASK_SUB = '/task-sub';
@@ -62,4 +68,6 @@ abstract class _Paths {
   static const NEWS = '/news';
   static const NEWS_DETAIL = '/news-detail';
   static const EXAM = '/exam';
+  static const EXAM_WEB = '/exam-web';
+  static const FAQ = '/faq';
 }

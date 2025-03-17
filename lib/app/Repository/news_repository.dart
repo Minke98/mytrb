@@ -85,38 +85,45 @@ class NewsRepository extends Repository {
   Future setRead(String newsUc) async {
     Map finalRes = {"status": false};
     MyDatabase mydb = MyDatabase.instance;
+
     try {
-      var db;
-      if (mydb.transaction != null) {
-        db = mydb.transaction!;
-      } else {
-        db = await mydb.database;
-      }
-      await db.transaction((dbx) async {
-        mydb.transaction = dbx;
+      final db =
+          await mydb.database; // Pastikan hanya pakai satu instance database
+
+      // Gunakan exclusive lock untuk mencegah deadlock
+      await db.transaction((txn) async {
         final prefs = await SharedPreferences.getInstance();
-        String userUc = prefs.getString('userUc')!;
-        List<Map> checkNews = await dbx.rawQuery(
-            "select * from tech_news_status where tech_news_uc = ? and tech_user_uc = ?",
-            [newsUc, userUc]);
-        if (checkNews.isEmpty) {
-          var uuid = const Uuid();
-          String localUc = "${uuid.v1()}_$userUc";
-          await dbx.rawInsert(
-              """ insert into tech_news_status values (?,?,?,?)""",
-              [localUc, localUc, userUc, newsUc]);
-          await journalIt(
-              tableName: "tech_news_status",
-              actionType: "c",
-              tableKey: localUc,
-              db: dbx);
-          log("set read $newsUc");
+        String userUc = prefs.getString('userUc') ?? '';
+
+        if (userUc.isNotEmpty) {
+          List<Map> checkNews = await txn.rawQuery(
+              "SELECT * FROM tech_news_status WHERE tech_news_uc = ? AND tech_user_uc = ?",
+              [newsUc, userUc]);
+
+          if (checkNews.isEmpty) {
+            var uuid = const Uuid();
+            String localUc = "${uuid.v1()}_$userUc";
+            await txn.rawInsert(
+                """INSERT INTO tech_news_status VALUES (?,?,?,?)""",
+                [localUc, localUc, userUc, newsUc]);
+
+            await journalIt(
+                tableName: "tech_news_status",
+                actionType: "c",
+                tableKey: localUc,
+                db: txn // Pastikan pakai txn, bukan db
+                );
+
+            log("set read $newsUc");
+          }
         }
       });
+
       finalRes['status'] = true;
-    } finally {
-      mydb.transaction = null;
+    } catch (e) {
+      log("Error in setRead: $e");
     }
+
     return finalRes;
   }
 

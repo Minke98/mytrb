@@ -19,90 +19,65 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as Path;
 
 class SyncRepository extends Repository {
-  Future doSync() async {
+  Future<Map> doSync({Function(int, int, String)? onProgress}) async {
     var con = await ConnectionTest.check();
     MyDatabase mydb = MyDatabase.instance;
     Database db = await mydb.database;
     Map finalRes = {"status": true};
+
     try {
-      if (con == false) {
+      if (!con) {
         throw CustomException(
             "Silahkan Hidupkan Koneksi Internet Untuk Melakukan Sinkronisasi");
       }
-      // stream.add("Checking Server Changes");
+
       await getServerJournal();
-
       await fromServerSync();
-      // if (serverSync['status'] == false) {
-      //   throw CustomException(serverSync["message"]);
-      // }
-      // log("SSYNC $serverSync");
 
-      List<Map> toSync = [];
       List<Map> res = await db
-          .rawQuery(""" select * from tech_journal order by log_stamp asc """);
-      if (res.isNotEmpty) {
-        int syncCount = res.length;
-        int syncCountProgres = 0;
-        for (Map item in res) {
-          syncCountProgres++;
-          log("syncRepo: Item $item");
-          switch (item["table_name"]) {
-            case "tech_sign":
-              // stream.add("Sync Sign ($syncCountProgres/$syncCount)");
-              await techSign(item: item);
-              break;
-            case "tech_sign_att":
-              // List<Map> testResTechSignAtt =
-              //     await db.rawQuery(""" select * from tech_sign_att """);
-              // log("syncRepo: resTestAtt $testResTechSignAtt");
-              // stream.add("Sync Sign Media ($syncCountProgres/$syncCount)");
-              await techSignAtt(
-                item: item,
-                // stream: stream
-              );
-              break;
-            case "tech_report_route":
-              // List<Map> testResTechSignAtt =
-              //     await db.rawQuery(""" select * from tech_report_route """);
-              // log("syncRepo: resTestAtt $testResTechSignAtt");
-              // stream.add("Sync Route ($syncCountProgres/$syncCount)");
-              await techReportRoute(item: item);
-              break;
-            case "tech_report_log":
-              // stream.add("Sync Report ($syncCountProgres/$syncCount)");
-              await techReportLog(item: item);
-              break;
-            case "tech_report_log_att":
-              // stream.add("Sync Report Media ($syncCountProgres/$syncCount)");
-              await techReportLogAtt(item: item);
-              break;
-            case "tech_task_check":
-              // stream.add("Sync Task ($syncCountProgres/$syncCount)");
-              await techTaskCheck(item: item);
-              break;
-            case "tech_news_status":
-              // stream.add("Sync News Status ($syncCountProgres/$syncCount)");
-              await techNewsStatus(item: item);
-              break;
-            case "tech_logbook":
-              // stream.add("Sync Log Book ($syncCountProgres/$syncCount)");
-              await techLogBook(item: item);
-              break;
-            default:
-              log("homePage: No handle yet for ${item['table_name']}");
-          }
-          // List<Map> tmpRes = await db
-          //     .rawQuery("""select * from ${item["table_name"]} limit 1 """, []);
-          // if (tmpRes.isNotEmpty) {
-          //   Map tmp = {"table_name": item['table_name']};
-          //   tmp['action_type'] = item['action_type'];
-          //   tmp['data'] = tmpRes.first;
-          //   toSync.add(tmp);
-          // }
+          .rawQuery(""" SELECT * FROM tech_journal ORDER BY log_stamp ASC """);
+
+      int syncCount = res.length;
+      int syncCountProgress = 0;
+
+      for (Map item in res) {
+        syncCountProgress++;
+        String tableName = item["table_name"];
+
+        // Callback untuk update progress dengan nama tabel
+        if (onProgress != null) {
+          onProgress(syncCountProgress, syncCount, formatTableName(tableName));
+        }
+
+        switch (tableName) {
+          case "tech_sign":
+            await techSign(item: item);
+            break;
+          case "tech_sign_att":
+            await techSignAtt(item: item);
+            break;
+          case "tech_report_route":
+            await techReportRoute(item: item);
+            break;
+          case "tech_report_log":
+            await techReportLog(item: item);
+            break;
+          case "tech_report_log_att":
+            await techReportLogAtt(item: item);
+            break;
+          case "tech_task_check":
+            await techTaskCheck(item: item);
+            break;
+          case "tech_news_status":
+            await techNewsStatus(item: item);
+            break;
+          case "tech_logbook":
+            await techLogBook(item: item);
+            break;
+          default:
+            log("homePage: No handler for $tableName");
         }
       }
-      log("syncRepo: toSync $toSync");
     } on CustomException catch (e) {
       log("CUSTOM $e");
       finalRes['status'] = false;

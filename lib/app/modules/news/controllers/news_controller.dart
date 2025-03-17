@@ -43,6 +43,14 @@ class NewsController extends GetxController {
       // Handle jika ada perubahan status baca
     }
   }
+
+  void markAsRead(String uc) {
+    int index = newsList.indexWhere((news) => news['uc'] == uc);
+    if (index != -1) {
+      newsList[index]['isRead'] = 1;
+      newsList.refresh(); // Memicu update UI
+    }
+  }
 }
 
 enum NewsReadyStatus { ready, loading, getmore, success }

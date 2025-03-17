@@ -15,10 +15,10 @@ class LogbookController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    prepare();
+    initLogBook();
   }
 
-  Future<void> prepare() async {
+  Future<void> initLogBook() async {
     isLoading.value = true;
     errorMessage.value = '';
     try {

@@ -8,6 +8,7 @@ import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/components/footer_copyright.dart';
 import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
 import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
+import 'package:mytrb/app/modules/profile/controllers/profile_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:responsive_framework/responsive_value.dart'
@@ -15,6 +16,7 @@ import 'package:responsive_framework/responsive_value.dart'
 
 class IndexView extends GetView<IndexController> {
   final AuthController authController = Get.find<AuthController>();
+  final ProfileController profileController = Get.find<ProfileController>();
   IndexView({Key? key}) : super(key: key);
 
   @override
@@ -163,7 +165,7 @@ class IndexView extends GetView<IndexController> {
                 ),
               ),
               onTap: () async {
-                await Get.toNamed("/news");
+                await Get.toNamed(Routes.NEWS);
                 controller.reInitializeHome();
               },
             ),
@@ -434,7 +436,9 @@ class IndexView extends GetView<IndexController> {
           children: <Widget>[
             IconButton(
               padding: EdgeInsets.zero,
-              onPressed: () {
+              onPressed: () async {
+                await Get.toNamed(Routes.EXAM);
+                controller.initializeHome();
                 // Get.to(
                 //   () => const Exam(),
                 //   transition:
@@ -586,26 +590,29 @@ class IndexView extends GetView<IndexController> {
       Dialog(
         child: SingleChildScrollView(
           child: Column(
-            mainAxisSize: MainAxisSize.min, // Tambahkan ini!
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               profileDialogAvatar(Get.context!),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Get.back(); // Tutup dialog sebelum pindah halaman
+                  Get.toNamed(Routes.PROFILE);
+                },
                 child: _menuItem(Icons.person, "Profile"),
               ),
               const Divider(height: 1),
               InkWell(
                 onTap: () {
-                  Get.toNamed("/faq")?.then((value) {
-                    Get.back(); // Tutup dialog setelah kembali dari FAQ
-                  });
+                  Get.back(); // Tutup dialog sebelum pindah halaman
+                  Get.toNamed(Routes.FAQ);
                 },
                 child: _menuItem(Icons.help, "Help"),
               ),
               const Divider(height: 1),
               InkWell(
                 onTap: () {
+                  Get.back(); // Tutup dialog sebelum konfirmasi logout
                   log("homePage: LOGOUT");
                   confirmLogout();
                 },
@@ -624,59 +631,75 @@ class IndexView extends GetView<IndexController> {
       color: Colors.grey[800],
       width: double.infinity,
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Tambahkan ini!
+        mainAxisSize: MainAxisSize.min, // Memastikan ukuran menyesuaikan isi
         children: [
-          controller.activeProfileFoto.value == ""
-              ? const CircleAvatar(
-                  radius: 50, // Jangan terlalu besar
-                  backgroundImage: AssetImage("assets/images/profile1.png"))
-              : ClipOval(
-                  child: Image.file(
-                    File(controller.activeProfileFoto.value),
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-          const SizedBox(height: 10), // Ganti Spacer dengan SizedBox
+          Obx(() {
+            // Cek apakah ada foto yang tersedia
+            String fotoPath =
+                profileController.userData['data']?['foto']?.toString() ??
+                    "assets/images/profile.jpg";
 
+            return ClipOval(
+              child: Image.file(
+                File(fotoPath),
+                height: 100,
+                width: 100,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage("assets/images/profile.jpg"),
+                  );
+                },
+              ),
+            );
+          }),
+          const SizedBox(height: 10),
           Obx(() {
             final user = authController.user;
+            if (user.isNotEmpty && user['status'] == true) {
+              return Text(
+                user['data']?['full_name'] ?? "UNKNOWN",
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold),
+              );
+            }
             return Text(
-              (user['status'] == true) ? user['data']['full_name'] : "UNKNOWN",
+              "UNKNOWN",
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontWeight: FontWeight.bold),
             );
           }),
-
-          const SizedBox(height: 10), // Ganti Spacer dengan SizedBox
-
+          const SizedBox(height: 10),
           Obx(() {
             final user = authController.user;
-            if (user['status'] == true) {
+            if (user.isNotEmpty && user['status'] == true) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "${user['data']['seafarer_code']} - ${user['data']['label']}",
+                    "${user['data']?['seafarer_code'] ?? '-'} - ${user['data']?['label'] ?? '-'}",
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    user['data']['title'],
+                    user['data']?['title'] ?? '-',
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ],
               );
             }
-            return Text("UNKNOWN",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(color: Theme.of(context).colorScheme.onPrimary));
+            return Text(
+              "UNKNOWN",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
+                  .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+            );
           }),
         ],
       ),
@@ -791,124 +814,135 @@ class IndexView extends GetView<IndexController> {
   }
 
   Widget buildCarousel() {
-    if (controller.news.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 50),
-            Text(
-              "There is currently no recent news available",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
-      );
-    }
+    return Obx(() {
+      if (controller.news.isEmpty) {
+        return const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 50),
+              Text(
+                "There is currently no recent news available",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
+        );
+      }
 
-    return Column(
-      children: [
-        CarouselSlider(
-          items: controller.news.map((item) {
-            return Card(
-              child: InkWell(
-                onTap: () {
-                  Get.toNamed("/newsView", arguments: {
-                    "uc": item['uc'],
-                    "title": item['title'],
-                    "created_at": item['created_at_formated'],
-                    "description": item['descriptionfull']
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(
-                      item['title'],
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
+      return Column(
+        children: [
+          CarouselSlider(
+            items: controller.news.map((item) {
+              return Card(
+                child: InkWell(
+                  onTap: () {
+                    Get.toNamed(Routes.NEWS_DETAIL, arguments: {
+                      "uc": item['uc'],
+                      "title": item['title'],
+                      "created_at": item['created_at_formated'],
+                      "description": item['descriptionfull']
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Text(
+                        item['title'],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                        ),
+                      ),
+                      subtitle: Column(
+                        children: [
+                          const Divider(),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              item['created_at_formated'],
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: RichText(
+                              text: TextSpan(
+                                style: const TextStyle(fontSize: 12),
+                                children: [
+                                  const TextSpan(
+                                    text: "MyTRB News - ",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                  ),
+                                  TextSpan(
+                                      text: item['description'] ?? '-',
+                                      style:
+                                          const TextStyle(color: Colors.black)),
+                                ],
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    subtitle: Column(
-                      children: [
-                        const Divider(),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            item['created_at_formated'],
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: RichText(
-                            text: TextSpan(
-                              style: const TextStyle(fontSize: 12),
-                              children: [
-                                const TextSpan(
-                                  text: "TRSea News - ",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                TextSpan(text: item['description'] ?? '-'),
-                              ],
-                            ),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-          carouselController: controller.carouselController,
-          options: CarouselOptions(
-            autoPlay: false,
-            enlargeCenterPage: true,
-            aspectRatio: 16 / 6,
-            height: 150,
-            onPageChanged: (index, reason) {
-              controller.changeCurrentIndex(index);
-            },
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: controller.news.asMap().entries.map((entry) {
-            return Obx(() {
-              return GestureDetector(
-                onTap: () =>
-                    controller.carouselController.animateToPage(entry.key),
-                child: Container(
-                  width: 16.0,
-                  height: 16.0,
-                  margin: const EdgeInsets.symmetric(
-                      vertical: 8.0, horizontal: 8.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: (controller.currentIndex.value == entry.key
-                        ? Get.theme.colorScheme.primary
-                        : Get.theme.colorScheme.secondary),
                   ),
                 ),
               );
-            });
-          }).toList(),
-        ),
-      ],
-    );
+            }).toList(),
+            carouselController: controller.carouselController,
+            options: CarouselOptions(
+              autoPlay: false,
+              enlargeCenterPage: true,
+              aspectRatio: 16 / 6,
+              height: 150,
+              onPageChanged: (index, reason) {
+                controller.currentIndex.value =
+                    index; // Pastikan ini memperbarui nilai
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(controller.news.length, (index) {
+              return Obx(() => GestureDetector(
+                    onTap: () {
+                      controller.carouselController.animateToPage(index);
+                      controller.currentIndex.value = index;
+                    },
+                    child: Container(
+                      width:
+                          controller.currentIndex.value == index ? 16.0 : 10.0,
+                      height:
+                          controller.currentIndex.value == index ? 16.0 : 10.0,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 4.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: controller.currentIndex.value == index
+                            ? Colors.blue.shade900
+                            : Colors.grey,
+                      ),
+                    ),
+                  ));
+            }),
+          )
+        ],
+      );
+    });
   }
 
   Future<void> confirmLogout() async {

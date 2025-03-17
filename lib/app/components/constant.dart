@@ -51,3 +51,10 @@ extension EmailValidator on String {
     return isLength(this, length);
   }
 }
+
+String formatTableName(String tableName) {
+  return tableName
+      .split('_') // Pisahkan berdasarkan underscore
+      .map((word) => word[0].toUpperCase() + word.substring(1)) // Kapitalisasi
+      .join(' '); // Gabungkan dengan spasi
+}

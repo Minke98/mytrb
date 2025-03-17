@@ -42,10 +42,9 @@ class LogbookView extends GetView<LogbookController> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () =>
             Get.toNamed(Routes.LOGBOOK_ADD, arguments: {"mode": "add"}),
-        label: Text('Add',
-            style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-        backgroundColor: Colors.white,
-        icon: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
+        label: const Text('Add', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue.shade900,
+        icon: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -105,7 +104,8 @@ class ListWidget extends StatelessWidget {
                         onPressed: () => Get.toNamed(Routes.LOGBOOK_ADD,
                             arguments: {"mode": "add", "uc": item['local_uc']}),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue, // Warna tombol Edit
+                          backgroundColor:
+                              Colors.blue.shade900, // Warna tombol Edit
                           foregroundColor: Colors.white, // Warna teks
                         ),
                         child: const Text("Edit"),

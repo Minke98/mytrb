@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:intl/intl.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:mytrb/app/modules/logbook_add/controllers/logbook_add_controller.dart';
 
 class LogBookAddView extends GetView<LogbookAddController> {
@@ -15,7 +14,7 @@ class LogBookAddView extends GetView<LogbookAddController> {
     return Scaffold(
       appBar: AppBar(title: const Text("Add Log")),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -52,6 +51,10 @@ class LogBookAddView extends GetView<LogbookAddController> {
                   height: MediaQuery.of(context).size.height * 0.4,
                 ),
                 callbacks: Callbacks(
+                  onChangeContent: (String? text) {
+                    controller
+                        .validateForm(); // Panggil validateForm() setiap ada perubahan teks
+                  },
                   onFocus: () {
                     FocusScope.of(context)
                         .unfocus(); // Menghilangkan fokus dari TextFormField
@@ -59,41 +62,37 @@ class LogBookAddView extends GetView<LogbookAddController> {
                 ),
               ),
               const SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerRight,
-                child: FractionallySizedBox(
-                  widthFactor: 0.5,
-                  child: Obx(
-                    () => ElevatedButton(
-                      onPressed: controller.isSaving.value
-                          ? null
-                          : () async {
-                              if (!_formKey.currentState!.validate()) return;
-                              String keterangan =
-                                  await controller.hcontroller.getText();
-                              if (keterangan.isEmpty) {
-                                Get.snackbar(
-                                    "Error", "Fill in the Description");
-                                return;
-                              }
-                              Position position =
-                                  await Geolocator.getCurrentPosition();
-                              var formattedDate = DateFormat('yyyy-MM-dd')
-                                  .format(controller.dateObj.value!);
-                              await controller.submit(
-                                date: formattedDate,
-                                keterangan: keterangan,
-                                pos: position,
-                                uc: controller.uc.value,
-                              );
-                            },
-                      child: controller.isSaving.value
-                          ? const CircularProgressIndicator()
+              Obx(
+                () {
+                  return SizedBox(
+                    width: double.infinity, // Mengisi lebar yang tersedia
+                    child: ElevatedButton(
+                      onPressed: controller.isFormValid.value &&
+                              !controller.isSubmitting.value
+                          ? () async {
+                              await controller.submit();
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(55),
+                        backgroundColor: controller.isFormValid.value
+                            ? Colors.blue.shade900
+                            : Colors.grey,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: controller.isSubmitting.value
+                          ? CircularProgressIndicator(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            )
                           : Text(
-                              controller.uc.value == null ? "Save" : "Update"),
+                              controller.uc.value == null ? "Save" : "Update",
+                              style: const TextStyle(fontSize: 14),
+                            ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ],
           ),
@@ -124,6 +123,7 @@ class DatePicker extends StatelessWidget {
             controller.dateObj.value = selectedDate;
             controller.dateText.value =
                 DateFormat.yMMMMd().format(selectedDate);
+            controller.validateForm();
           }
         },
         controller: TextEditingController(text: controller.dateText.value),

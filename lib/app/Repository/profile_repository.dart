@@ -9,7 +9,6 @@ import 'package:mytrb/config/environment/environment.dart';
 import 'package:mytrb/utils/multipart_extended.dart';
 import 'package:path/path.dart' as Path;
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -48,12 +47,10 @@ class ProfileRepository extends Repository {
         }
       }
 
-      FormData formData = FormData.fromMap(formDataMap);
-
       await BaseClient.safeApiCall(
         Environment.updateUser,
         RequestType.post,
-        data: formData,
+        data: formDataMap,
         onSuccess: (response) async {
           log("profileRepository: updateRes $response");
           Map resData = response.data;

@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
+import 'package:mytrb/app/routes/app_pages.dart';
 
 class ConnectionUtils {
   static const Duration _timeoutDuration = Duration(seconds: 5);
@@ -39,10 +40,15 @@ class ConnectionUtils {
     }
   }
 
-  static void showNoInternetDialog(String message,
-      {bool isSlowConnection = false}) {
+  void showNoInternetDialog(String message,
+      {bool isSlowConnection = false, bool closeToHome = false}) {
+    print("showNoInternetDialog called with:");
+    print("Message: $message");
+    print("isSlowConnection: $isSlowConnection");
+    print("closeToHome: $closeToHome");
+
     showDialog(
-      context: Get.context!,
+      context: Get.overlayContext ?? Get.context!,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
@@ -60,9 +66,7 @@ class ConnectionUtils {
             mainAxisSize: MainAxisSize.min,
             children: [
               Lottie.asset(
-                isSlowConnection
-                    ? 'assets/animations/slow_connection.json'
-                    : 'assets/animations/failed.json',
+                'assets/animations/failed.json',
                 width: 200,
                 height: 200,
                 fit: BoxFit.contain,
@@ -77,7 +81,12 @@ class ConnectionUtils {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Get.back();
+                if (closeToHome) {
+                  Get.offAllNamed(Routes.INDEX);
+                } else {
+                  print("Closing dialog...");
+                  Get.back();
+                }
               },
               child: const Text(
                 "Close",

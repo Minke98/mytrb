@@ -8,7 +8,13 @@ import 'package:mytrb/app/modules/claim/bindings/claim_binding.dart';
 import 'package:mytrb/app/modules/claim/views/claim_view.dart';
 import 'package:mytrb/app/modules/contact/bindings/contact_binding.dart';
 import 'package:mytrb/app/modules/contact/views/contact_view.dart';
+import 'package:mytrb/app/modules/exam/bindings/exam_binding.dart';
+import 'package:mytrb/app/modules/exam/views/exam_view.dart';
+import 'package:mytrb/app/modules/exam/views/exam_web_view.dart';
+import 'package:mytrb/app/modules/faq/bindings/faq_binding.dart';
+import 'package:mytrb/app/modules/faq/views/faq_view.dart';
 import 'package:mytrb/app/modules/index/bindings/index_binding.dart';
+// import 'package:mytrb/app/modules/index/views/chat_web.dart';
 import 'package:mytrb/app/modules/index/views/index_view.dart';
 import 'package:mytrb/app/modules/logbook/bindings/logbook_binding.dart';
 import 'package:mytrb/app/modules/logbook/views/logbook_view.dart';
@@ -16,6 +22,11 @@ import 'package:mytrb/app/modules/logbook_add/bindings/logbook_add_binding.dart'
 import 'package:mytrb/app/modules/logbook_add/views/logbook_add_view.dart';
 import 'package:mytrb/app/modules/logbook_approval/bindings/logbook_approval_binding.dart';
 import 'package:mytrb/app/modules/logbook_approval/views/logbook_approval_view.dart';
+import 'package:mytrb/app/modules/news/bindings/news_binding.dart';
+import 'package:mytrb/app/modules/news/views/news_detail_view.dart';
+import 'package:mytrb/app/modules/news/views/news_view.dart';
+import 'package:mytrb/app/modules/profile/bindings/profile_binding.dart';
+import 'package:mytrb/app/modules/profile/views/profile_view.dart';
 import 'package:mytrb/app/modules/report/bindings/report_binding.dart';
 import 'package:mytrb/app/modules/report/views/report_add_view.dart';
 import 'package:mytrb/app/modules/report/views/report_view.dart';
@@ -77,6 +88,11 @@ class AppPages {
       name: _Paths.INDEX,
       page: () => IndexView(),
       binding: IndexBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => ProfileView(),
+      binding: ProfileBinding(),
     ),
     GetPage(
       name: _Paths.CLAIM,
@@ -183,10 +199,30 @@ class AppPages {
       page: () => ContactView(),
       binding: ContactBinding(),
     ),
-    // GetPage(
-    //   name: _Paths.EXAM,
-    //   page: () => const ExamView(),
-    //   binding: ExamBinding(),
-    // ),
+    GetPage(
+      name: _Paths.EXAM,
+      page: () => const ExamView(),
+      binding: ExamBinding(),
+    ),
+    GetPage(
+      name: _Paths.EXAM_WEB,
+      page: () => const ExamWebView(),
+      binding: ExamBinding(),
+    ),
+    GetPage(
+      name: _Paths.FAQ,
+      page: () => const FaqView(),
+      binding: FaqBinding(),
+    ),
+    GetPage(
+      name: _Paths.NEWS,
+      page: () => const NewsView(),
+      binding: NewsBinding(),
+    ),
+    GetPage(
+      name: _Paths.NEWS_DETAIL,
+      page: () => const NewsDetailView(),
+      binding: NewsBinding(),
+    ),
   ];
 }

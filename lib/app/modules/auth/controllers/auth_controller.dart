@@ -39,7 +39,7 @@ class AuthController extends GetxController {
     }
     bool isConnected = await ConnectionUtils.checkInternetConnection();
     if (!isConnected) {
-      ConnectionUtils.showNoInternetDialog(
+      ConnectionUtils().showNoInternetDialog(
         "Apologies, the login process requires an internet connection.",
       );
       return;
@@ -48,7 +48,7 @@ class AuthController extends GetxController {
     EasyLoading.show(status: 'Please wait...');
     bool isFastConnection = await ConnectionUtils.isConnectionFast();
     if (!isFastConnection) {
-      ConnectionUtils.showNoInternetDialog(
+      ConnectionUtils().showNoInternetDialog(
         "Apologies, the login process requires a stable internet connection.",
         isSlowConnection: true,
       );
@@ -103,8 +103,8 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> checkAuth({bool background = false}) async {
-    if (isCheckingAuth.value) return; // Cegah duplikasi eksekusi
+  Future<bool> checkAuth({bool background = false}) async {
+    if (isCheckingAuth.value) return false; // Mencegah duplikasi eksekusi
 
     isCheckingAuth.value = true;
     EasyLoading.show(status: 'Checking authentication...');
@@ -134,7 +134,7 @@ class AuthController extends GetxController {
         }
       });
 
-      return;
+      return false;
     }
 
     final prefs = await SharedPreferences.getInstance();
@@ -145,14 +145,13 @@ class AuthController extends GetxController {
       userData: userData['data'],
     );
 
-    // **Jalankan biometric authentication setiap kali checkAuth berhasil**
     bool isAuthenticated = await BiometricAuth.authenticateUser(
         'Use biometric authentication to verify your identity');
 
     if (!isAuthenticated) {
       EasyLoading.showError('Autentikasi biometrik gagal');
-      isCheckingAuth.value = false; // Reset state
-      return;
+      isCheckingAuth.value = false;
+      return false;
     }
 
     user.value = userData;
@@ -163,6 +162,7 @@ class AuthController extends GetxController {
     }
 
     isCheckingAuth.value = false;
+    return true;
   }
 
   void showAuthDialog(String message) {

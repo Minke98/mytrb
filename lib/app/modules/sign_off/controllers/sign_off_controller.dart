@@ -79,7 +79,7 @@ class SignoffController extends GetxController {
     }
     bool isConnected = await ConnectionUtils.checkInternetConnection();
     if (!isConnected) {
-      ConnectionUtils.showNoInternetDialog(
+      ConnectionUtils().showNoInternetDialog(
         "Apologies, the login process requires an internet connection.",
       );
       return;
@@ -88,7 +88,7 @@ class SignoffController extends GetxController {
     EasyLoading.show(status: 'Please wait...');
     bool isFastConnection = await ConnectionUtils.isConnectionFast();
     if (!isFastConnection) {
-      ConnectionUtils.showNoInternetDialog(
+      ConnectionUtils().showNoInternetDialog(
         "Apologies, the login process requires a stable internet connection.",
         isSlowConnection: true,
       );

@@ -10,6 +10,7 @@ import 'package:mytrb/utils/auth_biometric.dart';
 import 'package:mytrb/utils/connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class IndexController extends GetxController {
   final SignRepository signRepository;
@@ -31,6 +32,10 @@ class IndexController extends GetxController {
   final CarouselController carouselController = CarouselController();
   var syncStatus = ''.obs;
   var isSyncing = false.obs;
+  var syncProgress = 0.obs;
+  var totalSyncItems = 0.obs;
+  var syncTableName = ''.obs;
+  WebViewController? webViewController;
 
   @override
   void onInit() {
@@ -75,6 +80,7 @@ class IndexController extends GetxController {
   }
 
   Future<void> startSyncing() async {
+    // Cek koneksi & autentikasi
     bool isAuthenticated = await BiometricAuth.authenticateUser(
         'Use biometric authentication to syncing');
     if (!isAuthenticated) {
@@ -83,53 +89,43 @@ class IndexController extends GetxController {
     }
     bool isConnected = await ConnectionUtils.checkInternetConnection();
     if (!isConnected) {
-      ConnectionUtils.showNoInternetDialog(
+      ConnectionUtils().showNoInternetDialog(
         "Apologies, the syncing process requires an internet connection.",
       );
       return;
     }
 
-    EasyLoading.show(status: 'Please wait...');
-    bool isFastConnection = await ConnectionUtils.isConnectionFast();
-    if (!isFastConnection) {
-      ConnectionUtils.showNoInternetDialog(
-        "Apologies, the syncing process requires a stable internet connection.",
-        isSlowConnection: true,
-      );
-      return;
-    }
     isSyncing.value = true;
+    EasyLoading.show(status: "Preparing Sync...");
 
-    // Menampilkan loading indicator
-    EasyLoading.show(status: "Syncing...");
+    // Panggil fungsi sync dengan tambahan nama tabel
+    Map syncRes = await syncRepository.doSync(
+      onProgress: (current, total, tableName) {
+        syncProgress.value = current;
+        totalSyncItems.value = total;
+        syncTableName.value = tableName;
+        EasyLoading.show(
+            status: " Sync $tableName ($current of $total)...",
+            maskType: EasyLoadingMaskType.black);
+      },
+    );
 
-    Map syncRes = await syncRepository.doSync();
-
-    EasyLoading.dismiss(); // Menutup loading setelah proses selesai
+    EasyLoading.dismiss(); // Selesai loading
 
     if (syncRes['status'] == false) {
       syncStatus.value = syncRes['message'];
-
-      // Menampilkan toast error
       EasyLoading.showError(syncRes['message']);
     } else {
       syncStatus.value = "Sync Completed";
-
-      // Menampilkan toast sukses
       EasyLoading.showSuccess("Sync Completed");
       isNeedSync.value = false;
-
-      // Tunggu sebentar sebelum navigasi ulang ke home
-      // Future.delayed(const Duration(seconds: 1), () {
-      //   Get.offNamed(Routes.INDEX);
-      // });
     }
 
     isSyncing.value = false;
   }
 
   void openWhatsAppGroup() async {
-    const String groupUrl = "https://chat.whatsapp.com/HVgP8i0EH1BBuZYtKVZElA";
+    const String groupUrl = "https://chat.whatsapp.com/Ee6yQmN87uLBAPcfB4qqcx";
     final Uri uri = Uri.parse(groupUrl);
 
     if (await canLaunchUrl(uri)) {
