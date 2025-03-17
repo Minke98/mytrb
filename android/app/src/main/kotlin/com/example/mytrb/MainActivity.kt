@@ -1,4 +1,4 @@
-package com.example.mytrb
+package com.stip.mytrb
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

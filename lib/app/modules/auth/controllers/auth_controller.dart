@@ -54,13 +54,13 @@ class AuthController extends GetxController {
       );
       return;
     }
+
     var deviceId = await getUniqueDeviceId();
 
     var res = await userRepository.login(
       username: usernameController.text,
       password: passwordController.text,
       device_id: deviceId,
-      // stream: _streamController!,
     );
 
     if (res["status"] == false) {
@@ -73,13 +73,10 @@ class AuthController extends GetxController {
     } else {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString("userUc", res['user'].uc);
-      var userData = await userRepository.getUserData(uc: res['user'].uc);
 
-      await appRepository.getBaselineData(
-        userData: userData['data'],
-        // stream: _streamController!,
-      );
-      user.value = userData;
+      // Panggil fetchUserData setelah login sukses
+      await fetchUserDataLogin(res['user'].uc);
+
       isAuthorized.value = true;
       EasyLoading.dismiss();
       usernameController.clear();
@@ -89,6 +86,32 @@ class AuthController extends GetxController {
         Get.offAllNamed(Routes.INDEX);
       }
     }
+  }
+
+  Future<void> fetchUserDataLogin(String userUc) async {
+    EasyLoading.show(status: 'Refreshing data...');
+
+    var userData = await userRepository.getUserData(uc: userUc);
+    await appRepository.getBaselineData(
+      userData: userData['data'],
+    );
+
+    var userDataNew = await userRepository.getUserData(uc: userUc);
+
+    user.value = userDataNew; // Update user
+    EasyLoading.dismiss();
+  }
+
+  Future<void> fetchUserDataAuth(String userUc) async {
+    EasyLoading.show(status: 'Refreshing data...');
+
+    var userData = await userRepository.getUserData(uc: userUc);
+    await appRepository.getBaselineData(
+      userData: userData['data'],
+    );
+
+    user.value = userData; // Update user
+    EasyLoading.dismiss();
   }
 
   Future<void> logout() async {
@@ -139,11 +162,13 @@ class AuthController extends GetxController {
 
     final prefs = await SharedPreferences.getInstance();
     prefs.setString("userUc", isAuth['user'].uc);
-    var userData = await userRepository.getUserData(uc: isAuth['user'].uc);
+    // Panggil fetchUserData setelah login sukses
+    await fetchUserDataAuth(isAuth['user'].uc);
+    // var userData = await userRepository.getUserData(uc: isAuth['user'].uc);
 
-    await appRepository.getBaselineData(
-      userData: userData['data'],
-    );
+    // await appRepository.getBaselineData(
+    //   userData: userData['data'],
+    // );
 
     bool isAuthenticated = await BiometricAuth.authenticateUser(
         'Use biometric authentication to verify your identity');
@@ -154,7 +179,7 @@ class AuthController extends GetxController {
       return false;
     }
 
-    user.value = userData;
+    // user.value = userData;
     isAuthorized.value = true;
 
     if (Get.currentRoute != Routes.INDEX && isAuthorized.value) {

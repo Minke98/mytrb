@@ -387,7 +387,7 @@ class UserRepository {
     return ret;
   }
 
-  Future getUserData({String? uc}) async {
+  Future<Map> getUserData({String? uc}) async {
     log("getData: GET DATA UC $uc");
     var con = await ConnectionTest.check();
     MyDatabase mydb = MyDatabase.instance;
@@ -401,37 +401,41 @@ class UserRepository {
 
       try {
         log("getData: ONLINE CHECK");
-        // Menggunakan BaseClient untuk melakukan request API
         await BaseClient.safeApiCall(
-          Environment.getUserData, // URL endpoint
-          RequestType.post, // Jenis request
-          data: {'uc': uc}, // Data yang dikirim
+          Environment.getUserData,
+          RequestType.post,
+          data: {'uc': uc},
           onSuccess: (Response response) async {
             log("getData: trb check $response");
             var data = response.data['data'];
             data['trb_participant'].remove("id");
 
-            // Simpan atau update data ke dalam database lokal
             Database db = await mydb.database;
+            await db.execute(
+                "PRAGMA synchronous = FULL"); // Memastikan data tersimpan
+
             List<Map> result = await db.rawQuery(
-                "select * from tech_trb_participant where uc_participant = ? limit 1",
+                "SELECT * FROM tech_trb_participant WHERE uc_participant = ? LIMIT 1",
                 [data['trb_participant']['uc_participant']]);
 
             log("getData: CHECK tech trb $result ${data['trb_participant']}");
             if (result.isEmpty) {
-              log("getData: INSET INTO LOCAL TRB");
+              log("getData: INSERT INTO LOCAL TRB");
               await db.rawInsert(
-                  "insert into tech_trb_participant values (?,?,?,?,?)", [
+                  "INSERT INTO tech_trb_participant VALUES (?,?,?,?,?)", [
                 data['trb_participant']['uc'],
                 data['trb_participant']['uc_trb_schedule'],
                 data['trb_participant']['uc_participant'],
                 data['trb_participant']['uc_diklat_participant'],
                 data['trb_participant']['seafarer_code'],
               ]);
+
+              await Future.delayed(
+                  const Duration(milliseconds: 500)); // Tunggu sinkronisasi
             } else if (!mapEquals(data['participant'], result.first)) {
               log("getData: UPDATE LOCAL TRB");
               await db.rawUpdate(
-                  "update tech_trb_participant set uc_trb_schedule = ?, uc_participant = ?, uc_diklat_participant = ?, seafarer_code = ? where uc = ?",
+                  "UPDATE tech_trb_participant SET uc_trb_schedule = ?, uc_participant = ?, uc_diklat_participant = ?, seafarer_code = ? WHERE uc = ?",
                   [
                     data['trb_participant']['uc_trb_schedule'],
                     data['trb_participant']['uc_participant'],
@@ -439,6 +443,9 @@ class UserRepository {
                     data['trb_participant']['seafarer_code'],
                     data['trb_participant']['uc'],
                   ]);
+
+              await Future.delayed(
+                  const Duration(milliseconds: 500)); // Tunggu sinkronisasi
             }
           },
           onError: (e) {
@@ -451,10 +458,14 @@ class UserRepository {
     }
 
     Database db = await mydb.database;
+    await db.execute(
+        "PRAGMA synchronous = FULL"); // Pastikan data tersimpan sebelum diambil
+
     try {
       List<Map> result = await db.rawQuery(
-          "select uc as uc_tech_user, uc_participant, user_name, full_name, email from tech_user where uc = ? limit 1",
+          "SELECT uc AS uc_tech_user, uc_participant, user_name, full_name, email FROM tech_user WHERE uc = ? LIMIT 1",
           [uc]);
+
       if (result.isEmpty) {
         throw ("notfound");
       }
@@ -466,8 +477,9 @@ class UserRepository {
 
       Map resTrb = {};
       List<Map> resultTrb = await db.rawQuery(
-          "select uc_trb_schedule, uc_participant, uc_diklat_participant, seafarer_code from tech_trb_participant where uc_participant = ? limit 1",
+          "SELECT uc_trb_schedule, uc_participant, uc_diklat_participant, seafarer_code FROM tech_trb_participant WHERE uc_participant = ? LIMIT 1",
           [resUser['uc_participant']]);
+
       log("getData: participant $resultTrb");
       if (resultTrb.isNotEmpty) {
         resTrb = resultTrb.first;
@@ -479,12 +491,13 @@ class UserRepository {
 
         List<Map> resultSchedule = await db.rawQuery(
           '''
-      SELECT tech_trb_schedule.title, tech_trb_schedule.date_start, tech_trb_schedule.date_finish, tech_trb_schedule.uc_upt, tech_trb_schedule.uc_pukp, tech_trb_schedule.uc_level, tech_level.label
-      FROM tech_trb_schedule
-      INNER JOIN tech_level ON tech_trb_schedule.uc_level = tech_level.uc
-      WHERE tech_trb_schedule.uc = ?
-      LIMIT 1;
-      ''',
+        SELECT tech_trb_schedule.title, tech_trb_schedule.date_start, tech_trb_schedule.date_finish, 
+               tech_trb_schedule.uc_upt, tech_trb_schedule.uc_pukp, tech_trb_schedule.uc_level, tech_level.label
+        FROM tech_trb_schedule
+        INNER JOIN tech_level ON tech_trb_schedule.uc_level = tech_level.uc
+        WHERE tech_trb_schedule.uc = ?
+        LIMIT 1;
+        ''',
           [ucTrbSchedule],
         );
 
@@ -495,18 +508,17 @@ class UserRepository {
       }
 
       List<Map> resultSign = await db.rawQuery(
-          "select * from tech_sign where seafarer_code = ? and sign_on_date != null and sign_off_date == null limit 1",
+          "SELECT * FROM tech_sign WHERE seafarer_code = ? AND sign_on_date IS NOT NULL AND sign_off_date IS NULL LIMIT 1",
           [ret['seafarer_code']]);
-      if (resultSign.isNotEmpty) {
-        ret['sign'] = true;
-      } else {
-        ret['sign'] = false;
-      }
+
+      ret['sign'] = resultSign.isNotEmpty;
 
       finalResult = {'status': true, "data": ret};
     } finally {
       await mydb.close2();
     }
+
+    log("getData: Final Result $finalResult");
     return finalResult;
   }
 

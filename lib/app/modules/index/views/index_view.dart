@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/components/footer_copyright.dart';
@@ -10,9 +11,10 @@ import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
 import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
 import 'package:mytrb/app/modules/profile/controllers/profile_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
+import 'package:mytrb/utils/connection.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:responsive_framework/responsive_value.dart'
-    as responsive; // Tambah prefix
+import 'package:responsive_framework/responsive_value.dart' as responsive;
+import 'package:shared_preferences/shared_preferences.dart'; // Tambah prefix
 
 class IndexView extends GetView<IndexController> {
   final AuthController authController = Get.find<AuthController>();
@@ -21,15 +23,28 @@ class IndexView extends GetView<IndexController> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: SafeArea(
-        child: Scaffold(
-          body: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
+    return RefreshIndicator(
+      onRefresh: () async {
+        bool isConnected = await ConnectionUtils.checkInternetConnection();
+        if (!isConnected) {
+          EasyLoading.showError("Tidak ada koneksi internet.");
+          return;
+        }
+
+        final prefs = await SharedPreferences.getInstance();
+        String? userUc = prefs.getString("userUc");
+        if (userUc != null) {
+          await authController.fetchUserDataAuth(userUc);
+        }
+      },
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: SafeArea(
+          child: Scaffold(
+            body: Column(
+              children: [
+                Expanded(
+                  child: ListView(
                     children: [
                       Stack(
                         alignment: Alignment.topCenter,
@@ -72,9 +87,9 @@ class IndexView extends GetView<IndexController> {
                     ],
                   ),
                 ),
-              ),
-              const FooterCopyright(), // Footer tetap di bawah
-            ],
+                const FooterCopyright(),
+              ],
+            ),
           ),
         ),
       ),

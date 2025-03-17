@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mytrb/app/Repository/news_repository.dart';
 import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
+import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
 import 'package:mytrb/app/modules/news/controllers/news_controller.dart';
 import 'package:mytrb/config/theme/theme_data.dart';
 import 'package:mytrb/main_binding.dart';
@@ -44,43 +47,92 @@ class MyApp extends StatelessWidget {
     OneSignal.Notifications.addClickListener((event) async {
       EasyLoading.show(status: 'Loading...');
 
-      final data = event.notification.additionalData;
-      String? type = data?['type'];
-      String? uc = data?['uc'];
-
-      if (type != null) {
-        switch (type) {
-          case 'news':
-            NewsController newsController = Get.find<NewsController>();
-            await NewsRepository.getNewNews();
-            if (uc != null) {
-              var selectedNews = newsController.newsList.firstWhereOrNull(
-                (news) => news['uc'] == uc,
-              );
-              if (selectedNews != null) {
-                await newsController.setRead(uc);
-                Get.toNamed(Routes.NEWS_DETAIL, arguments: selectedNews);
-              } else {
-                Get.toNamed(Routes.NEWS);
-              }
-            } else {
-              Get.toNamed(Routes.NEWS);
-            }
-            break;
-
-          default:
-            AuthController authController = Get.find<AuthController>();
-            var authResult = await authController.checkAuth();
-            if (authResult) {
-              Get.toNamed(Routes.LOGIN);
-            } else {
-              Get.toNamed(Routes.INDEX);
-            }
-            break;
+      try {
+        final data = event.notification.additionalData;
+        if (data == null) {
+          log("OneSignal: No additional data found");
+          EasyLoading.dismiss();
+          return;
         }
+
+        String? type = data['type'];
+        String? uc = data['uc'];
+
+        if (type != null) {
+          switch (type) {
+            case 'news':
+              if (Get.isRegistered<NewsController>()) {
+                NewsController newsController = Get.find<NewsController>();
+
+                await NewsRepository.getNewNews();
+                await newsController.fetchNews();
+
+                // Tambahkan IndexController jika sudah terdaftar
+                if (Get.isRegistered<IndexController>()) {
+                  IndexController indexController = Get.find<IndexController>();
+                  await indexController.initializeHome();
+                }
+
+                if (uc != null) {
+                  var selectedNews = newsController.newsList.firstWhereOrNull(
+                    (news) => news['uc'] == uc,
+                  );
+
+                  if (selectedNews != null) {
+                    EasyLoading.dismiss(); // Dismiss sebelum navigasi
+
+                    var status = await Get.toNamed(Routes.NEWS_DETAIL,
+                            arguments: selectedNews)
+                        ?.then((value) async {
+                      // Jika kembali dari halaman NEWS_DETAIL, jalankan initializeHome
+                      if (Get.isRegistered<IndexController>()) {
+                        IndexController indexController =
+                            Get.find<IndexController>();
+                        await indexController.initializeHome();
+                      }
+                      return value;
+                    });
+
+                    if (status is int && status == 1) {
+                      newsController.markAsRead(uc);
+                    }
+                  } else {
+                    EasyLoading.dismiss(); // Dismiss sebelum navigasi
+                    Get.toNamed(Routes.NEWS);
+                  }
+                } else {
+                  EasyLoading.dismiss(); // Dismiss sebelum navigasi
+                  Get.toNamed(Routes.NEWS);
+                }
+              } else {
+                log("OneSignal: NewsController not registered");
+              }
+              break;
+
+            default:
+              if (Get.isRegistered<AuthController>()) {
+                AuthController authController = Get.find<AuthController>();
+                var authResult = await authController.checkAuth();
+
+                EasyLoading.dismiss(); // Dismiss sebelum navigasi
+                if (authResult) {
+                  Get.toNamed(Routes.LOGIN);
+                } else {
+                  Get.toNamed(Routes.INDEX);
+                }
+              } else {
+                log("OneSignal: AuthController not registered");
+              }
+              break;
+          }
+        } else {
+          log("OneSignal: Type not found in notification");
+        }
+      } catch (e) {
+        log("OneSignal Error: $e");
       }
 
-      EasyLoading.dismiss();
+      EasyLoading.dismiss(); // Pastikan dismiss tetap dipanggil jika ada error
     });
 
     return ScreenUtilInit(
