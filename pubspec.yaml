@@ -25,6 +25,7 @@ dependencies:
   # Networking & API handling
   dio: ^5.4.1
   http_mock_adapter: ^0.6.1 # Mocking dio for testing
+  upgrader: ^8.4.0
 
   # Storage & Persistence
   shared_preferences: ^2.2.2

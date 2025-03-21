@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 // import 'package:mytrb/app/components/footer_copyright.dart';
 import 'package:mytrb/app/components/footer_copyright_login.dart';
 import 'package:mytrb/config/environment/environment.dart';
+import 'package:upgrader/upgrader.dart';
 import '../controllers/splash_controller.dart';
 
 class SplashView extends GetWidget<SplashController> {
@@ -11,18 +12,30 @@ class SplashView extends GetWidget<SplashController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return UpgradeAlert(
+      upgrader: Upgrader(
+        debugLogging: true,
+        countryCode: "ID",
+        messages: UpgraderMessages(code: "ID"),
+        canDismissDialog: false,
+        showIgnore: false,
+        showLater: false,
+        debugDisplayAlways: false,
+        dialogStyle: UpgradeDialogStyle.cupertino,
+        cupertinoButtonTextStyle:
+            const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+      ),
+      child: Scaffold(
         backgroundColor: Colors.grey[800],
         body: SafeArea(
           child: Center(
             child: Column(
               children: [
-                const Spacer(flex: 3), // Ruang atas sedikit lebih kecil
+                const Spacer(flex: 3),
                 FadeInUp(
                   delay: const Duration(milliseconds: 500),
                   duration: const Duration(milliseconds: 1000),
                   child: Column(
-                    // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 150.0),
@@ -45,8 +58,7 @@ class SplashView extends GetWidget<SplashController> {
                     ],
                   ),
                 ),
-                const Spacer(
-                    flex: 6), // Kurangi tinggi spacer ini agar teks bawah naik
+                const Spacer(flex: 6),
                 FadeInUp(
                   delay: const Duration(milliseconds: 700),
                   duration: const Duration(milliseconds: 1200),
@@ -64,30 +76,15 @@ class SplashView extends GetWidget<SplashController> {
                         ),
                       ),
                       SizedBox(height: 16),
-                      // Padding(
-                      //   padding: EdgeInsets.only(bottom: 30.0),
-                      //   child: Text(
-                      //     'Jakarta',
-                      //     style: TextStyle(
-                      //       fontSize: 18,
-                      //       color: Colors.white,
-                      //     ),
-                      //     textAlign: TextAlign.center,
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
-                // const SizedBox(
-                //     height: 30), // Tambahkan sedikit ruang sebelum footer
-                // const Padding(
-                //   padding: EdgeInsets.only(bottom: 16.0),
-                //   child: FooterCopyrightLogin(),
-                // ),
               ],
             ),
           ),
         ),
-        bottomNavigationBar: const FooterCopyrightLogin());
+        bottomNavigationBar: const FooterCopyrightLogin(),
+      ),
+    );
   }
 }
