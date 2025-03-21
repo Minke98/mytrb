@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/news_repository.dart';
 
@@ -7,6 +9,7 @@ class NewsController extends GetxController {
   var newsList = <Map>[].obs;
   var status = NewsReadyStatus.ready.obs;
   var page = 1.obs;
+  var isFetching = false.obs;
 
   NewsController({required this.newsRepository});
 
@@ -14,6 +17,20 @@ class NewsController extends GetxController {
   void onInit() {
     super.onInit();
     fetchNews();
+  }
+
+  Future<void> fetchNewsData() async {
+    if (isFetching.value) return;
+
+    try {
+      isFetching.value = true;
+      await NewsRepository.getNewNews();
+      await fetchNews();
+    } catch (e) {
+      log("Error fetching news: $e");
+    } finally {
+      isFetching.value = false;
+    }
   }
 
   Future<void> fetchNews() async {

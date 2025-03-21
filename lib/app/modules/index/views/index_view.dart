@@ -158,10 +158,12 @@ class IndexView extends GetView<IndexController> {
             alignment: Alignment.topCenter,
             child: Padding(
               padding: const EdgeInsets.only(
-                  top: 20), // Tambah jarak 20 pixel dari atas
+                top: 20, // Tambah jarak 20 pixel dari atas
+              ),
               child: Image.asset(
                 "assets/images/LogoSTIP1.png",
-                // scale: ResponsiveWrapper.of(context).isMobile ? 1 : 1,
+                width: 200, // Sesuaikan ukuran lebar
+                height: 200, // Sesuaikan ukuran tinggi
               ),
             ),
           ),

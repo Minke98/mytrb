@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mytrb/app/Repository/profile_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
+import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:mytrb/utils/manual_con_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +20,8 @@ class ProfileController extends GetxController {
   var errorMessage = ''.obs;
   var isEditing = false.obs;
   var passwordVisible = false.obs;
+  var newPasswordVisible = false.obs;
+  var retypePasswordVisible = false.obs;
   var activeFotoProfile = "assets/images/profile.jpg".obs;
   var fotoProfile = Rx<XFile?>(null);
   TextStyle? formTextStyle;
@@ -45,22 +49,22 @@ class ProfileController extends GetxController {
     getCurrentProfile();
   }
 
-  @override
-  void onClose() {
-    nikController.dispose();
-    seafererCodeController.dispose();
-    fullNameController.dispose();
-    genderController.dispose();
-    nationalityController.dispose();
-    emailController.dispose();
-    tempatLahirController.dispose();
-    tanggalLahirController.dispose();
-    oldPasswordController.dispose();
-    newPasswordController.dispose();
-    confirmNewPasswordController.dispose();
-    scrollController.dispose();
-    super.onClose();
-  }
+  // @override
+  // void onClose() {
+  //   nikController.dispose();
+  //   seafererCodeController.dispose();
+  //   fullNameController.dispose();
+  //   genderController.dispose();
+  //   nationalityController.dispose();
+  //   emailController.dispose();
+  //   tempatLahirController.dispose();
+  //   tanggalLahirController.dispose();
+  //   oldPasswordController.dispose();
+  //   newPasswordController.dispose();
+  //   confirmNewPasswordController.dispose();
+  //   scrollController.dispose();
+  //   super.onClose();
+  // }
 
   Future<void> getCurrentProfile() async {
     isLoading.value = true;
@@ -105,28 +109,43 @@ class ProfileController extends GetxController {
   }
 
   Future<void> updateProfile() async {
-    isLoading.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    String? uc = prefs.getString('userUc');
-    if (uc == null) {
-      errorMessage.value = "Profile Tidak Dapat Ditemukan";
+  isLoading.value = true;  // Tampilkan loading indikator
+  EasyLoading.show(status: 'Memperbarui profil...');
+
+  final prefs = await SharedPreferences.getInstance();
+  String? uc = prefs.getString('userUc');
+
+  if (uc == null) {
+    errorMessage.value = "Profile Tidak Dapat Ditemukan";
+    EasyLoading.showError("Profile Tidak Dapat Ditemukan");
+  } else {
+    File? imageFile = image.value != null ? File(image.value!.path) : null;
+
+    Map res = await profileRepository.updateUser(
+      email: emailController.text,
+      foto: imageFile,
+      password: oldPasswordController.text,
+      newpassword: newPasswordController.text,
+    );
+
+    if (res['status'] == true) {
+      userData.value = await UserRepository.getLocalUser(uc: uc);
+      _setUserData();
+      isEditing.value = true;
+
+      EasyLoading.showSuccess("Profil berhasil diperbarui");
+      Get.offAndToNamed(Routes.INDEX);  // Arahkan ke halaman index jika sukses
     } else {
-      Map res = await profileRepository.updateUser(
-        email: emailController.text,
-        foto: File(image.value!.path),
-        password: oldPasswordController.text,
-        newpassword: newPasswordController.text,
-      );
-      if (res['status'] == true) {
-        userData.value = await UserRepository.getLocalUser(uc: uc);
-        _setUserData();
-        isEditing.value = true;
-      } else {
-        errorMessage.value = res['message'];
-      }
+      errorMessage.value = res['message'];
+      EasyLoading.showError(res['message']);  // Tampilkan pesan error
     }
-    isLoading.value = false;
   }
+
+  isLoading.value = false;
+  EasyLoading.dismiss();  // Tutup loading indikator
+}
+
+
 
   Future<void> editProfile() async {
     bool conStatus = await ConnectionTest.check();

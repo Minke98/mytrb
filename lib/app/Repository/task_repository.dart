@@ -1082,129 +1082,120 @@ GROUP BY
   }
 
   Future urlVideo({required String ucTask, required String urlVideo}) async {
-    Map finalres = {};
-    MyDatabase mydb = MyDatabase.instance;
-    var db;
-    if (mydb.transaction != null) {
-      db = mydb.transaction!;
-    } else {
-      db = await mydb.database;
-    }
-    try {
-      await db.transaction((dbx) async {
-        mydb.transaction = dbx;
-        Map userData = await UserRepository.getLocalUser();
-        log("taskRepo $userData");
-        if (userData['status'] == false) {
-          throw ("Cannot Find User Data");
-        }
-        if (userData['data']['sign'] == false) {
-          throw ("User Not Sign");
-        }
-        String ucSign = userData['data']['sign_uc'];
-        String ucSignLocal = userData['data']['sign_uc_local'];
+  Map finalres = {};
+  MyDatabase mydb = MyDatabase.instance;
+  var db;
 
-        List<Map> taskChecklist = await dbx.rawQuery(
-            "select * from tech_task_check where uc_task = ? and uc_sign = ? limit 1 ",
-            [ucTask, ucSign]);
-        bool newCheckList = false;
-        var uuid = const Uuid();
-        String? uc;
-        String? ucLokal;
-        if (taskChecklist.isEmpty) {
-          // uc =
-          //     "local_${uuid.v1()}_${taskUc}_${userData['data']['uc_tech_user']}";
-          uc = "${ucSignLocal}_${uuid.v1()}_$ucTask";
-          ucLokal = uc;
-          newCheckList = true;
-        } else {
-          Map taskCheckListData = taskChecklist.first;
-          uc = taskCheckListData['uc'];
-          ucLokal = taskCheckListData['local_uc'];
-          newCheckList = false;
-        }
-        String deviceId = await getUniqueDeviceId();
-        if (newCheckList == true) {
-          log("taskRepo ADD");
-          await dbx.rawInsert(
-              """insert into tech_task_check (uc, local_uc, uc_sign, uc_task, 
-              app_inst_status, app_lect_status, device_id) values (?,?,?,?,?,?,?)""",
-              [uc, ucLokal, ucSign, ucTask, 0, 0, deviceId]);
-          await journalIt(
-              tableName: "tech_task_check",
-              actionType: "c",
-              tableKey: ucLokal,
-              db: dbx);
-        } else {
-          log("taskRepo Update");
-          await dbx.rawUpdate(
-              """ update tech_task_check set att_url = ? where uc = ? """,
-              [urlVideo, uc]);
-
-          await journalIt(
-              tableName: "tech_task_check",
-              actionType: "u",
-              tableKey: ucLokal,
-              db: dbx);
-        }
-        List<Map> tmpResTaskList = await dbx.rawQuery(
-            // """ SELECT * FROM `tech_task` WHERE `uc_sub_competency` = ? """,
-            """ SELECT
-            tt.*,
-          CASE
-              WHEN tc.uc IS NULL THEN
-              0 ELSE 1 
-            END AS isChecked,
-          CASE
-              WHEN tc.app_inst_status IS NULL THEN
-              0 ELSE tc.app_inst_status
-            END AS status,
-          CASE
-              WHEN tc.app_lect_status IS NULL THEN
-              0 ELSE tc.app_lect_status
-            END AS lect_status,
-          tc.app_inst_time as instTime,
-          tc.app_lect_time as lectTime,
-          tc.att_url AS url
-          FROM
-            tech_task AS tt
-            LEFT JOIN tech_task_check AS tc 
-            on tc.uc_task = tt.uc and tc.uc_sign = ?
-          WHERE
-            tt.uc = ? """,
-            [ucSign, ucTask]);
-        List<Map> resTaskList = [];
-        for (Map item in tmpResTaskList) {
-          Map tmp = Map.from(item);
-          // var formatParse = DateFormat('y-M-d H:m:s');
-          var formatParse = DateFormat('yyyy-MM-dd HH:mm:ss');
-          if (tmp['instTime'] != null) {
-            DateTime instTime = formatParse.parse(tmp['instTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
-            tmp["instTime"] = format.format(instTime);
-          }
-          if (tmp['lectTime'] != null) {
-            DateTime lectTime = formatParse.parse(tmp['lectTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
-            tmp["lectTime"] = format.format(lectTime);
-          }
-          resTaskList.add(tmp);
-        }
-        Map? resTask;
-        if (resTaskList.isNotEmpty) {
-          resTask = resTaskList.first;
-        }
-        log("taskRepo approve $resTask");
-
-        finalres['status'] = true;
-        finalres['data'] = resTask;
-      });
-    } catch (e) {
-      finalres['status'] = false;
-      finalres['message'] = e.toString();
-    } finally {
-      mydb.transaction = null;
-    }
-    return finalres;
+  if (mydb.transaction != null) {
+    db = mydb.transaction!;
+  } else {
+    db = await mydb.database;
   }
+
+  try {
+    await db.transaction((dbx) async {
+      mydb.transaction = dbx;
+      Map userData = await UserRepository.getLocalUser();
+      log("taskRepo $userData");
+
+      if (userData['status'] == false) throw ("Cannot Find User Data");
+      if (userData['data']['sign'] == false) throw ("User Not Signed In");
+
+      String ucSign = userData['data']['sign_uc'];
+      String ucSignLocal = userData['data']['sign_uc_local'];
+
+      // Mengecek task checklist
+      List<Map> taskChecklist = await dbx.rawQuery(
+          "SELECT * FROM tech_task_check WHERE uc_task = ? AND uc_sign = ? LIMIT 1",
+          [ucTask, ucSign]);
+
+      bool newCheckList = false;
+      var uuid = const Uuid();
+      String? uc;
+      String? ucLokal;
+
+      if (taskChecklist.isEmpty) {
+        uc = "${ucSignLocal}_${uuid.v1()}_$ucTask";
+        ucLokal = uc;
+        newCheckList = true;
+      } else {
+        Map taskCheckListData = taskChecklist.first;
+        uc = taskCheckListData['uc'];
+        ucLokal = taskCheckListData['local_uc'];
+      }
+
+      log("UC yang digunakan untuk update: $uc");
+      log("URL yang akan diupdate: $urlVideo");
+
+      // Validasi nilai URL sebelum update
+      if (urlVideo.isEmpty) throw ("URL Video tidak valid!");
+
+      String deviceId = await getUniqueDeviceId();
+
+      if (newCheckList) {
+        log("taskRepo ADD");
+        await dbx.rawInsert(
+            """INSERT INTO tech_task_check 
+              (uc, local_uc, uc_sign, uc_task, app_inst_status, app_lect_status, device_id, att_url) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            [uc, ucLokal, ucSign, ucTask, 0, 0, deviceId, urlVideo]);
+        await journalIt(
+            tableName: "tech_task_check",
+            actionType: "c",
+            tableKey: ucLokal,
+            db: dbx);
+      } else {
+        log("taskRepo Update");
+        int rowsUpdated = await dbx.rawUpdate(
+            "UPDATE tech_task_check SET att_url = ? WHERE uc = ?",
+            [urlVideo, uc]);
+        log("Rows updated: $rowsUpdated");
+
+        if (rowsUpdated == 0) throw ("Gagal mengupdate URL video.");
+        await journalIt(
+            tableName: "tech_task_check",
+            actionType: "u",
+            tableKey: ucLokal,
+            db: dbx);
+      }
+
+      // Cek apakah URL benar-benar sudah diupdate
+      List<Map> verifyUpdate = await dbx.rawQuery(
+          "SELECT att_url FROM tech_task_check WHERE uc = ?", [uc]);
+      if (verifyUpdate.isEmpty) throw ("Data tidak ditemukan setelah update!");
+      log("URL terupdate: ${verifyUpdate.first['att_url']}");
+
+      // Mengambil task data untuk response
+      List<Map> tmpResTaskList = await dbx.rawQuery(
+          """SELECT
+              tt.*,
+              CASE WHEN tc.uc IS NULL THEN 0 ELSE 1 END AS isChecked,
+              CASE WHEN tc.app_inst_status IS NULL THEN 0 ELSE tc.app_inst_status END AS status,
+              CASE WHEN tc.app_lect_status IS NULL THEN 0 ELSE tc.app_lect_status END AS lect_status,
+              tc.app_inst_time as instTime,
+              tc.app_lect_time as lectTime,
+              tc.att_url AS url
+            FROM tech_task AS tt
+            LEFT JOIN tech_task_check AS tc ON tc.uc_task = tt.uc AND tc.uc_sign = ?
+            WHERE tt.uc = ?""",
+          [ucSign, ucTask]);
+
+      Map? resTask;
+      if (tmpResTaskList.isNotEmpty) resTask = tmpResTaskList.first;
+      log("taskRepo approve $resTask");
+
+      finalres['status'] = true;
+      finalres['data'] = resTask;
+    });
+  } catch (e, stacktrace) {
+    log("ERROR: $e\nSTACKTRACE: $stacktrace");
+    finalres['status'] = false;
+    finalres['message'] = e.toString();
+  } finally {
+    mydb.transaction = null;
+  }
+
+  return finalres;
+}
+
 }

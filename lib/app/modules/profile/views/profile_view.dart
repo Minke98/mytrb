@@ -238,6 +238,7 @@ class ProfileView extends GetView<ProfileController> {
         return TextFormField(
           style: const TextStyle(color: Colors.black),
           controller: controller.emailController,
+          cursorColor: Colors.black,
           decoration: InputDecoration(
             enabled: controller.isEditing.value,
             labelStyle: controller.formTextStyle,
@@ -327,9 +328,10 @@ class ProfileView extends GetView<ProfileController> {
   Widget oldPasswordField(BuildContext context) {
     return Obx(() {
       return TextFormField(
-        style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+        style: const TextStyle(color: Colors.black),
         obscureText: !controller.passwordVisible.value,
         controller: controller.oldPasswordController,
+        cursorColor: Colors.black,
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -365,8 +367,9 @@ class ProfileView extends GetView<ProfileController> {
   Widget newPassword(BuildContext context) {
     return Obx(() {
       return TextFormField(
-        style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
-        obscureText: !controller.passwordVisible.value,
+        style: const TextStyle(color: Colors.black),
+        cursorColor: Colors.black,
+        obscureText: !controller.newPasswordVisible.value,
         controller: controller.newPasswordController,
         decoration: InputDecoration(
           border: OutlineInputBorder(
@@ -377,11 +380,11 @@ class ProfileView extends GetView<ProfileController> {
           labelStyle: controller.formTextStyle,
           suffixIcon: IconButton(
             onPressed: () {
-              controller.passwordVisible.value =
-                  !controller.passwordVisible.value;
+              controller.newPasswordVisible.value =
+                  !controller.newPasswordVisible.value;
             },
             icon: Icon(
-              controller.passwordVisible.value
+              controller.newPasswordVisible.value
                   ? Icons.visibility
                   : Icons.visibility_off,
               color: Colors.grey,
@@ -405,8 +408,9 @@ class ProfileView extends GetView<ProfileController> {
   Widget confirmPassword(BuildContext context) {
     return Obx(() {
       return TextFormField(
-        style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
-        obscureText: !controller.passwordVisible.value,
+        style: const TextStyle(color: Colors.black),
+        cursorColor: Colors.black,
+        obscureText: !controller.retypePasswordVisible.value,
         controller: controller.confirmNewPasswordController,
         decoration: InputDecoration(
           border: OutlineInputBorder(
@@ -417,11 +421,11 @@ class ProfileView extends GetView<ProfileController> {
           labelStyle: controller.formTextStyle,
           suffixIcon: IconButton(
             onPressed: () {
-              controller.passwordVisible.value =
-                  !controller.passwordVisible.value;
+              controller.retypePasswordVisible.value =
+                  !controller.retypePasswordVisible.value;
             },
             icon: Icon(
-              controller.passwordVisible.value
+              controller.retypePasswordVisible.value
                   ? Icons.visibility
                   : Icons.visibility_off,
               color: Colors.grey,

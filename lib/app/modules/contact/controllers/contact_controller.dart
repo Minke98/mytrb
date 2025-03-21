@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/contact_repository.dart';
 
@@ -25,6 +26,8 @@ class ContactController extends GetxController {
     if (!isFormValid.value) return;
 
     isSubmitting.value = true;
+    EasyLoading.show(status: 'Sending...'); // Menampilkan loading indikator
+
     Map res = await contactRepository.send(
       pesan: pesanController.text,
       email: emailController.text,
@@ -33,15 +36,17 @@ class ContactController extends GetxController {
 
     if (res['status'] == true) {
       isSent.value = true;
-      Get.snackbar("Success", "Message Sent",
-          snackPosition: SnackPosition.BOTTOM);
+      EasyLoading.showSuccess("Message Sent"); // Menampilkan pesan sukses
+      Get.back(); // Kembali ke halaman sebelumnya
     } else {
       errorMessage.value = res.containsKey('message')
           ? res['message']
           : "Maaf, data tidak dapat terkirim";
+      EasyLoading.showError(errorMessage.value); // Menampilkan pesan error
     }
 
     isSubmitting.value = false;
+    EasyLoading.dismiss(); // Menutup loading indikator
   }
 
   void validateForm() {

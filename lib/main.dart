@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:mytrb/app/Repository/news_repository.dart';
+// import 'package:mytrb/app/Repository/news_repository.dart';
 import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
 import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
 import 'package:mytrb/app/modules/news/controllers/news_controller.dart';
@@ -64,8 +64,7 @@ class MyApp extends StatelessWidget {
               if (Get.isRegistered<NewsController>()) {
                 NewsController newsController = Get.find<NewsController>();
 
-                await NewsRepository.getNewNews();
-                await newsController.fetchNews();
+                await newsController.fetchNewsData();
 
                 // Tambahkan IndexController jika sudah terdaftar
                 if (Get.isRegistered<IndexController>()) {
@@ -79,11 +78,15 @@ class MyApp extends StatelessWidget {
                   );
 
                   if (selectedNews != null) {
-                    EasyLoading.dismiss(); // Dismiss sebelum navigasi
 
-                    var status = await Get.toNamed(Routes.NEWS_DETAIL,
-                            arguments: selectedNews)
-                        ?.then((value) async {
+                    EasyLoading.dismiss();
+                    var status =
+                        await Get.toNamed(Routes.NEWS_DETAIL, arguments: {
+                      "uc": selectedNews['uc'],
+                      "title": selectedNews['title'],
+                      "created_at": selectedNews['created_at_formated'],
+                      "description": selectedNews['descriptionfull'],
+                    })?.then((value) async {
                       // Jika kembali dari halaman NEWS_DETAIL, jalankan initializeHome
                       if (Get.isRegistered<IndexController>()) {
                         IndexController indexController =

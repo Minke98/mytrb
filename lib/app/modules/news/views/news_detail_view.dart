@@ -53,7 +53,13 @@ class NewsDetailView extends GetView<NewsController> {
                     TextSpan(text: desc),
                   ],
                 ),
-              )
+              ),
+              // Menambahkan Text tambahan agar tidak ada batasan maxLines
+              const SizedBox(height: 10),
+              Text(
+                desc,
+                style: const TextStyle(color: Colors.transparent, fontSize: 0),
+              ),
             ],
           ),
         ),

@@ -20,7 +20,7 @@ class SplashView extends GetWidget<SplashController> {
         canDismissDialog: false,
         showIgnore: false,
         showLater: false,
-        debugDisplayAlways: false,
+        debugDisplayAlways: true,
         dialogStyle: UpgradeDialogStyle.cupertino,
         cupertinoButtonTextStyle:
             const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),

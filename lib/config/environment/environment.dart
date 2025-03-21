@@ -3,7 +3,7 @@ class Environment {
   static const apiKey = '6f926d5c19164cdfa95205814242202';
 
   // api urls
-  static const baseUrl = 'http://192.168.100.38';
+  static const baseUrl = 'http://192.168.1.20';
   static const apiUrl = '$baseUrl/trsea-api/api';
   static const refreshUrl = '$apiUrl/auth/refresh';
   static const baseline = '$apiUrl/sync/baseline';

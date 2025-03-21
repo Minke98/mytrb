@@ -39,7 +39,7 @@ class TaskChecklistController extends GetxController {
   TextEditingController notes = TextEditingController();
   var isFirstAttachmentAdded = false.obs;
   final ScrollController scrollController = ScrollController();
-  String? urlVideo;
+  // String? urlVideo;
   var lastScrollPosition = 0.0.obs;
   Timer? _scrollDebounce;
 
@@ -173,13 +173,13 @@ class TaskChecklistController extends GetxController {
     }
   }
 
-  Future<void> saveUrlVideo(String ucTask, String urlVideo) async {
+  Future<void> saveUrlVideo(String ucTask,) async {
     try {
       EasyLoading.show(status: 'Saving...'); // Tampilkan loading indicator
       isLoading.value = true;
 
       var res =
-          await taskRepository.urlVideo(urlVideo: urlVideo, ucTask: ucTask);
+          await taskRepository.urlVideo(urlVideo: videoUrl.value, ucTask: ucTask);
 
       if (res['status'] == true) {
         updateSingleTask(ucTask);

@@ -66,28 +66,24 @@ class ExamController extends GetxController {
       prefs.setString("userUc", isAuth['user'].uc);
 
       var userData = await userRepository.getUserData(uc: isAuth['user'].uc);
-      if (userData != null) {
-        var response = await examRepository.getExam(userData: userData['data']);
-        if (response['status'] == 200) {
-          final List<Map> resExam = List<Map>.from(response['data'] ?? []);
-          final now = DateTime.now();
-          exams.value = resExam.map((exam) {
-            final openTime = DateTime.tryParse(exam['open_time'] ?? '') ?? now;
-            final closeTime = DateTime.tryParse(exam['close_time'] ?? '') ??
-                now.add(const Duration(days: 365));
-            return {
-              ...exam,
-              'canBeOpened': now.isAfter(openTime) && now.isBefore(closeTime),
-            };
-          }).toList();
-        } else {
-          examError.value = "Gagal memuat ujian";
-          EasyLoading.showError("Failed to load exams");
-          Get.back();
-        }
+
+      var response = await examRepository.getExam(userData: userData['data']);
+      if (response['status'] == 200) {
+        final List<Map> resExam = List<Map>.from(response['data'] ?? []);
+        final now = DateTime.now();
+        exams.value = resExam.map((exam) {
+          final openTime = DateTime.tryParse(exam['open_time'] ?? '') ?? now;
+          final closeTime = DateTime.tryParse(exam['close_time'] ?? '') ??
+              now.add(const Duration(days: 365));
+          return {
+            ...exam,
+            'canBeOpened': now.isAfter(openTime) && now.isBefore(closeTime),
+          };
+        }).toList();
       } else {
-        examError.value = "Data pengguna tidak ditemukan";
-        EasyLoading.showError("User data not found");
+        examError.value = "Gagal memuat ujian";
+        EasyLoading.showError("Failed to load exams");
+        Get.back();
       }
     } catch (e) {
       _logger.e("Error in initExam: $e");
@@ -120,46 +116,41 @@ class ExamController extends GetxController {
       prefs.setString("userUc", isAuth['user'].uc);
 
       var userData = await userRepository.getUserData(uc: isAuth['user'].uc);
-      if (userData != null) {
-        var response = await examRepository.getUrlExam(userData, uc);
-        if (response['status'] == 200) {
-          webViewController = WebViewController()
-            ..setJavaScriptMode(JavaScriptMode.unrestricted)
-            ..setNavigationDelegate(
-              NavigationDelegate(
-                onPageStarted: (String url) {},
-                onPageFinished: (String url) async {
-                  // **Autentikasi sebelum masuk ke halaman ujian**
-                  bool isAuthenticated = await BiometricAuth.authenticateUser(
-                      'Gunakan autentikasi biometrik untuk mengakses ujian');
-                  if (!isAuthenticated) {
-                    EasyLoading.showError('Autentikasi biometrik gagal');
-                    return;
-                  }
+      var response = await examRepository.getUrlExam(userData, uc);
+      if (response['status'] == 200) {
+        webViewController = WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onPageStarted: (String url) {},
+              onPageFinished: (String url) async {
+                // **Autentikasi sebelum masuk ke halaman ujian**
+                bool isAuthenticated = await BiometricAuth.authenticateUser(
+                    'Gunakan autentikasi biometrik untuk mengakses ujian');
+                if (!isAuthenticated) {
+                  EasyLoading.showError('Autentikasi biometrik gagal');
+                  return;
+                }
 
-                  Get.toNamed(Routes.EXAM_WEB);
-                },
-                onWebResourceError: (WebResourceError error) {
-                  Get.snackbar('Error', 'Terjadi kesalahan memuat halaman');
-                },
-                onNavigationRequest: (NavigationRequest request) {
-                  if (request.url.startsWith('https://www.youtube.com/')) {
-                    return NavigationDecision.prevent;
-                  }
-                  return NavigationDecision.navigate;
-                },
-              ),
-            )
-            ..loadRequest(Uri.parse(response['examUrl']));
+                Get.toNamed(Routes.EXAM_WEB);
+              },
+              onWebResourceError: (WebResourceError error) {
+                Get.snackbar('Error', 'Terjadi kesalahan memuat halaman');
+              },
+              onNavigationRequest: (NavigationRequest request) {
+                if (request.url.startsWith('https://www.youtube.com/')) {
+                  return NavigationDecision.prevent;
+                }
+                return NavigationDecision.navigate;
+              },
+            ),
+          )
+          ..loadRequest(Uri.parse(response['examUrl']));
 
-          EasyLoading.showSuccess("Exam URL loaded successfully");
-        } else {
-          examError.value = "Gagal memuat ujian";
-          EasyLoading.showError("Failed to load exam");
-        }
+        EasyLoading.showSuccess("Exam URL loaded successfully");
       } else {
-        examError.value = "Data pengguna tidak ditemukan";
-        EasyLoading.showError("User data not found");
+        examError.value = "Gagal memuat ujian";
+        EasyLoading.showError("Failed to load exam");
       }
     } catch (e) {
       _logger.e("Error in getUrlExam: $e");

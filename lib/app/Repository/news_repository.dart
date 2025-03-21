@@ -131,15 +131,15 @@ class NewsRepository extends Repository {
     final finalRes = {"status": false};
     MyDatabase mydb = MyDatabase.instance;
     Database dbx = await mydb.database;
-    Database db = dbx;
+    // Database db = dbx;
     String lastCreatedDate = "1980-01-01 00:00:00";
 
-    List<Map> findNews = await db.rawQuery(
-        """SELECT * FROM tech_news ORDER BY created_at DESC LIMIT 1""");
+    // List<Map> findNews = await db.rawQuery(
+    //     """SELECT * FROM tech_news ORDER BY created_at DESC LIMIT 1""");
 
-    if (findNews.isNotEmpty) {
-      lastCreatedDate = findNews.first["created_at"];
-    }
+    // if (findNews.isNotEmpty) {
+    //   lastCreatedDate = findNews.first["created_at"];
+    // }
 
     // final prefs = await SharedPreferences.getInstance();
     // String userUc = prefs.getString('userUc')!;

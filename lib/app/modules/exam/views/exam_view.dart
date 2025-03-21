@@ -92,21 +92,8 @@ class ExamView extends GetView<ExamController> {
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // **Ikon Mata Pelajaran**
-                          // Container(
-                          //   padding: const EdgeInsets.all(10),
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.blue.shade100,
-                          //     shape: BoxShape.circle,
-                          //   ),
-                          //   child: const Icon(Icons.menu_book_rounded,
-                          //       color: Colors.blue, size: 15),
-                          // ),
-                          // const SizedBox(
-                          //     width: 12), // Jarak antara ikon dan teks
-
-                          // **Bagian Teks**
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,17 +101,15 @@ class ExamView extends GetView<ExamController> {
                                 // **Judul Ujian**
                                 Text(
                                   exam['topic_name'] ?? "Unknown Topic",
-                                  maxLines: 2,
+                                  maxLines: 42,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black87,
                                   ),
                                 ),
                                 const SizedBox(height: 6),
-
-                                // **Label Major**
                                 Row(
                                   children: [
                                     const Icon(Icons.school,
@@ -139,8 +124,6 @@ class ExamView extends GetView<ExamController> {
                                   ],
                                 ),
                                 const SizedBox(height: 6),
-
-                                // **Semester**
                                 Row(
                                   children: [
                                     const Icon(Icons.calendar_today,
@@ -157,8 +140,7 @@ class ExamView extends GetView<ExamController> {
                               ],
                             ),
                           ),
-                          // const SizedBox(width: 5),
-                          // **Tombol Attempt**
+                          const SizedBox(width: 16),
                           ElevatedButton.icon(
                             onPressed: () {
                               final bool canBeOpened =

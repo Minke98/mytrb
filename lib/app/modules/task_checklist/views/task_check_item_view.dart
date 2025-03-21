@@ -13,6 +13,7 @@ import 'package:mytrb/app/modules/task_checklist/controllers/task_checklist_cont
 import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as Path;
+import 'package:url_launcher/url_launcher.dart';
 
 class CheckItem extends GetView<TaskChecklistController> {
   final TaskItem item;
@@ -464,9 +465,26 @@ class CheckItem extends GetView<TaskChecklistController> {
             const SizedBox(
               height: 20,
             ),
-            Text(
-              item.url!,
-              style: const TextStyle(fontSize: 16),
+            GestureDetector(
+              onTap: () async {
+                final url = item.url!;
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url),
+                      mode: LaunchMode.externalApplication);
+                } else {
+                  Get.snackbar("Error",
+                      "Tidak bisa membuka URL"); // Notifikasi jika gagal
+                }
+              },
+              child: Text(
+                item.url!,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue, // Teks URL dengan warna biru
+                  decoration: TextDecoration
+                      .underline, // Agar terlihat seperti hyperlink
+                ),
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -475,13 +493,21 @@ class CheckItem extends GetView<TaskChecklistController> {
               onPressed: item.isApproved == 1
                   ? null
                   : () {
-                      showVideoURLDialog(isEdit: true);
                       Get.close(1);
+                      showVideoURLDialog(isEdit: true);
                     },
-              // style: ElevatedButton.styleFrom(
-              //   backgroundColor: isApproved == 1 ? Colors.grey : Colors.white,
-              // ),
-              child: const Text("Edit URL Video"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    item.isApproved == 1 ? Colors.grey : Colors.blue.shade900,
+              ),
+              child: Text(
+                "Edit URL Video",
+                style: TextStyle(
+                  color: item.isApproved == 1
+                      ? Colors.black54
+                      : Colors.white, // Ubah warna teks sesuai kondisi
+                ),
+              ),
             ),
           ],
         ),
@@ -543,8 +569,10 @@ class CheckItem extends GetView<TaskChecklistController> {
     String dialogTitle = isEdit ? "Edit Video URL" : "Enter Video URL";
     String buttonText = isEdit ? 'Update' : 'Send';
 
-    TextEditingController textController =
-        TextEditingController(text: controller.videoUrl.value);
+    // Sinkronisasi TextEditingController dengan nilai videoUrl
+    TextEditingController textController = TextEditingController(
+      text: controller.videoUrl.value, // Set nilai awal TextField dari videoUrl
+    );
 
     Get.bottomSheet(
       Container(
@@ -565,24 +593,30 @@ class CheckItem extends GetView<TaskChecklistController> {
               ),
             ),
             const SizedBox(height: 10),
-            TextFormField(
-              controller: textController,
-              decoration: InputDecoration(
-                labelText: "Video URL",
-                hintText: "Enter the video link...",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Obx(() {
+              textController.text = controller.videoUrl.value;
+
+              return TextFormField(
+                controller: textController,
+                decoration: InputDecoration(
+                  labelText: "Video URL",
+                  hintText: "Enter the video link...",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.link),
                 ),
-                prefixIcon: const Icon(Icons.link),
-              ),
-              onChanged: (text) {
-                controller.videoUrl.value = text;
-                Uri? parsedUri = Uri.tryParse(text); // Coba parse URL
-                print("Parsed URI: $parsedUri"); // Debug output
-                print(
-                    "Has absolute path: ${parsedUri?.hasAbsolutePath}"); // Debug output
-              },
-            ),
+                onChanged: (text) {
+                  // Update nilai observable saat pengguna mengetik
+                  controller.videoUrl.value = text;
+
+                  // Debugging tambahan untuk memeriksa input URL
+                  Uri? parsedUri = Uri.tryParse(text);
+                  print("Updated video URL: ${controller.videoUrl.value}");
+                  print("Parsed URI: $parsedUri");
+                },
+              );
+            }),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -595,18 +629,16 @@ class CheckItem extends GetView<TaskChecklistController> {
                   ),
                 ),
                 Obx(() {
+                  // Validasi URL berdasarkan hasil parsing
                   Uri? parsedUri = Uri.tryParse(controller.videoUrl.value);
                   bool isValidUrl = parsedUri?.hasAbsolutePath == true;
-
-                  print("Final Check - URL: ${controller.videoUrl.value}");
-                  print("Final Parsed URI: $parsedUri");
-                  print("Final Has Absolute Path: $isValidUrl");
 
                   return ElevatedButton(
                     onPressed: isValidUrl
                         ? () async {
                             await controller.saveUrlVideo(
-                                item.uc, controller.videoUrl.value);
+                              item.uc,
+                            );
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
