@@ -26,24 +26,33 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>The app requires access to the camera to take photos for Sign On, Task, Logbook, and Report.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>The app requires Face ID authentication to securely log in.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>The app uses location services for specific features in Sign On, Task, Logbook, and Report.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The app requires location access to detect network connection and user location for Sign On, Task, Logbook, and Report.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>The app requires access to save photos to the gallery after being used in Sign On, Task, Logbook, and Report.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The app requires access to the photo library to select photos for Sign On, Task, Logbook, and Report.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
-	<array/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>The app requires location access to detect network connection and user location for Sign On, Task, Logbook, and Report.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>The app uses location services for specific features in Sign On, Task, Logbook, and Report.</string>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>App requires notifications to stay up to date.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-	<key>NSCameraUsageDescription</key>
-	<string>The app requires access to the camera to take photos for Sign On, Task, Logbook, and Report.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>The app requires access to the photo library to select photos for Sign On, Task, Logbook, and Report.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>The app requires access to save photos to the gallery after being used in Sign On, Task, Logbook, and Report.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>The app requires Face ID authentication to securely log in.</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
