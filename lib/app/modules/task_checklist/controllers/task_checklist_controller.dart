@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mytrb/app/Repository/task_repository.dart';
 import 'package:mytrb/app/data/models/task_item.dart';
+import 'package:mytrb/utils/auth_biometric.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TaskChecklistController extends GetxController {
@@ -154,6 +155,12 @@ class TaskChecklistController extends GetxController {
   }
 
   Future<void> saveLampiran(String ucTask, File foto) async {
+    bool isAuthenticated = await BiometricAuth.authenticateUser(
+        'Use biometric authentication to login');
+    if (!isAuthenticated) {
+      EasyLoading.showError('Autentikasi biometrik gagal');
+      return;
+    }
     isLoading.value = true;
     EasyLoading.show(status: 'Menyimpan...');
 
@@ -173,13 +180,21 @@ class TaskChecklistController extends GetxController {
     }
   }
 
-  Future<void> saveUrlVideo(String ucTask,) async {
+  Future<void> saveUrlVideo(
+    String ucTask,
+  ) async {
     try {
+      bool isAuthenticated = await BiometricAuth.authenticateUser(
+          'Use biometric authentication to login');
+      if (!isAuthenticated) {
+        EasyLoading.showError('Autentikasi biometrik gagal');
+        return;
+      }
       EasyLoading.show(status: 'Saving...'); // Tampilkan loading indicator
       isLoading.value = true;
 
-      var res =
-          await taskRepository.urlVideo(urlVideo: videoUrl.value, ucTask: ucTask);
+      var res = await taskRepository.urlVideo(
+          urlVideo: videoUrl.value, ucTask: ucTask);
 
       if (res['status'] == true) {
         updateSingleTask(ucTask);
