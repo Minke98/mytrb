@@ -116,7 +116,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.REPORT_ADD,
-      page: () => const ReportAddView(),
+      page: () => ReportAddView(),
       binding: ReportBinding(),
     ),
     GetPage(

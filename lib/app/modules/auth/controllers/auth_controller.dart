@@ -169,15 +169,19 @@ class AuthController extends GetxController {
     // await appRepository.getBaselineData(
     //   userData: userData['data'],
     // );
-
-    bool isAuthenticated = await BiometricAuth.authenticateUser(
-        'Use biometric authentication to verify your identity');
-
+    bool isAuthenticated = await BiometricAuth.tryBiometricAuthentication();
     if (!isAuthenticated) {
-      EasyLoading.showError('Autentikasi biometrik gagal');
-      isCheckingAuth.value = false;
-      return false;
+      return false; // Jika pengguna tidak ingin mencoba lagi, hentikan proses
     }
+
+    // bool isAuthenticated = await BiometricAuth.authenticateUser(
+    //     'Use biometric authentication to verify your identity');
+
+    // if (!isAuthenticated) {
+    //   EasyLoading.showError('Autentikasi biometrik gagal');
+    //   isCheckingAuth.value = false;
+    //   return false;
+    // }
 
     // user.value = userData;
     isAuthorized.value = true;

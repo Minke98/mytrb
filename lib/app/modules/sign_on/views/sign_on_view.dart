@@ -1,8 +1,7 @@
-import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:mytrb/app/components/image_picker_widget.dart';
 import 'package:mytrb/app/data/models/instructor.dart';
 import 'package:mytrb/app/data/models/type_vessel.dart';
 import 'package:mytrb/app/modules/sign_on/controllers/sign_on_controller.dart';
@@ -344,157 +343,172 @@ class SignOnView extends GetView<SignController> {
   }
 
   Widget signOnFotoWidget(BuildContext context) {
-    return Obx(() => _imageInput(context, "Photo of Sign On",
-        controller.signOnFoto, controller.signOnError));
+    return ImagePickerWidget(
+      title: "Photo of Sign On",
+      imageFile: controller.signOnFoto,
+      error: controller.signOnError,
+    );
   }
 
   Widget mutasiOnWidget(BuildContext context) {
-    return Obx(() => _imageInput(context, "Photo of Mutasi On",
-        controller.mutasiOnFoto, controller.mutasiOnError));
+    return ImagePickerWidget(
+      title: "Photo of Mutasi On",
+      imageFile: controller.mutasiOnFoto,
+      error: controller.mutasiOnError,
+    );
   }
 
   Widget imoFotoWidget(BuildContext context) {
-    return Obx(() => _imageInput(
-        context, "Photo of IMO", controller.imoFoto, controller.imoFotoError));
+    return ImagePickerWidget(
+      title: "Photo of IMO",
+      imageFile: controller.imoFoto,
+      error: controller.imoFotoError,
+    );
   }
 
   Widget crewListFotoWidget(BuildContext context) {
-    return Obx(() => _imageInput(context, "Photo of Crew List",
-        controller.crewListFoto, controller.crewListFotoError));
+    return ImagePickerWidget(
+      title: "Photo of Crew List",
+      imageFile: controller.crewListFoto,
+      error: controller.crewListFotoError,
+    );
   }
 
   Widget bukuPelautFotoWidget(BuildContext context) {
-    return Obx(() => _imageInput(context, "Photo of Seafarer's Book",
-        controller.bukuPelautFoto, controller.bukuPelautFotoError));
-  }
-
-  Widget _imageInput(BuildContext context, String title, Rx<XFile?> imageFile,
-      RxString error) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: Theme.of(context).textTheme.bodyLarge),
-        const SizedBox(height: 8),
-        if (error.value.isNotEmpty)
-          Text(
-            error.value,
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
-        const SizedBox(height: 4),
-        InkWell(
-          onTap: () async {
-            FocusScope.of(context).unfocus();
-            XFile? tmp = await _showImagePicker(context);
-
-            if (tmp != null) {
-              imageFile.value = tmp;
-              error.value = "";
-            }
-          },
-          child: Ink(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[800],
-                border: Border.all(
-                  color: error.value.isNotEmpty
-                      ? Theme.of(context).colorScheme.error
-                      : Colors.transparent,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              width: double.infinity,
-              height: (30 / 100) * Get.height,
-              child: Center(
-                child: imageFile.value == null
-                    ? _displayUpload(context)
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: SizedBox(
-                          width: double.infinity, // atau berikan ukuran minimal
-                          height: double.infinity,
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child: Image.file(
-                              File(imageFile.value!.path),
-                            ),
-                          ),
-                        ),
-                      ),
-              ),
-            ),
-          ),
-        ),
-      ],
+    return ImagePickerWidget(
+      title: "Photo of Seafarer's Book",
+      imageFile: controller.bukuPelautFoto,
+      error: controller.bukuPelautFotoError,
     );
   }
 
-  /// Fungsi untuk menampilkan modal pemilihan gambar
-  Future<XFile?> _showImagePicker(BuildContext context) async {
-    final ImagePicker picker = ImagePicker();
+  // Widget _imageInput(BuildContext context, String title, Rx<XFile?> imageFile,
+  //     RxString error) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(title, style: Theme.of(context).textTheme.bodyLarge),
+  //       const SizedBox(height: 8),
+  //       if (error.value.isNotEmpty)
+  //         Text(
+  //           error.value,
+  //           style: TextStyle(color: Theme.of(context).colorScheme.error),
+  //         ),
+  //       const SizedBox(height: 4),
+  //       InkWell(
+  //         onTap: () async {
+  //           FocusScope.of(context).unfocus();
+  //           XFile? tmp = await _showImagePicker(context);
 
-    return await showModalBottomSheet<XFile?>(
-      useRootNavigator: false,
-      backgroundColor: Colors.transparent, // Set agar bisa melihat efek rounded
-      isDismissible: true,
-      context: context,
-      builder: (BuildContext context) {
-        return ClipRRect(
-          borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20)), // Rounded di atas
-          child: Container(
-            color: Colors.white, // Warna background tetap putih
-            child: Wrap(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: const Text('Ambil Foto'),
-                  onTap: () async {
-                    XFile? pickedFile =
-                        await picker.pickImage(source: ImageSource.camera);
-                    Get.back(result: pickedFile);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Pilih dari Galeri'),
-                  onTap: () async {
-                    XFile? pickedFile =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    Get.back(result: pickedFile);
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //           if (tmp != null) {
+  //             imageFile.value = tmp;
+  //             error.value = "";
+  //           }
+  //         },
+  //         child: Ink(
+  //           child: Container(
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey[800],
+  //               border: Border.all(
+  //                 color: error.value.isNotEmpty
+  //                     ? Theme.of(context).colorScheme.error
+  //                     : Colors.transparent,
+  //               ),
+  //               borderRadius: BorderRadius.circular(8),
+  //             ),
+  //             width: double.infinity,
+  //             height: (30 / 100) * Get.height,
+  //             child: Center(
+  //               child: imageFile.value == null
+  //                   ? _displayUpload(context)
+  //                   : ClipRRect(
+  //                       borderRadius: BorderRadius.circular(8),
+  //                       child: SizedBox(
+  //                         width: double.infinity, // atau berikan ukuran minimal
+  //                         height: double.infinity,
+  //                         child: FittedBox(
+  //                           fit: BoxFit.contain,
+  //                           child: Image.file(
+  //                             File(imageFile.value!.path),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _displayUpload(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          WidgetSpan(
-            child: Icon(
-              Icons.cloud_upload_rounded,
-              color: Colors.grey[400],
-              size: 20,
-            ),
-          ),
-          WidgetSpan(child: mySpacer(height: 0, width: 10)),
-          WidgetSpan(
-            child: Text(
-              "Upload / Take Photo",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondaryContainer,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // /// Fungsi untuk menampilkan modal pemilihan gambar
+  // Future<XFile?> _showImagePicker(BuildContext context) async {
+  //   final ImagePicker picker = ImagePicker();
+
+  //   return await showModalBottomSheet<XFile?>(
+  //     useRootNavigator: false,
+  //     backgroundColor: Colors.transparent, // Set agar bisa melihat efek rounded
+  //     isDismissible: true,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return ClipRRect(
+  //         borderRadius: const BorderRadius.vertical(
+  //             top: Radius.circular(20)), // Rounded di atas
+  //         child: Container(
+  //           color: Colors.white, // Warna background tetap putih
+  //           child: Wrap(
+  //             children: [
+  //               ListTile(
+  //                 leading: const Icon(Icons.camera_alt),
+  //                 title: const Text('Ambil Foto'),
+  //                 onTap: () async {
+  //                   XFile? pickedFile =
+  //                       await picker.pickImage(source: ImageSource.camera);
+  //                   Get.back(result: pickedFile);
+  //                 },
+  //               ),
+  //               ListTile(
+  //                 leading: const Icon(Icons.photo_library),
+  //                 title: const Text('Pilih dari Galeri'),
+  //                 onTap: () async {
+  //                   XFile? pickedFile =
+  //                       await picker.pickImage(source: ImageSource.gallery);
+  //                   Get.back(result: pickedFile);
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  // Widget _displayUpload(BuildContext context) {
+  //   return RichText(
+  //     text: TextSpan(
+  //       children: [
+  //         WidgetSpan(
+  //           child: Icon(
+  //             Icons.cloud_upload_rounded,
+  //             color: Colors.grey[400],
+  //             size: 20,
+  //           ),
+  //         ),
+  //         WidgetSpan(child: mySpacer(height: 0, width: 10)),
+  //         WidgetSpan(
+  //           child: Text(
+  //             "Upload / Take Photo",
+  //             style: TextStyle(
+  //               color: Theme.of(context).colorScheme.onSecondaryContainer,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget errorFoto(BuildContext context, String errorText) {
     return errorText.isEmpty

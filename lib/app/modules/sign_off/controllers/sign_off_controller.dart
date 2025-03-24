@@ -44,6 +44,11 @@ class SignoffController extends GetxController {
     prepareSignOff();
   }
 
+  bool get areAllPhotosFilled =>
+      signOffImoFoto.value != null &&
+      signOffPelabuhanFoto.value != null &&
+      crewListFoto.value != null;
+
   Future<void> prepareSignOff() async {
     isLoading.value = true;
     final prefs = await SharedPreferences.getInstance();

@@ -2,30 +2,38 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/modules/report/controllers/report_add_controller.dart';
+import 'package:mytrb/app/modules/report/controllers/report_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
 
 class ReportAddView extends GetView<ReportAddController> {
-  const ReportAddView({super.key});
+  final ReportController reportController = Get.find<ReportController>();
+  ReportAddView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Report for Month ${controller.monthNumber}"),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                locationButton(context, controller.monthNumber.value,
-                    controller.ucSign.value),
-                const SizedBox(height: 10),
-                tugasButton(context, controller.monthNumber.value,
-                    controller.ucSign.value)
-              ],
+    return WillPopScope(
+      onWillPop: () async {
+        reportController.initializeReport();
+        return true; // Mengizinkan pengguna untuk kembali
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Add Report for Month ${controller.monthNumber}"),
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+                  locationButton(context, controller.monthNumber.value,
+                      controller.ucSign.value),
+                  const SizedBox(height: 10),
+                  tugasButton(context, controller.monthNumber.value,
+                      controller.ucSign.value)
+                ],
+              ),
             ),
           ),
         ),

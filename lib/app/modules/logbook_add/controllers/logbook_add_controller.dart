@@ -7,6 +7,7 @@ import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:intl/intl.dart';
 import 'package:mytrb/app/Repository/logbook_repository.dart';
 import 'package:mytrb/app/modules/logbook/controllers/logbook_controller.dart';
+import 'package:mytrb/utils/auth_biometric.dart';
 import 'package:mytrb/utils/dialog.dart';
 import 'package:mytrb/utils/location.dart';
 
@@ -32,7 +33,7 @@ class LogbookAddController extends GetxController {
     super.onInit();
     final args = Get.arguments;
     if (args != null) {
-      uc.value = args['uc'] ?? null; // Set ke null jika args['uc'] tidak ada
+      uc.value = args['uc']; // Set ke null jika args['uc'] tidak ada
       log("REPORT_TASK: uc=${uc.value}");
     } else {
       log("WARNING: Get.arguments is null!");
@@ -69,6 +70,12 @@ class LogbookAddController extends GetxController {
   }
 
   Future<void> submit() async {
+    bool isAuthenticated = await BiometricAuth.authenticateUser(
+        'Use biometric authentication to login');
+    if (!isAuthenticated) {
+      EasyLoading.showError('Autentikasi biometrik gagal');
+      return;
+    }
     EasyLoading.show(status: 'Processing...');
 
     Map getPos = await Location.getLocation();

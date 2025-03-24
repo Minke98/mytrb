@@ -110,6 +110,8 @@ class ReportTaskApprovalView extends GetView<ReportTaskApprovalController> {
                     error: controller.uploadFotoError.value.isNotEmpty
                         ? controller.uploadFotoError
                         : ''.obs,
+                    showCamera: true, // Menampilkan opsi kamera
+                    showGallery: false, // Menyembunyikan opsi galeri
                   ),
                   const SizedBox(height: 10),
                   FutureBuilder<bool>(

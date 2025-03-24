@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/contact_repository.dart';
+import 'package:mytrb/utils/auth_biometric.dart';
 
 class ContactController extends GetxController {
   final ContactRepository contactRepository;
@@ -23,6 +24,12 @@ class ContactController extends GetxController {
   }
 
   Future<void> sendContact() async {
+    bool isAuthenticated = await BiometricAuth.authenticateUser(
+        'Use biometric authentication to login');
+    if (!isAuthenticated) {
+      EasyLoading.showError('Autentikasi biometrik gagal');
+      return;
+    }
     if (!isFormValid.value) return;
 
     isSubmitting.value = true;

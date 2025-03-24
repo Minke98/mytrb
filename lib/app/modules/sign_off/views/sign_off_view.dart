@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/components/image_picker_widget.dart';
 import 'package:mytrb/app/modules/sign_off/controllers/sign_off_controller.dart';
-import 'package:mytrb/utils/dialog.dart';
 
 class SignoffView extends GetView<SignoffController> {
   const SignoffView({super.key});
@@ -180,40 +179,30 @@ class SignoffView extends GetView<SignoffController> {
 
       return Padding(
         padding: const EdgeInsets.all(5.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue.shade900,
-            minimumSize: const Size.fromHeight(55),
+        child: Obx(
+          () => ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: controller.areAllPhotosFilled
+                  ? Colors.blue.shade900
+                  : Colors.grey.shade400, // Ubah warna jika belum terisi semua
+              minimumSize: const Size.fromHeight(55),
+            ),
+            onPressed: controller.areAllPhotosFilled
+                ? () async {
+                    // Konfirmasi Sign Off
+                    bool doSignOff = await _showConfirmSignOff();
+                    log("DO SIGN OFF: $doSignOff");
+
+                    if (doSignOff) {
+                      await controller.signOff(); // Panggil fungsi signOff
+                    }
+                  }
+                : null, // Nonaktifkan tombol jika ada foto yang belum diisi
+            child: const Text(
+              "Sign Off",
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
           ),
-          onPressed: () async {
-            // Validasi foto
-            bool imagesValid = true;
-            if (controller.signOffImoFoto.value == null) {
-              imagesValid = false;
-              MyDialog.showError(context, "Masukkan Gambar Depan Imo");
-            }
-            if (controller.signOffPelabuhanFoto.value == null) {
-              imagesValid = false;
-              MyDialog.showError(context, "Masukkan Gambar Pelabuhan");
-            }
-            if (controller.crewListFoto.value == null) {
-              imagesValid = false;
-              MyDialog.showError(context, "Masukkan Gambar Crew List");
-            }
-
-            if (!imagesValid) return;
-
-            // Konfirmasi Sign Off
-            bool doSignOff = await _showConfirmSignOff();
-            log("DO SIGN OFF: $doSignOff");
-
-            if (doSignOff) {
-              // Lakukan Sign Off dengan GetX
-              await controller.signOff();
-            }
-          },
-          child: const Text("Sign Off",
-              style: TextStyle(color: Colors.white, fontSize: 14)),
         ),
       );
     });

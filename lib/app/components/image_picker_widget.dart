@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,11 +7,15 @@ class ImagePickerWidget extends StatelessWidget {
   final String? title;
   final Rx<XFile?>? imageFile;
   final RxString? error;
+  final bool showCamera; // Parameter untuk menampilkan opsi Kamera
+  final bool showGallery; // Parameter untuk menampilkan opsi Galeri
 
   const ImagePickerWidget({
     this.title,
     this.imageFile,
     this.error,
+    this.showCamera = true, // Default: true
+    this.showGallery = true, // Default: true
     Key? key,
   }) : super(key: key);
 
@@ -84,24 +87,26 @@ class ImagePickerWidget extends StatelessWidget {
             color: Colors.white,
             child: Wrap(
               children: [
-                ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: const Text('Ambil Foto'),
-                  onTap: () async {
-                    XFile? pickedFile =
-                        await picker.pickImage(source: ImageSource.camera);
-                    Get.back(result: pickedFile);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Pilih dari Galeri'),
-                  onTap: () async {
-                    XFile? pickedFile =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    Get.back(result: pickedFile);
-                  },
-                ),
+                if (showCamera)
+                  ListTile(
+                    leading: const Icon(Icons.camera_alt),
+                    title: const Text('Take Photo'),
+                    onTap: () async {
+                      XFile? pickedFile =
+                          await picker.pickImage(source: ImageSource.camera);
+                      Get.back(result: pickedFile);
+                    },
+                  ),
+                if (showGallery)
+                  ListTile(
+                    leading: const Icon(Icons.photo_library),
+                    title: const Text('Choose from Gallery'),
+                    onTap: () async {
+                      XFile? pickedFile =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      Get.back(result: pickedFile);
+                    },
+                  ),
               ],
             ),
           ),

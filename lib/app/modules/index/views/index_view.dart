@@ -865,6 +865,7 @@ class IndexView extends GetView<IndexController> {
                       "created_at": item['created_at_formated'],
                       "description": item['descriptionfull']
                     });
+                    controller.initializeHome();
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

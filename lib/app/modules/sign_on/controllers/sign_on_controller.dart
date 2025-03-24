@@ -41,11 +41,11 @@ class SignController extends GetxController {
       TextEditingController();
   final TextEditingController imoNumberController = TextEditingController();
   final TextEditingController mmsiNumberController = TextEditingController();
-  final Rx<XFile?> signOnFoto = Rx<XFile?>(null);
-  final Rx<XFile?> mutasiOnFoto = Rx<XFile?>(null);
-  final Rx<XFile?> imoFoto = Rx<XFile?>(null);
-  final Rx<XFile?> crewListFoto = Rx<XFile?>(null);
-  final Rx<XFile?> bukuPelautFoto = Rx<XFile?>(null);
+  final signOnFoto = Rx<XFile?>(null);
+  final mutasiOnFoto = Rx<XFile?>(null);
+  final imoFoto = Rx<XFile?>(null);
+  final crewListFoto = Rx<XFile?>(null);
+  final bukuPelautFoto = Rx<XFile?>(null);
   var signOnError = ''.obs;
   var mutasiOnError = ''.obs;
   var imoFotoError = ''.obs;

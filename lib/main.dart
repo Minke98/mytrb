@@ -78,7 +78,6 @@ class MyApp extends StatelessWidget {
                   );
 
                   if (selectedNews != null) {
-
                     EasyLoading.dismiss();
                     var status =
                         await Get.toNamed(Routes.NEWS_DETAIL, arguments: {

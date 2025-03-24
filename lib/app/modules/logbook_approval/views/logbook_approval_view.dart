@@ -122,6 +122,8 @@ class LogbookApprovalView extends GetView<LogbookApprovalController> {
             error: controller.uploadFotoError.value.isNotEmpty
                 ? controller.uploadFotoError
                 : ''.obs,
+            showCamera: true, // Menampilkan opsi kamera
+            showGallery: false, // Menyembunyikan opsi galeri
           ),
           const SizedBox(height: 8.0),
           HtmlEditor(
