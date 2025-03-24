@@ -11,29 +11,23 @@ class ReportAddView extends GetView<ReportAddController> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        reportController.initializeReport();
-        return true; // Mengizinkan pengguna untuk kembali
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Add Report for Month ${controller.monthNumber}"),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 8),
-                  locationButton(context, controller.monthNumber.value,
-                      controller.ucSign.value),
-                  const SizedBox(height: 10),
-                  tugasButton(context, controller.monthNumber.value,
-                      controller.ucSign.value)
-                ],
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Add Report for Month ${controller.monthNumber}"),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 8),
+                locationButton(context, controller.monthNumber.value,
+                    controller.ucSign.value),
+                const SizedBox(height: 10),
+                tugasButton(context, controller.monthNumber.value,
+                    controller.ucSign.value)
+              ],
             ),
           ),
         ),
