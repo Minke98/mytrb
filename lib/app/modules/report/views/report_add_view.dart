@@ -2,12 +2,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/modules/report/controllers/report_add_controller.dart';
-import 'package:mytrb/app/modules/report/controllers/report_controller.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
 
 class ReportAddView extends GetView<ReportAddController> {
-  final ReportController reportController = Get.find<ReportController>();
-  ReportAddView({super.key});
+  const ReportAddView({super.key});
 
   @override
   Widget build(BuildContext context) {
