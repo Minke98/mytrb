@@ -33,9 +33,12 @@ class TaskChecklistView extends GetView<TaskChecklistController> {
                 completed: controller.completed, // Kirim RxInt ke CheckListInfo
               ),
               const SizedBox(height: 8),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text("Task List"),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Task List",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ),
               Expanded(
                 child: SizedBox(

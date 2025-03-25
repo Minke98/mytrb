@@ -75,7 +75,7 @@ class TaskApprovalController extends GetxController {
 
       if (save['status'] == true) {
         approvalData.value = save['data'] ?? {};
-        taskChecklistController.initTaskChecklist();
+        taskChecklistController.updateSingleTask(taskUc.value ?? '');
         Get.close(1);
         EasyLoading.showSuccess("Approval berhasil disimpan!");
       } else {

@@ -670,13 +670,13 @@ class CheckItem extends GetView<TaskChecklistController> {
     String? fotoLect = item.appLectComment;
 
     if (item.isLectApproved == 1) {
-      titleText = "Detail Persetujuan";
+      titleText = "Approval Details";
     } else if (item.isLectApproved == 2) {
-      titleText = "Detail Penolakan";
+      titleText = "Rejection Details";
     } else if (item.isLectApproved == 0) {
-      titleText = "Belum Disetujui";
+      titleText = "Not Yet Approved";
     } else {
-      titleText = "Status Tidak Valid";
+      titleText = "Invalid Status";
     }
 
     if (fotoLect != null &&
@@ -794,13 +794,13 @@ class CheckItem extends GetView<TaskChecklistController> {
     Uint8List? fotoInstruktur;
 
     if (item.isApproved == 1) {
-      titleText = "Detail Persetujuan";
+      titleText = "Approval Details";
     } else if (item.isApproved == 2) {
-      titleText = "Detail Penolakan";
+      titleText = "Rejection Details";
     } else if (item.isApproved == 0) {
-      titleText = "Belum Disetujui";
+      titleText = "Not Yet Approved";
     } else {
-      titleText = "Status Tidak Valid";
+      titleText = "Invalid Status";
     }
 
     String fotoApproval = item.appInstPhoto ?? "";
@@ -857,12 +857,14 @@ class CheckItem extends GetView<TaskChecklistController> {
                     const Text(
                       "Instructor's Name : ",
                       style: TextStyle(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.left,
                     ),
                     Text(
                       instrukturName,
                       maxLines: 2, // Batas maksimal 5 baris
                       overflow: TextOverflow
                           .ellipsis, // Jika lebih, akan muncul "..."
+                      textAlign: TextAlign.left,
                     ),
                   ],
                 ),
@@ -873,12 +875,14 @@ class CheckItem extends GetView<TaskChecklistController> {
                     const Text(
                       "Comment : ",
                       style: TextStyle(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.left,
                     ),
                     Text(
                       komentarText,
-                      maxLines: 5, // Batas maksimal 5 baris
+                      maxLines: 6, // Batas maksimal 5 baris
                       overflow: TextOverflow
                           .ellipsis, // Jika lebih, akan muncul "..."
+                      textAlign: TextAlign.left,
                     ),
                   ],
                 ),
@@ -886,6 +890,7 @@ class CheckItem extends GetView<TaskChecklistController> {
                 const Text(
                   "Approval Photo :",
                   style: TextStyle(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 10),
                 Center(
