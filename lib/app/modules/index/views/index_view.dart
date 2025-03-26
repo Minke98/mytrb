@@ -73,6 +73,7 @@ class IndexView extends GetView<IndexController> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
+                                const SizedBox(height: 10.0),
                                 Obx(() {
                                   if (controller.isLoading.value) {
                                     return const CircularProgressIndicator();
