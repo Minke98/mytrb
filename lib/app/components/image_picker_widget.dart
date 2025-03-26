@@ -7,15 +7,15 @@ class ImagePickerWidget extends StatelessWidget {
   final String? title;
   final Rx<XFile?>? imageFile;
   final RxString? error;
-  final bool showCamera; // Parameter untuk menampilkan opsi Kamera
-  final bool showGallery; // Parameter untuk menampilkan opsi Galeri
+  final bool showCamera;
+  final bool showGallery;
 
   const ImagePickerWidget({
     this.title,
     this.imageFile,
     this.error,
-    this.showCamera = true, // Default: true
-    this.showGallery = true, // Default: true
+    this.showCamera = true,
+    this.showGallery = true,
     Key? key,
   }) : super(key: key);
 
@@ -55,17 +55,20 @@ class ImagePickerWidget extends StatelessWidget {
             width: double.infinity,
             height: (30 / 100) * Get.height,
             child: Center(
-              child: (imageFile != null && imageFile!.value != null)
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.file(
-                        File(imageFile!.value!.path),
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.contain,
-                      ),
-                    )
-                  : _displayUpload(context),
+              child: Obx(() {
+                // Pantau perubahan nilai imageFile
+                return (imageFile != null && imageFile!.value != null)
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          File(imageFile!.value!.path),
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.contain,
+                        ),
+                      )
+                    : _displayUpload(context);
+              }),
             ),
           ),
         ),

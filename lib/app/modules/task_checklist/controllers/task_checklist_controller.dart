@@ -91,6 +91,8 @@ class TaskChecklistController extends GetxController {
       } else {
         taskList
             .assignAll(typedTaskList.map((e) => TaskItem.fromMap(e)).toList());
+
+        completed.value = taskList.where((task) => task.checked.value).length;
       }
     } catch (e) {
       errorMessage.value = "Failed to load tasks: $e";

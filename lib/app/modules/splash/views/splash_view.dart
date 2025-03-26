@@ -16,7 +16,7 @@ class SplashView extends GetWidget<SplashController> {
       upgrader: Upgrader(
         debugLogging: true,
         countryCode: "ID",
-        messages: UpgraderMessages(code: "ID"),
+        messages: UpgraderMessages(code: "en"),
         canDismissDialog: false,
         showIgnore: false,
         showLater: false,

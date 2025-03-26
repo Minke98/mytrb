@@ -168,7 +168,7 @@ class CheckItem extends GetView<TaskChecklistController> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (item.isLectApproved != 1)
+                    if (item.isLectApproved != 1 && allowModify)
                       Visibility(
                         visible: item.isApproved != 1,
                         child: ElevatedButton(
@@ -176,7 +176,6 @@ class CheckItem extends GetView<TaskChecklistController> {
                             backgroundColor: Colors.green.shade700,
                             foregroundColor: Colors.white,
                           ),
-                          // onPressed: () {},
                           onPressed: item.isAttachmentSaved
                               ? () => Get.toNamed(Routes.TASK_APPROVAL,
                                       arguments: {
@@ -347,9 +346,7 @@ class CheckItem extends GetView<TaskChecklistController> {
             const SizedBox(height: 8),
             CachedNetworkImage(
               progressIndicatorBuilder: (context, url, progress) => Center(
-                child: CircularProgressIndicator(
-                  value: progress.progress,
-                ),
+                child: CircularProgressIndicator(value: progress.progress),
               ),
               imageUrl: networkUrl,
               height: 400,
@@ -357,15 +354,16 @@ class CheckItem extends GetView<TaskChecklistController> {
               fit: BoxFit.fill,
             ),
             const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: item.isApproved == 1
-                  ? null
-                  : () async {
-                      takeAndUploadPhoto();
-                      Get.close(1);
-                    },
-              child: const Text("Take Another Photo"),
-            ),
+            if (allowModify) // Tambahkan pengecekan allowModify di sini
+              ElevatedButton(
+                onPressed: item.isApproved == 1
+                    ? null
+                    : () async {
+                        takeAndUploadPhoto();
+                        Get.close(1);
+                      },
+                child: const Text("Take Another Photo"),
+              ),
           ],
         ));
       } else {
@@ -381,33 +379,25 @@ class CheckItem extends GetView<TaskChecklistController> {
             widgets.add(Column(
               children: [
                 const SizedBox(height: 8),
-                Image.memory(
-                  foto,
-                  height: 400,
-                  width: 300,
-                  fit: BoxFit.fill,
-                ),
+                Image.memory(foto, height: 400, width: 300, fit: BoxFit.fill),
                 const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: item.isApproved == 1
-                      ? null
-                      : () async {
-                          takeAndUploadPhoto();
-                          Get.close(1);
-                        },
-                  child: const Text("Take Another Photo"),
-                ),
+                if (allowModify) // Pengecekan allowModify di sini juga
+                  ElevatedButton(
+                    onPressed: item.isApproved == 1
+                        ? null
+                        : () async {
+                            takeAndUploadPhoto();
+                            Get.close(1);
+                          },
+                    child: const Text("Take Another Photo"),
+                  ),
               ],
             ));
           } else {
-            if (kDebugMode) {
-              print("File tidak ditemukan: $imagePath");
-            }
+            if (kDebugMode) print("File tidak ditemukan: $imagePath");
           }
         } catch (e) {
-          if (kDebugMode) {
-            print("Kesalahan saat memuat gambar: $e");
-          }
+          if (kDebugMode) print("Kesalahan saat memuat gambar: $e");
         }
       }
     } else if (fotoUrl != null && fotoUrl.isNotEmpty) {
@@ -415,30 +405,22 @@ class CheckItem extends GetView<TaskChecklistController> {
         fotoUrl = 'https://trsea.technomulti.co.id/trsea-api/$fotoUrl';
       }
 
-      widgets.add(
-        Column(
-          children: [
-            const Text(
-              "The Result of the Photo :",
-              style: TextStyle(fontSize: 16),
+      widgets.add(Column(
+        children: [
+          const Text("The Result of the Photo :",
+              style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 20),
+          CachedNetworkImage(
+            progressIndicatorBuilder: (context, url, progress) => Center(
+              child: CircularProgressIndicator(value: progress.progress),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            CachedNetworkImage(
-              progressIndicatorBuilder: (context, url, progress) => Center(
-                child: CircularProgressIndicator(
-                  value: progress.progress,
-                ),
-              ),
-              imageUrl: fotoUrl,
-              height: 400,
-              width: 300,
-              fit: BoxFit.fill,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
+            imageUrl: fotoUrl,
+            height: 400,
+            width: 300,
+            fit: BoxFit.fill,
+          ),
+          const SizedBox(height: 20),
+          if (allowModify) // Pengecekan allowModify di sini
             ElevatedButton(
               onPressed: item.isApproved == 1
                   ? null
@@ -446,49 +428,36 @@ class CheckItem extends GetView<TaskChecklistController> {
                       takeAndUploadPhoto();
                       Get.close(1);
                     },
-              // style: ElevatedButton.styleFrom(
-              //   backgroundColor: isApproved == 1 ? Colors.grey : Colors.white,
-              // ),
               child: const Text("Take Another Photo"),
             ),
-          ],
-        ),
-      );
+        ],
+      ));
     } else if (item.url != null) {
-      widgets.add(
-        Column(
-          children: [
-            const Text(
-              "URL Video :",
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              onTap: () async {
-                final url = item.url!;
-                if (await canLaunchUrl(Uri.parse(url))) {
-                  await launchUrl(Uri.parse(url),
-                      mode: LaunchMode.externalApplication);
-                } else {
-                  Get.snackbar("Error",
-                      "Tidak bisa membuka URL"); // Notifikasi jika gagal
-                }
-              },
-              child: Text(
-                item.url!,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue, // Teks URL dengan warna biru
-                  decoration: TextDecoration
-                      .underline, // Agar terlihat seperti hyperlink
-                ),
+      widgets.add(Column(
+        children: [
+          const Text("URL Video :", style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 20),
+          GestureDetector(
+            onTap: () async {
+              final url = item.url!;
+              if (await canLaunchUrl(Uri.parse(url))) {
+                await launchUrl(Uri.parse(url),
+                    mode: LaunchMode.externalApplication);
+              } else {
+                Get.snackbar("Error", "Tidak bisa membuka URL");
+              }
+            },
+            child: Text(
+              item.url!,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+          ),
+          const SizedBox(height: 20),
+          if (allowModify) // Tambahkan pengecekan di tombol Edit URL
             ElevatedButton(
               onPressed: item.isApproved == 1
                   ? null
@@ -503,15 +472,12 @@ class CheckItem extends GetView<TaskChecklistController> {
               child: Text(
                 "Edit URL Video",
                 style: TextStyle(
-                  color: item.isApproved == 1
-                      ? Colors.black54
-                      : Colors.white, // Ubah warna teks sesuai kondisi
+                  color: item.isApproved == 1 ? Colors.black54 : Colors.white,
                 ),
               ),
             ),
-          ],
-        ),
-      );
+        ],
+      ));
     }
 
     return widgets;

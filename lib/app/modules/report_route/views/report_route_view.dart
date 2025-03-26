@@ -25,7 +25,6 @@ class ReportRouteView extends GetView<ReportRouteController> {
               if (context.mounted) {
                 log("reportRoute: SAVE TRIGGER BLOC");
                 controller.saveRoute();
-
                 log("reportRoute: SAVE TRIGGER BLOC AFTER");
                 // timer.cancel();
               }
