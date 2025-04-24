@@ -362,6 +362,9 @@ class CheckItem extends GetView<TaskChecklistController> {
                         takeAndUploadPhoto();
                         Get.close(1);
                       },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade900,
+                ),
                 child: const Text("Take Another Photo"),
               ),
           ],
@@ -389,6 +392,9 @@ class CheckItem extends GetView<TaskChecklistController> {
                             takeAndUploadPhoto();
                             Get.close(1);
                           },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade900,
+                    ),
                     child: const Text("Take Another Photo"),
                   ),
               ],
@@ -428,6 +434,9 @@ class CheckItem extends GetView<TaskChecklistController> {
                       takeAndUploadPhoto();
                       Get.close(1);
                     },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade900,
+              ),
               child: const Text("Take Another Photo"),
             ),
         ],
@@ -469,11 +478,11 @@ class CheckItem extends GetView<TaskChecklistController> {
                 backgroundColor:
                     item.isApproved == 1 ? Colors.grey : Colors.blue.shade900,
               ),
-              child: Text(
+              child: const Text(
                 "Edit URL Video",
-                style: TextStyle(
-                  color: item.isApproved == 1 ? Colors.black54 : Colors.white,
-                ),
+                // style: TextStyle(
+                //   color: item.isApproved == 1 ? Colors.black54 : Colors.white,
+                // ),
               ),
             ),
         ],

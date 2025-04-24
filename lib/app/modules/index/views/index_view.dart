@@ -307,7 +307,10 @@ class IndexView extends GetView<IndexController> {
                 backgroundColor: Colors.blue.shade900,
                 minimumSize: const Size.fromHeight(50),
               ),
-              child: const Text("Sign Off"),
+              child: const Text(
+                "Sign Off",
+                style: TextStyle(fontSize: 14),
+              ),
             ),
           ),
         );
