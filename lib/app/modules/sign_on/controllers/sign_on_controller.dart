@@ -41,6 +41,8 @@ class SignController extends GetxController {
       TextEditingController();
   final TextEditingController imoNumberController = TextEditingController();
   final TextEditingController mmsiNumberController = TextEditingController();
+  final TextEditingController noRegistrasiController = TextEditingController();
+  var selectedVesselType = " ".obs;
   final signOnFoto = Rx<XFile?>(null);
   final mutasiOnFoto = Rx<XFile?>(null);
   final imoFoto = Rx<XFile?>(null);
@@ -58,7 +60,7 @@ class SignController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    await prepareSignForm();
+    // await prepareSignForm();
     loadDosenList();
   }
 
@@ -165,7 +167,7 @@ class SignController extends GetxController {
       bool res = await signRepository.doSignOn(
         signOnDate: signOnDbFormat,
         seafarerCode: userData['seafarer_code'],
-        ucTypeVessel: selectedVessel.value?.uc ?? '',
+        ucTypeVessel: selectedVesselType.value,
         vesselName: namaKapalController.text,
         companyName: namaPerusahaanController.text,
         imoNumber: imoNumberController.text,
@@ -209,11 +211,10 @@ class SignController extends GetxController {
   bool isFormValid() {
     return selectedDate.value != null &&
         dosenSelected.value != null &&
-        selectedVessel.value != null &&
+        selectedVesselType.value.isNotEmpty &&
         namaKapalController.text.isNotEmpty &&
         namaPerusahaanController.text.isNotEmpty &&
         imoNumberController.text.isNotEmpty &&
-        mmsiNumberController.text.isNotEmpty &&
         signOnFoto.value != null &&
         mutasiOnFoto.value != null &&
         imoFoto.value != null &&

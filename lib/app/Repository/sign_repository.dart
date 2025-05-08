@@ -4,6 +4,8 @@ import 'package:mytrb/app/Repository/chat_repository.dart';
 import 'package:mytrb/app/Repository/repository.dart';
 import 'package:mytrb/app/components/constant.dart';
 import 'package:mytrb/app/data/models/type_vessel.dart';
+import 'package:mytrb/app/data/models/vessel_info.dart';
+import 'package:mytrb/app/services/base_client.dart';
 import 'package:mytrb/config/database/my_db.dart';
 import 'package:mytrb/utils/manual_con_check.dart';
 import 'package:path/path.dart' as Path;
@@ -229,6 +231,67 @@ ORDER BY
     } finally {
       await mydb.close();
     }
+    return finalResult;
+  }
+
+  Future<Map<String, dynamic>> getVesselTypeOnline({
+    required String noPendaftaran,
+  }) async {
+    final Map<String, dynamic> finalResult = {"status": true};
+
+    const int maxRetries = 3;
+    int retryCount = 0;
+
+    // Handle retries
+    while (retryCount < maxRetries) {
+      try {
+        final data = {
+          "no_pendaftaran": noPendaftaran,
+        };
+
+        // Make API call using the BaseClient
+        await BaseClient.safeApiCall(
+          "https://pelaut.dephub.go.id/trsea/trsea-api/api/vessel/GetDetail", // Endpoint
+          RequestType.get, // HTTP method (GET)
+          queryParameters: data,
+          onSuccess: (response) {
+            if (response.statusCode == 200 && response.data != null) {
+              final data = response.data['data'];
+              final vessel = VesselInfo.fromJson(data);
+
+              if (vessel.nomorIMO != null &&
+                  vessel.nomorIMO!.isNotEmpty &&
+                  vessel.namaKapal != null &&
+                  vessel.namaKapal!.isNotEmpty) {
+                finalResult['vessel'] = vessel;
+              }
+            }
+          },
+          onError: (error) {
+            finalResult['status'] = false;
+            finalResult['message'] = 'Terjadi kesalahan: ${error.toString()}';
+          },
+        );
+
+        // If data is fetched successfully, break from the loop
+        if (finalResult.containsKey('vessel')) {
+          break;
+        }
+
+        retryCount++;
+        await Future.delayed(const Duration(seconds: 1));
+      } catch (e) {
+        finalResult['status'] = false;
+        finalResult['message'] = 'Terjadi kesalahan: ${e.toString()}';
+        break;
+      }
+    }
+
+    if (retryCount == maxRetries) {
+      finalResult['status'] = false;
+      finalResult['message'] = 'Data kosong setelah $maxRetries percobaan.';
+    }
+
     return finalResult;
   }
 
