@@ -11,6 +11,7 @@ class TaskItem {
   int isApproved;
   int isLectApproved;
   String instTime;
+  String lectTime;
   String initNote;
   bool isAttachmentSaved;
   String? url;
@@ -35,6 +36,7 @@ class TaskItem {
     required this.isApproved,
     required this.isLectApproved,
     required this.instTime,
+    required this.lectTime,
     required this.initNote,
     required this.isAttachmentSaved,
     this.url,
@@ -62,6 +64,7 @@ class TaskItem {
       isApproved: map['status'] ?? 0,
       isLectApproved: map['lect_status'] ?? 0,
       instTime: map['instTime'] ?? "",
+      lectTime: map['lectTime'] ?? "",
       initNote: map['note'] ?? "",
       isAttachmentSaved: map['local_photo'] != null ||
           map['url'] != null ||
@@ -91,6 +94,7 @@ class TaskItem {
       "status": isApproved,
       "lect_status": isLectApproved,
       "instTime": instTime,
+      "lectTime": lectTime,
       "note": initNote,
       "local_photo": localPhoto,
       "url": url,

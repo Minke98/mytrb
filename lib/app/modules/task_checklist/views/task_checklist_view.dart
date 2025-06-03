@@ -43,21 +43,24 @@ class TaskChecklistView extends GetView<TaskChecklistController> {
               Expanded(
                 child: SizedBox(
                   height: 400, // Atur tinggi agar pasti bisa di-scroll
-                  child: ListView.builder(
-                    controller: controller.scrollController,
-                    itemCount: controller.taskList.length,
-                    itemBuilder: (context, index) {
-                      final item = controller.taskList[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 8.0), // Jarak antar item
-                        child: CheckItem(
-                          key: ValueKey(item.uc),
-                          item: item,
-                          allowModify: controller.allowModify.value,
-                        ),
-                      );
-                    },
+                  child: RefreshIndicator(
+                    onRefresh: () => controller.initTaskChecklist(),
+                    child: ListView.builder(
+                      controller: controller.scrollController,
+                      itemCount: controller.taskList.length,
+                      itemBuilder: (context, index) {
+                        final item = controller.taskList[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 8.0), // Jarak antar item
+                          child: CheckItem(
+                            key: ValueKey(item.uc),
+                            item: item,
+                            allowModify: controller.allowModify.value,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

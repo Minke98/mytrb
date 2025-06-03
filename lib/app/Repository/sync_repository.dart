@@ -1181,21 +1181,37 @@ class SyncRepository extends Repository {
               Map toServerData = response.data;
               log("syncTaskCheck: serverData $toServerData");
               if (toServerData['status'] == true) {
-                // Update local database with server data
+                // Update local database with uc
                 await txn.rawUpdate(
-                    """UPDATE tech_task_check SET uc = ? WHERE local_uc = ?""",
-                    [toServerData['uc'], data['local_uc']]);
+                  """UPDATE tech_task_check SET uc = ? WHERE local_uc = ?""",
+                  [toServerData['uc'], data['local_uc']],
+                );
+                if (toServerData['server_images'] is Map) {
+                  Map<String, dynamic> serverImages =
+                      toServerData['server_images'];
+                  if (serverImages['att_photo'] != null) {
+                    await txn.rawUpdate(
+                      """UPDATE tech_task_check SET att_photo = ? WHERE local_uc = ?""",
+                      [serverImages['att_photo'], data['local_uc']],
+                    );
+                  }
 
-                // Remove images if necessary
-                // Add logic here if needed
+                  if (serverImages['app_inst_photo'] != null) {
+                    await txn.rawUpdate(
+                      """UPDATE tech_task_check SET app_inst_photo = ? WHERE local_uc = ?""",
+                      [serverImages['app_inst_photo'], data['local_uc']],
+                    );
+                  }
+                }
 
                 // Remove item from journal
                 super.journalRemove(
-                    db: txn,
-                    tableName: item['table_name'],
-                    actionType: item['action_type'],
-                    logStamp: item["log_stamp"],
-                    tableKey: item["table_key"]);
+                  db: txn,
+                  tableName: item['table_name'],
+                  actionType: item['action_type'],
+                  logStamp: item["log_stamp"],
+                  tableKey: item["table_key"],
+                );
               }
             },
             onError: (e) {

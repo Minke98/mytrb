@@ -227,13 +227,16 @@ class ReportTaskAddView extends GetView<ReportTaskAddController> {
                             child: (controller.reportStatus
                                         .value?['app_inst_local_foto'] !=
                                     null)
-                                ? PictureDisplay(
-                                    fit: BoxFit.fitHeight,
-                                    folder: APPROVAL_FOTO_FOLDER,
-                                    local: controller.reportStatus
-                                        .value!['app_inst_local_foto'],
-                                    remote: controller
-                                        .reportStatus.value!['app_inst_foto'],
+                                ? SizedBox(
+                                    height: 150,
+                                    child: PictureDisplay(
+                                      fit: BoxFit.fitHeight,
+                                      folder: APPROVAL_FOTO_FOLDER,
+                                      local: controller.reportStatus
+                                          .value!['app_inst_local_foto'],
+                                      remote: controller
+                                          .reportStatus.value!['app_inst_foto'],
+                                    ),
                                   )
                                 : const SizedBox.shrink(),
                           )
@@ -262,11 +265,11 @@ class ReportTaskAddView extends GetView<ReportTaskAddController> {
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 5,
                             spreadRadius: 2,
-                            offset: Offset(2, 2),
+                            offset: const Offset(2, 2),
                           ),
                         ],
                       ),
-                      padding: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -285,16 +288,19 @@ class ReportTaskAddView extends GetView<ReportTaskAddController> {
         if (!controller.allowModify.value) return const SizedBox.shrink();
         return Stack(
           children: [
-            Align(
-              alignment: Alignment.bottomRight,
-              child: FloatingActionButton.extended(
-                backgroundColor: Colors.blue.shade900,
-                heroTag: 'menuButton',
-                onPressed: controller.toggleMenuVisibility,
-                label: const Text('Menu'),
-                icon: const Icon(Icons.menu),
+            if (controller.reportStatus.value == null ||
+                (controller.reportStatus.value != null &&
+                    controller.reportStatus.value!['app_inst_status'] != 1))
+              Align(
+                alignment: Alignment.bottomRight,
+                child: FloatingActionButton.extended(
+                  backgroundColor: Colors.blue.shade900,
+                  heroTag: 'menuButton',
+                  onPressed: controller.toggleMenuVisibility,
+                  label: const Text('Menu'),
+                  icon: const Icon(Icons.menu),
+                ),
               ),
-            ),
             if (controller.reportStatus.value != null &&
                 controller.reportStatus.value!['app_inst_status'] != 1)
               Align(

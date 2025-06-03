@@ -27,7 +27,7 @@ class CheckListInfo extends StatelessWidget {
               color: Colors.blue.shade900,
               child: const Text(
                 "Task Info",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 14),
               ),
             ),
             Padding(
@@ -42,7 +42,10 @@ class CheckListInfo extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Text(label),
+                  Text(
+                    label,
+                    style: const TextStyle(fontSize: 13),
+                  ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -57,7 +60,11 @@ class CheckListInfo extends StatelessWidget {
                                 fontSize: 14,
                               ),
                             ),
-                            Text("$total items"),
+                            const SizedBox(height: 5),
+                            Text(
+                              "$total items",
+                              style: const TextStyle(fontSize: 13),
+                            ),
                           ],
                         ),
                       ),
@@ -72,8 +79,11 @@ class CheckListInfo extends StatelessWidget {
                                 fontSize: 14,
                               ),
                             ),
+                            const SizedBox(height: 5),
                             Obx(() => Text(
-                                "${completed.value} items")), // Gunakan Obx di sini
+                                  "${completed.value} items",
+                                  style: const TextStyle(fontSize: 13),
+                                )), // Gunakan Obx di sini
                           ],
                         ),
                       ),

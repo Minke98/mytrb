@@ -6,10 +6,10 @@ class Environment {
   // static String baseUrl = "https://pelaut.dephub.go.id/trsea/trsea-api/api/";
   // static String refreshUrl =
   //     "https://pelaut.dephub.go.id/trsea/trsea-api/api/auth/refresh";
-  static const baseUrl = 'http://192.168.1.21';
-  static const apiUrl = '$baseUrl/trsea-api/api';
-  // static const baseUrl = 'https://pelaut.dephub.go.id';
-  // static const apiUrl = '$baseUrl/trsea/trsea-api/api';
+  // static const baseUrl = 'http://192.168.1.21';
+  // static const apiUrl = '$baseUrl/trsea-api/api';
+  static const baseUrl = 'https://pelaut.dephub.go.id';
+  static const apiUrl = '$baseUrl/trsea/trsea-api/api';
   static const refreshUrl = '$apiUrl/auth/refresh';
   static const baseline = '$apiUrl/sync/baseline';
   static const checkSeafarer = '$apiUrl/auth/CheckSeafarer';

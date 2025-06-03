@@ -87,10 +87,19 @@ class ReportView extends GetView<ReportController> {
     return TableRow(children: [
       Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
-        child: Text(title),
+        child: Text(
+          title,
+          style: const TextStyle(fontSize: 14),
+        ),
       ),
-      const Text(":"),
-      Text(value),
+      const Text(
+        ":",
+        style: TextStyle(fontSize: 14),
+      ),
+      Text(
+        value,
+        style: const TextStyle(fontSize: 14),
+      ),
     ]);
   }
 
@@ -129,7 +138,10 @@ class ReportView extends GetView<ReportController> {
                     size: 45,
                   ),
                   const SizedBox(height: 10),
-                  Text("Month $i"),
+                  Text(
+                    "Month $i",
+                    style: const TextStyle(fontSize: 14),
+                  ),
                 ],
               ),
             ),

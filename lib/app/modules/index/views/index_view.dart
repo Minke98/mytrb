@@ -34,7 +34,7 @@ class IndexView extends GetView<IndexController> {
         final prefs = await SharedPreferences.getInstance();
         String? userUc = prefs.getString("userUc");
         if (userUc != null) {
-          await authController.fetchUserDataAuth(userUc);
+          await authController.fetchUserData(userUc);
         }
       },
       child: WillPopScope(

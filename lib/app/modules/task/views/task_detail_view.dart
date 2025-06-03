@@ -7,6 +7,35 @@ import 'package:mytrb/app/modules/task/controllers/task_controller.dart';
 class TaskUserDetail extends GetView<TaskController> {
   const TaskUserDetail({super.key});
 
+  TableRow _buildTableRow(String title, String value) {
+    return TableRow(children: [
+      Padding(
+        padding: const EdgeInsets.only(bottom: 8.0, right: 4),
+        child: Text(
+          title,
+          style: const TextStyle(fontSize: 14),
+        ),
+      ),
+      const Padding(
+        padding: EdgeInsets.only(right: 4),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            ":",
+            style: TextStyle(fontSize: 14),
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Text(
+          value,
+          style: const TextStyle(fontSize: 14),
+        ),
+      ),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -20,115 +49,35 @@ class TaskUserDetail extends GetView<TaskController> {
           ),
         );
       }
+
       log("state ${controller.userData}");
+
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
+          child: Table(
+            columnWidths: const {
+              0: FlexColumnWidth(3),
+              1: FlexColumnWidth(1),
+              2: FlexColumnWidth(8),
+            },
             children: [
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 3,
-                    child: Text(
-                      "Name",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      ":",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 8,
-                    child: Text(
-                      controller.userData['full_name'] ?? "-",
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  )
-                ],
+              _buildTableRow(
+                "Name",
+                controller.userData['full_name'] ?? "-",
               ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 3,
-                    child: Text(
-                      "Seafarer Code",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      ":",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 8,
-                    child: Text(
-                      controller.userData['seafarer_code'] ?? "-",
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ],
+              _buildTableRow(
+                "Seafarer Code",
+                controller.userData['seafarer_code'] ?? "-",
               ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 3,
-                    child: Text(
-                      "Instructor",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      ":",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 8,
-                    child: Text(
-                      controller.userData['pembimbing'] ?? "-",
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ],
+              _buildTableRow(
+                "Instructor",
+                controller.userData['pembimbing'] ?? "-",
               ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Expanded(
-                    flex: 3,
-                    child: Text(
-                      "IMO Number",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  const Expanded(
-                    flex: 1,
-                    child: Text(
-                      ":",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 8,
-                    child: Text(
-                      controller.userData['imo_number'] ?? "-",
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ],
-              )
+              _buildTableRow(
+                "IMO Number",
+                controller.userData['imo_number'] ?? "-",
+              ),
             ],
           ),
         ),

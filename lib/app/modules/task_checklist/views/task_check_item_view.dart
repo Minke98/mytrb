@@ -152,22 +152,37 @@ class CheckItem extends GetView<TaskChecklistController> {
                     showStatusDialogInst(context);
                   }
                 },
-                child: const Text('Instructor Approval Status'),
+                child: const Text(
+                  'Instructor Approval Status',
+                  style: TextStyle(fontSize: 13),
+                ),
               ),
               const SizedBox(height: 8),
               if (item.checked.value)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (item.instTime.isNotEmpty && item.isApproved == 1)
-                      Text(item.instTime),
-                    Text(
-                      TaskRepository.statusText(item.isApproved),
-                      style: TextStyle(
-                        color: item.isApproved == 1 ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.bold,
+                    if (item.instTime.isNotEmpty && item.isApproved == 1 ||
+                        item.isApproved == 2)
+                      Text(
+                        item.instTime,
+                        style: const TextStyle(
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
+                    const SizedBox(height: 5),
+                    if (item.isApproved == 1 || item.isApproved == 2)
+                      Text(
+                        TaskRepository.statusText(item.isApproved),
+                        style: TextStyle(
+                          color:
+                              item.isApproved == 1 ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
                     if (item.isLectApproved != 1 && allowModify)
                       Visibility(
                         visible: item.isApproved != 1,
@@ -228,15 +243,30 @@ class CheckItem extends GetView<TaskChecklistController> {
                     showStatusDialogLect(context);
                   }
                 },
-                child: const Text('Lecturer Approval Status'),
+                child: const Text(
+                  'Lecturer Approval Status',
+                  style: TextStyle(fontSize: 13),
+                ),
               ),
               const SizedBox(height: 8),
-              if (item.checked.value)
+              if (item.lectTime.isNotEmpty && item.isLectApproved == 1)
+                Text(
+                  item.lectTime,
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+              const SizedBox(height: 5),
+              if (item.checked.value && item.isLectApproved == 1 ||
+                  item.isLectApproved == 2)
                 Text(
                   TaskRepository.statusText(item.isLectApproved),
                   style: TextStyle(
                     color: item.isLectApproved == 1 ? Colors.green : Colors.red,
                     fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
                 ),
             ],

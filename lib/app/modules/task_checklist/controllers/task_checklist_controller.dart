@@ -66,7 +66,7 @@ class TaskChecklistController extends GetxController {
     initTaskChecklist();
   }
 
-  void initTaskChecklist() async {
+  Future<void> initTaskChecklist() async {
     isLoading.value = true;
     errorMessage.value = '';
     try {

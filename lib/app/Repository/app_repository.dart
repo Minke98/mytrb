@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:mytrb/app/services/base_client.dart';
 import 'package:mytrb/config/database/my_db.dart';
 import 'package:mytrb/config/environment/environment.dart';
@@ -30,6 +31,7 @@ class AppRepository {
         // List<Map> resultVesselTest =
         //     await db.rawQuery("select * from tech_type_vessel limit 1");
         // stream.add("Sync Participant");
+        EasyLoading.show(status: "Sync Participant");
         List<Map> resultParticipant = await db.rawQuery(
             "select * from tech_participant where seafarer_code = ? limit 1",
             [userData["seafarer_code"]]);
@@ -60,6 +62,7 @@ class AppRepository {
         Map data = resData['data']!;
 
         // stream.add("Sync Vessel");
+        EasyLoading.show(status: "Sync Vessel");
         log("appRepo: techTypeVessel");
         List<Map> resultVessel =
             await db.rawQuery("select * from tech_type_vessel limit 1");
@@ -75,6 +78,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Server Journal Time");
+        EasyLoading.show(status: "Sync Server Journal Time");
         if (getBaseline == true) {
           var stamp = data['log_stamp'];
           List findLog = await db.rawQuery(
@@ -91,6 +95,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Instructor");
+        EasyLoading.show(status: "Sync Instructor");
         log("appRepo: techInstructor");
         List<Map> resultInstructor =
             await db.rawQuery("select * from tech_instructor limit 1");
@@ -111,6 +116,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Sign Data");
+        EasyLoading.show(status: "Sync Sign Data");
         log("appRepo: techSign");
         String? ucSign;
         List<Map> resultSign = await db.rawQuery(
@@ -178,6 +184,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Participant");
+        EasyLoading.show(status: "Sync Participant");
         Map m = {};
         if (getBaseline == true) {
           log("appRepo: techParticipant $data ${data['tech_participant']}");
@@ -231,6 +238,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Schedule");
+        EasyLoading.show(status: "Sync Schedule");
         finalResult['tech_trb_schedule'] = false;
         String? ucLevel;
         if (data.containsKey('tech_trb_schedule') && getBaseline == true) {
@@ -257,6 +265,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Level");
+        EasyLoading.show(status: "Sync Level");
         finalResult['status_tech_level'] = false;
         if (data.containsKey('tech_level') && getBaseline == true) {
           log("appRepo: tech_level");
@@ -277,6 +286,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Function");
+        EasyLoading.show(status: "Sync Function");
         finalResult['status_tech_function'] = false;
         if (data.containsKey('tech_function') && getBaseline == true) {
           log("appRepo: tech_function");
@@ -297,6 +307,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Competency");
+        EasyLoading.show(status: "Sync Competency");
         finalResult['status_tech_competency'] = false;
         if (data.containsKey('tech_competency') && getBaseline == true) {
           log("appRepo: tech_competency");
@@ -321,6 +332,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Sub Competency");
+        EasyLoading.show(status: "Sync Sub Competency");
         finalResult['status_tech_sub_competency'] = false;
         if (data.containsKey('tech_sub_competency') && getBaseline == true) {
           log("appRepo: tech_sub_competency");
@@ -344,6 +356,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Task");
+        EasyLoading.show(status: "Sync Task");
         finalResult['status_tech_task'] = false;
         if (data.containsKey('tech_task') && getBaseline == true) {
           log("appRepo: tech_task");
@@ -367,6 +380,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Task check");
+        EasyLoading.show(status: "Sync Task Check");
         finalResult['status_tech_task_check'] = false;
         if (data.containsKey('tech_task_check') && getBaseline == true) {
           log("appRepo: tech_task_check");
@@ -407,6 +421,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Report List");
+        EasyLoading.show(status: "Sync Repost List");
         finalResult['status_report_list'] = false;
         if (data.containsKey('tech_report_list') &&
             ucLevel != null &&
@@ -432,6 +447,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Report Route");
+        EasyLoading.show(status: "Sync Report Route");
         finalResult['tech_report_route'] = false;
         if (data.containsKey('tech_report_route') &&
             getBaseline == true &&
@@ -458,6 +474,7 @@ class AppRepository {
         }
 
         // stream.add("Sync Report Log");
+        EasyLoading.show(status: "Sync Report Log");
         finalResult['tech_report_log'] = false;
         if (data.containsKey('tech_report_log') &&
             getBaseline == true &&
@@ -511,6 +528,7 @@ class AppRepository {
         }
 
         // stream.add("Sync News");
+        EasyLoading.show(status: "Sync News");
         finalResult['tech_news'] = false;
         if (data.containsKey('tech_news') && getBaseline == true) {
           // var formatParse = DateFormat('y-M-d H:m:s');
@@ -536,7 +554,7 @@ class AppRepository {
         }
 
         // stream.add("Sync News Status");
-
+        EasyLoading.show(status: "Sync News Status");
         final prefs = await SharedPreferences.getInstance();
         String userUc = prefs.getString('userUc')!;
 
@@ -563,6 +581,7 @@ class AppRepository {
         }
 
         // stream.add("Getting FAQ");
+        EasyLoading.show(status: "Getting FAQ");
         if (data.containsKey('tech_faq') && getBaseline == true) {
           for (Map m in data['tech_faq']) {
             // stream.add("Sync Tech Faq");
@@ -579,6 +598,7 @@ class AppRepository {
         }
 
         // stream.add("Getting Logbook");
+        EasyLoading.show(status: "Getting Logbook");
         if (data.containsKey('tech_logbook') && getBaseline == true) {
           for (Map m in data['tech_logbook']) {
             // stream.add("Sync Tech Logbook");
@@ -613,6 +633,7 @@ class AppRepository {
         }
 
         // stream.add("Restoring Messages");
+        EasyLoading.show(status: "Restoring Messages");
         finalResult['messages'] = false;
         if (data.containsKey('chat_room') && getBaseline == true) {
           for (Map m in data['chat_room']) {
@@ -689,6 +710,7 @@ class AppRepository {
         }
 
         // stream.add("Finishing Login..");
+        EasyLoading.show(status: "Finishing Login..");
       });
       mydb.transaction = null;
       await dbx.execute("PRAGMA foreign_keys = ON");
@@ -697,6 +719,7 @@ class AppRepository {
     } finally {
       mydb.transaction = null;
       // await mydb.close2();
+      EasyLoading.dismiss();
     }
     return finalResult;
   }

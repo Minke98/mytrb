@@ -42,7 +42,7 @@ class ReportRouteView extends GetView<ReportRouteController> {
         }
 
         if (controller.routes.isEmpty) {
-          return const Center(child: Text("Tidak ada rute tersedia."));
+          return const Center(child: Text("No route available."));
         }
 
         return ListView.builder(

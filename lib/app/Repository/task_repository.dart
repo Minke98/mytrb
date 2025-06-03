@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mytrb/app/Repository/repository.dart';
 import 'package:mytrb/app/Repository/sign_repository.dart';
@@ -143,12 +144,12 @@ GROUP BY
       var formatParse = DateFormat('yyyy-MM-dd HH:mm:ss');
       if (tmp['instTime'] != null) {
         DateTime instTime = formatParse.parse(tmp['instTime']);
-        var format = DateFormat.yMMMMd().addPattern("H:m");
+        var format = DateFormat.yMMMMd().addPattern("HH:mm");
         tmp["instTime"] = format.format(instTime);
       }
       if (tmp['lectTime'] != null) {
         DateTime lectTime = formatParse.parse(tmp['lectTime']);
-        var format = DateFormat.yMMMMd().addPattern("H:m");
+        var format = DateFormat.yMMMMd().addPattern("HH:mm");
         tmp["lectTime"] = format.format(lectTime);
       }
       String ucTask = tmp['uc'];
@@ -238,8 +239,22 @@ GROUP BY
       task["att_photo"] = null;
     }
 
-    print(
-        "Final task: $task"); // Debug print untuk melihat hasil akhir sebelum dikembalikan
+    // Format instTime dan lectTime
+    var formatParse = DateFormat('yyyy-MM-dd HH:mm:ss');
+    if (task['instTime'] != null) {
+      DateTime instTime = formatParse.parse(task['instTime']);
+      var format = DateFormat.yMMMMd().addPattern("HH:mm");
+      task["instTime"] = format.format(instTime);
+    }
+    if (task['lectTime'] != null) {
+      DateTime lectTime = formatParse.parse(task['lectTime']);
+      var format = DateFormat.yMMMMd().addPattern("HH:mm");
+      task["lectTime"] = format.format(lectTime);
+    }
+
+    if (kDebugMode) {
+      print("Final task: $task");
+    } // Debug print untuk melihat hasil akhir sebelum dikembalikan
     return TaskItem.fromMap(task);
   }
 
@@ -564,11 +579,13 @@ GROUP BY
           var formatParse = DateFormat('yyyy-MM-dd HH:mm:ss');
           if (tmp['instTime'] != null) {
             DateTime instTime = formatParse.parse(tmp['instTime']);
-            tmp["instTime"] = DateFormat.yMMMMd().add_Hm().format(instTime);
+            var format = DateFormat.yMMMMd().addPattern("HH:mm");
+            tmp["instTime"] = format.format(instTime);
           }
           if (tmp['lectTime'] != null) {
             DateTime lectTime = formatParse.parse(tmp['lectTime']);
-            tmp["lectTime"] = DateFormat.yMMMMd().add_Hm().format(lectTime);
+            var format = DateFormat.yMMMMd().addPattern("HH:mm");
+            tmp["lectTime"] = format.format(lectTime);
           }
           tmp["local_photo"] = fotoName;
           resTaskList.add(tmp);
@@ -753,12 +770,12 @@ GROUP BY
           var formatParse = DateFormat('yyyy-MM-dd HH:mm:ss');
           if (tmp['instTime'] != null) {
             DateTime instTime = formatParse.parse(tmp['instTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
+            var format = DateFormat.yMMMMd().addPattern("HH:mm");
             tmp["instTime"] = format.format(instTime);
           }
           if (tmp['lectTime'] != null) {
             DateTime lectTime = formatParse.parse(tmp['lectTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
+            var format = DateFormat.yMMMMd().addPattern("HH:mm");
             tmp["lectTime"] = format.format(lectTime);
           }
           tmp["app_inst_local_photo"] = fotoName;
@@ -921,12 +938,12 @@ GROUP BY
           var formatParse = DateFormat('yyyy-MM-dd HH:mm:ss');
           if (tmp['instTime'] != null) {
             DateTime instTime = formatParse.parse(tmp['instTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
+            var format = DateFormat.yMMMMd().addPattern("HH:mm");
             tmp["instTime"] = format.format(instTime);
           }
           if (tmp['lectTime'] != null) {
             DateTime lectTime = formatParse.parse(tmp['lectTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
+            var format = DateFormat.yMMMMd().addPattern("HH:mm");
             tmp["lectTime"] = format.format(lectTime);
           }
           resTaskList.add(tmp);
@@ -1053,12 +1070,12 @@ GROUP BY
           var formatParse = DateFormat('yyyy-MM-dd HH:mm:ss');
           if (tmp['instTime'] != null) {
             DateTime instTime = formatParse.parse(tmp['instTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
+            var format = DateFormat.yMMMMd().addPattern("HH:mm");
             tmp["instTime"] = format.format(instTime);
           }
           if (tmp['lectTime'] != null) {
             DateTime lectTime = formatParse.parse(tmp['lectTime']);
-            var format = DateFormat.yMMMMd().addPattern("H:m");
+            var format = DateFormat.yMMMMd().addPattern("HH:mm");
             tmp["lectTime"] = format.format(lectTime);
           }
           resTaskList.add(tmp);
@@ -1082,92 +1099,91 @@ GROUP BY
   }
 
   Future urlVideo({required String ucTask, required String urlVideo}) async {
-  Map finalres = {};
-  MyDatabase mydb = MyDatabase.instance;
-  var db;
+    Map finalres = {};
+    MyDatabase mydb = MyDatabase.instance;
+    var db;
 
-  if (mydb.transaction != null) {
-    db = mydb.transaction!;
-  } else {
-    db = await mydb.database;
-  }
+    if (mydb.transaction != null) {
+      db = mydb.transaction!;
+    } else {
+      db = await mydb.database;
+    }
 
-  try {
-    await db.transaction((dbx) async {
-      mydb.transaction = dbx;
-      Map userData = await UserRepository.getLocalUser();
-      log("taskRepo $userData");
+    try {
+      await db.transaction((dbx) async {
+        mydb.transaction = dbx;
+        Map userData = await UserRepository.getLocalUser();
+        log("taskRepo $userData");
 
-      if (userData['status'] == false) throw ("Cannot Find User Data");
-      if (userData['data']['sign'] == false) throw ("User Not Signed In");
+        if (userData['status'] == false) throw ("Cannot Find User Data");
+        if (userData['data']['sign'] == false) throw ("User Not Signed In");
 
-      String ucSign = userData['data']['sign_uc'];
-      String ucSignLocal = userData['data']['sign_uc_local'];
+        String ucSign = userData['data']['sign_uc'];
+        String ucSignLocal = userData['data']['sign_uc_local'];
 
-      // Mengecek task checklist
-      List<Map> taskChecklist = await dbx.rawQuery(
-          "SELECT * FROM tech_task_check WHERE uc_task = ? AND uc_sign = ? LIMIT 1",
-          [ucTask, ucSign]);
+        // Mengecek task checklist
+        List<Map> taskChecklist = await dbx.rawQuery(
+            "SELECT * FROM tech_task_check WHERE uc_task = ? AND uc_sign = ? LIMIT 1",
+            [ucTask, ucSign]);
 
-      bool newCheckList = false;
-      var uuid = const Uuid();
-      String? uc;
-      String? ucLokal;
+        bool newCheckList = false;
+        var uuid = const Uuid();
+        String? uc;
+        String? ucLokal;
 
-      if (taskChecklist.isEmpty) {
-        uc = "${ucSignLocal}_${uuid.v1()}_$ucTask";
-        ucLokal = uc;
-        newCheckList = true;
-      } else {
-        Map taskCheckListData = taskChecklist.first;
-        uc = taskCheckListData['uc'];
-        ucLokal = taskCheckListData['local_uc'];
-      }
+        if (taskChecklist.isEmpty) {
+          uc = "${ucSignLocal}_${uuid.v1()}_$ucTask";
+          ucLokal = uc;
+          newCheckList = true;
+        } else {
+          Map taskCheckListData = taskChecklist.first;
+          uc = taskCheckListData['uc'];
+          ucLokal = taskCheckListData['local_uc'];
+        }
 
-      log("UC yang digunakan untuk update: $uc");
-      log("URL yang akan diupdate: $urlVideo");
+        log("UC yang digunakan untuk update: $uc");
+        log("URL yang akan diupdate: $urlVideo");
 
-      // Validasi nilai URL sebelum update
-      if (urlVideo.isEmpty) throw ("URL Video tidak valid!");
+        // Validasi nilai URL sebelum update
+        if (urlVideo.isEmpty) throw ("URL Video tidak valid!");
 
-      String deviceId = await getUniqueDeviceId();
+        String deviceId = await getUniqueDeviceId();
 
-      if (newCheckList) {
-        log("taskRepo ADD");
-        await dbx.rawInsert(
-            """INSERT INTO tech_task_check 
+        if (newCheckList) {
+          log("taskRepo ADD");
+          await dbx.rawInsert("""INSERT INTO tech_task_check 
               (uc, local_uc, uc_sign, uc_task, app_inst_status, app_lect_status, device_id, att_url) 
               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-            [uc, ucLokal, ucSign, ucTask, 0, 0, deviceId, urlVideo]);
-        await journalIt(
-            tableName: "tech_task_check",
-            actionType: "c",
-            tableKey: ucLokal,
-            db: dbx);
-      } else {
-        log("taskRepo Update");
-        int rowsUpdated = await dbx.rawUpdate(
-            "UPDATE tech_task_check SET att_url = ? WHERE uc = ?",
-            [urlVideo, uc]);
-        log("Rows updated: $rowsUpdated");
+              [uc, ucLokal, ucSign, ucTask, 0, 0, deviceId, urlVideo]);
+          await journalIt(
+              tableName: "tech_task_check",
+              actionType: "c",
+              tableKey: ucLokal,
+              db: dbx);
+        } else {
+          log("taskRepo Update");
+          int rowsUpdated = await dbx.rawUpdate(
+              "UPDATE tech_task_check SET att_url = ? WHERE uc = ?",
+              [urlVideo, uc]);
+          log("Rows updated: $rowsUpdated");
 
-        if (rowsUpdated == 0) throw ("Gagal mengupdate URL video.");
-        await journalIt(
-            tableName: "tech_task_check",
-            actionType: "u",
-            tableKey: ucLokal,
-            db: dbx);
-      }
+          if (rowsUpdated == 0) throw ("Gagal mengupdate URL video.");
+          await journalIt(
+              tableName: "tech_task_check",
+              actionType: "u",
+              tableKey: ucLokal,
+              db: dbx);
+        }
 
-      // Cek apakah URL benar-benar sudah diupdate
-      List<Map> verifyUpdate = await dbx.rawQuery(
-          "SELECT att_url FROM tech_task_check WHERE uc = ?", [uc]);
-      if (verifyUpdate.isEmpty) throw ("Data tidak ditemukan setelah update!");
-      log("URL terupdate: ${verifyUpdate.first['att_url']}");
+        // Cek apakah URL benar-benar sudah diupdate
+        List<Map> verifyUpdate = await dbx
+            .rawQuery("SELECT att_url FROM tech_task_check WHERE uc = ?", [uc]);
+        if (verifyUpdate.isEmpty)
+          throw ("Data tidak ditemukan setelah update!");
+        log("URL terupdate: ${verifyUpdate.first['att_url']}");
 
-      // Mengambil task data untuk response
-      List<Map> tmpResTaskList = await dbx.rawQuery(
-          """SELECT
+        // Mengambil task data untuk response
+        List<Map> tmpResTaskList = await dbx.rawQuery("""SELECT
               tt.*,
               CASE WHEN tc.uc IS NULL THEN 0 ELSE 1 END AS isChecked,
               CASE WHEN tc.app_inst_status IS NULL THEN 0 ELSE tc.app_inst_status END AS status,
@@ -1177,25 +1193,23 @@ GROUP BY
               tc.att_url AS url
             FROM tech_task AS tt
             LEFT JOIN tech_task_check AS tc ON tc.uc_task = tt.uc AND tc.uc_sign = ?
-            WHERE tt.uc = ?""",
-          [ucSign, ucTask]);
+            WHERE tt.uc = ?""", [ucSign, ucTask]);
 
-      Map? resTask;
-      if (tmpResTaskList.isNotEmpty) resTask = tmpResTaskList.first;
-      log("taskRepo approve $resTask");
+        Map? resTask;
+        if (tmpResTaskList.isNotEmpty) resTask = tmpResTaskList.first;
+        log("taskRepo approve $resTask");
 
-      finalres['status'] = true;
-      finalres['data'] = resTask;
-    });
-  } catch (e, stacktrace) {
-    log("ERROR: $e\nSTACKTRACE: $stacktrace");
-    finalres['status'] = false;
-    finalres['message'] = e.toString();
-  } finally {
-    mydb.transaction = null;
+        finalres['status'] = true;
+        finalres['data'] = resTask;
+      });
+    } catch (e, stacktrace) {
+      log("ERROR: $e\nSTACKTRACE: $stacktrace");
+      finalres['status'] = false;
+      finalres['message'] = e.toString();
+    } finally {
+      mydb.transaction = null;
+    }
+
+    return finalres;
   }
-
-  return finalres;
-}
-
 }

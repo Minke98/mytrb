@@ -7,6 +7,7 @@ import 'package:mytrb/app/data/models/type_vessel.dart';
 import 'package:mytrb/app/data/models/vessel_info.dart';
 import 'package:mytrb/app/services/base_client.dart';
 import 'package:mytrb/config/database/my_db.dart';
+import 'package:mytrb/config/environment/environment.dart';
 import 'package:mytrb/utils/manual_con_check.dart';
 import 'package:path/path.dart' as Path;
 import 'package:geolocator/geolocator.dart';
@@ -251,7 +252,7 @@ ORDER BY
 
         // Make API call using the BaseClient
         await BaseClient.safeApiCall(
-          "https://pelaut.dephub.go.id/trsea/trsea-api/api/vessel/GetDetail", // Endpoint
+          Environment.dataKapal, // Endpoint
           RequestType.get, // HTTP method (GET)
           queryParameters: data,
           onSuccess: (response) {
