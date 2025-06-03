@@ -267,13 +267,13 @@ class SyncRepository extends Repository {
                             item: resSign.data['data'],
                             journalItem: item);
                         break;
-                      case "tech_type_vessel":
-                        // stream.add("Sync Task Vessel");
-                        await serverVesselType(
-                            db: txn,
-                            item: resSign.data['data'],
-                            journalItem: item);
-                        break;
+                      // case "tech_type_vessel":
+                      //   // stream.add("Sync Task Vessel");
+                      //   await serverVesselType(
+                      //       db: txn,
+                      //       item: resSign.data['data'],
+                      //       journalItem: item);
+                      //   break;
                       default:
                         log("homePage: No handle yet for ${resSign.data["table_name"]}");
                     }
@@ -1209,7 +1209,7 @@ class SyncRepository extends Repository {
             Map<String, dynamic> fdata = {"uc": item['table_key']};
             log("remove server $item $fdata");
             await BaseClient.safeApiCall(
-              "sync/techtaskcheckdelete",
+              Environment.syncTaskCheckDelete,
               RequestType.post,
               data: fdata,
               onSuccess: (Response response) async {

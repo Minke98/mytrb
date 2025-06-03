@@ -72,8 +72,8 @@ class ReportView extends GetView<ReportController> {
                       controller.signData["company_name"] ?? "-"),
                   _buildTableRow(
                       "IMO Number", controller.signData["imo_number"] ?? "-"),
-                  _buildTableRow(
-                      "MMSI Number", controller.signData["mmsi_number"] ?? "-"),
+                  // _buildTableRow(
+                  //     "MMSI Number", controller.signData["mmsi_number"] ?? "-"),
                 ],
               ),
             ),

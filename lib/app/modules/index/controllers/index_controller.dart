@@ -125,6 +125,24 @@ class IndexController extends GetxController {
   }
 
   void openWhatsAppGroup() async {
+    bool isConnected = await ConnectionUtils.checkInternetConnection();
+    if (!isConnected) {
+      EasyLoading.dismiss();
+      ConnectionUtils().showNoInternetDialog(
+        "Apologies, the login process requires an internet connection.",
+      );
+      return;
+    }
+
+    bool isFastConnection = await ConnectionUtils.isConnectionFast();
+    if (!isFastConnection) {
+      EasyLoading.dismiss();
+      ConnectionUtils().showNoInternetDialog(
+        "Apologies, the login process requires a stable internet connection.",
+        isSlowConnection: true,
+      );
+      return;
+    }
     const String groupUrl = "https://chat.whatsapp.com/Ee6yQmN87uLBAPcfB4qqcx";
     final Uri uri = Uri.parse(groupUrl);
 

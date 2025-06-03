@@ -1,9 +1,12 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:mytrb/app/Repository/sign_repository.dart';
 import 'package:mytrb/app/components/image_picker_widget.dart';
 import 'package:mytrb/app/data/models/instructor.dart';
 import 'package:mytrb/app/data/models/type_vessel.dart';
+import 'package:mytrb/app/data/models/vessel_info.dart';
 import 'package:mytrb/app/modules/sign_on/controllers/sign_on_controller.dart';
 
 class SignOnView extends GetView<SignController> {
@@ -44,16 +47,18 @@ class SignOnView extends GetView<SignController> {
                     mySpacer(),
                     dosenInput(context),
                     mySpacer(),
-                    vesselInput(context),
+                    vesselInput2(context),
                     mySpacer(),
-                    namaKapalInput(),
-                    mySpacer(),
-                    namaPerusahaanInput(),
-                    mySpacer(),
-                    imoNumberInput(),
-                    mySpacer(),
-                    mmsiNumberInput(),
-                    mySpacer(),
+                    // vesselInput(context),
+                    // mySpacer(),
+                    // namaKapalInput(),
+                    // mySpacer(),
+                    // namaPerusahaanInput(),
+                    // mySpacer(),
+                    // imoNumberInput(),
+                    // mySpacer(),
+                    // mmsiNumberInput(),
+                    // mySpacer(),
                     errorFoto(context, controller.signOnError.value),
                     signOnFotoWidget(context),
                     mySpacer(),
@@ -127,6 +132,9 @@ class SignOnView extends GetView<SignController> {
         labelText: "Sign On Date",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black), // Ganti warna fokus
         ),
       ),
     );
@@ -258,6 +266,223 @@ class SignOnView extends GetView<SignController> {
         },
       ),
     );
+  }
+
+  Widget vesselInput2(BuildContext context) {
+    return Obx(() {
+      final isIndonesia = controller.selectedVesselType.value == "indonesian";
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Vessel Category (Indonesian/Foreign)",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: RadioListTile<String>(
+                  activeColor: Colors.black,
+                  title: const Text("Indonesian"),
+                  value: "indonesian",
+                  groupValue: controller.selectedVesselType.value,
+                  onChanged: (value) {
+                    controller.selectedVesselType.value = value!;
+                    controller.imoNumberController.clear();
+                    controller.namaKapalController.clear();
+                    controller.noRegistrasiController.clear();
+                    controller.namaPerusahaanController.clear();
+                  },
+                ),
+              ),
+              Expanded(
+                child: RadioListTile<String>(
+                  activeColor: Colors.black,
+                  title: const Text("Foreign"),
+                  value: "foreign",
+                  groupValue: controller.selectedVesselType.value,
+                  onChanged: (value) {
+                    controller.selectedVesselType.value = value!;
+                    controller.imoNumberController.clear();
+                    controller.namaKapalController.clear();
+                    controller.noRegistrasiController.clear();
+                    controller.namaPerusahaanController.clear();
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          isIndonesia
+              ? Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: controller.noRegistrasiController,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          labelText: "Nomor Registrasi Kapal",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.black), // Ganti warna fokus
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Nomor Registrasi wajib diisi";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus();
+                        final noReg =
+                            controller.noRegistrasiController.text.trim();
+
+                        if (noReg.isEmpty) {
+                          Get.snackbar(
+                            'Peringatan',
+                            'Nomor Registrasi tidak boleh kosong',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
+
+                        // Menampilkan loading dengan GetX
+                        EasyLoading.show(status: "Mencari Data Kapal");
+
+                        final signRepo = SignRepository();
+                        final result = await signRepo.getVesselTypeOnline(
+                          noPendaftaran: noReg,
+                        );
+
+                        // Menghilangkan loading setelah mendapatkan hasil
+                        EasyLoading.dismiss();
+
+                        if (result['status'] == true &&
+                            result['vessel'] != null) {
+                          final VesselInfo vessel = result['vessel'];
+                          controller.imoNumberController.text =
+                              vessel.nomorIMO ?? '';
+                          controller.namaKapalController.text =
+                              vessel.namaKapal ?? '';
+                          controller.namaPerusahaanController.text =
+                              vessel.namaPemilik ?? '';
+                        } else {
+                          Get.snackbar(
+                            'Terjadi Kesalahan',
+                            result['message'] ?? 'Terjadi kesalahan',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade900,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 20),
+                      ),
+                      child: const Text("Cari"),
+                    ),
+                  ],
+                )
+              : TextFormField(
+                  controller: controller.noRegistrasiController,
+                  cursorColor: Colors.black,
+                  decoration: InputDecoration(
+                    labelText: "Nomor Registrasi Kapal",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.black), // Ganti warna fokus
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Nomor Registrasi wajib diisi";
+                    }
+                    return null;
+                  },
+                ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: controller.imoNumberController,
+            cursorColor: Colors.black,
+            enabled: !isIndonesia,
+            decoration: InputDecoration(
+              labelText: "No IMO",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: Colors.black), // Ganti warna fokus
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "No IMO wajib diisi";
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: controller.namaKapalController,
+            cursorColor: Colors.black,
+            enabled: !isIndonesia,
+            decoration: InputDecoration(
+              labelText: "Nama Kapal",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: Colors.black), // Ganti warna fokus
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Vessel Name wajib diisi";
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: controller.namaPerusahaanController,
+            cursorColor: Colors.black,
+            enabled: !isIndonesia,
+            decoration: InputDecoration(
+              labelText: "Nama Perusahaan",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: Colors.black), // Ganti warna fokus
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Nama Perusahaan wajib diisi";
+              }
+              return null;
+            },
+          ),
+        ],
+      );
+    });
   }
 
   Widget namaKapalInput() {

@@ -73,6 +73,7 @@ class IndexView extends GetView<IndexController> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
+                                const SizedBox(height: 10.0),
                                 Obx(() {
                                   if (controller.isLoading.value) {
                                     return const CircularProgressIndicator();
@@ -306,7 +307,10 @@ class IndexView extends GetView<IndexController> {
                 backgroundColor: Colors.blue.shade900,
                 minimumSize: const Size.fromHeight(50),
               ),
-              child: const Text("Sign Off"),
+              child: const Text(
+                "Sign Off",
+                style: TextStyle(fontSize: 14),
+              ),
             ),
           ),
         );

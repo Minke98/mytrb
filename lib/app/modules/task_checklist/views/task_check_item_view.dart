@@ -362,6 +362,9 @@ class CheckItem extends GetView<TaskChecklistController> {
                         takeAndUploadPhoto();
                         Get.close(1);
                       },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade900,
+                ),
                 child: const Text("Take Another Photo"),
               ),
           ],
@@ -389,6 +392,9 @@ class CheckItem extends GetView<TaskChecklistController> {
                             takeAndUploadPhoto();
                             Get.close(1);
                           },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade900,
+                    ),
                     child: const Text("Take Another Photo"),
                   ),
               ],
@@ -428,6 +434,9 @@ class CheckItem extends GetView<TaskChecklistController> {
                       takeAndUploadPhoto();
                       Get.close(1);
                     },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade900,
+              ),
               child: const Text("Take Another Photo"),
             ),
         ],
@@ -469,11 +478,11 @@ class CheckItem extends GetView<TaskChecklistController> {
                 backgroundColor:
                     item.isApproved == 1 ? Colors.grey : Colors.blue.shade900,
               ),
-              child: Text(
+              child: const Text(
                 "Edit URL Video",
-                style: TextStyle(
-                  color: item.isApproved == 1 ? Colors.black54 : Colors.white,
-                ),
+                // style: TextStyle(
+                //   color: item.isApproved == 1 ? Colors.black54 : Colors.white,
+                // ),
               ),
             ),
         ],
@@ -538,10 +547,12 @@ class CheckItem extends GetView<TaskChecklistController> {
     String dialogTitle = isEdit ? "Edit Video URL" : "Enter Video URL";
     String buttonText = isEdit ? 'Update' : 'Send';
 
-    // Sinkronisasi TextEditingController dengan nilai berdasarkan isEdit
-    TextEditingController textController = TextEditingController(
-      text: isEdit ? itemUrl ?? "" : controller.videoUrl.value,
+    final TextEditingController textController = TextEditingController(
+      text: isEdit ? (itemUrl ?? "") : controller.videoUrl.value,
     );
+
+    // Sync awal ke controller.videoUrl
+    controller.videoUrl.value = textController.text;
 
     Get.bottomSheet(
       Container(
@@ -550,78 +561,91 @@ class CheckItem extends GetView<TaskChecklistController> {
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        child: StatefulBuilder(
-          builder: (context, setState) {
-            Uri? parsedUri = Uri.tryParse(textController.text);
-            bool isValidUrl = parsedUri?.hasAbsolutePath == true;
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                dialogTitle,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: textController,
+              decoration: InputDecoration(
+                labelText: "Video URL",
+                hintText: "Enter the video link...",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                prefixIcon: const Icon(Icons.link),
+              ),
+              onChanged: (text) {
+                controller.videoUrl.value = text;
+              },
+            ),
+            const SizedBox(height: 6),
+            Obx(() {
+              final uri = Uri.tryParse(controller.videoUrl.value);
+              final isValidUrl = uri != null &&
+                  (uri.scheme == 'http' || uri.scheme == 'https') &&
+                  uri.host.isNotEmpty;
 
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Text(
-                    dialogTitle,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: textController,
-                  decoration: InputDecoration(
-                    labelText: "Video URL",
-                    hintText: "Enter the video link...",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    prefixIcon: const Icon(Icons.link),
-                  ),
-                  onChanged: (text) {
-                    // Update controller saat pengguna mengetik
-                    controller.videoUrl.value = text;
-                    // Perbarui validasi URL
-                    setState(() {
-                      parsedUri = Uri.tryParse(text);
-                      isValidUrl = parsedUri?.hasAbsolutePath == true;
-                    });
-                  },
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () => Get.back(),
-                      child: const Text(
-                        "Cancel",
-                        style: TextStyle(color: Colors.red, fontSize: 16),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: isValidUrl
-                          ? () async {
-                              await controller.saveUrlVideo(item.uc);
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isValidUrl
-                            ? Colors.blue.shade900
-                            : Colors.grey.shade400,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                      ),
+              return (!isValidUrl && controller.videoUrl.value.isNotEmpty)
+                  ? const Padding(
+                      padding: EdgeInsets.only(top: 4.0, left: 4),
                       child: Text(
-                        buttonText,
-                        style: const TextStyle(fontSize: 14),
+                        "URL tidak valid",
+                        style: TextStyle(color: Colors.red),
                       ),
-                    ),
-                  ],
+                    )
+                  : const SizedBox.shrink();
+            }),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () => Get.back(),
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
                 ),
+                Obx(() {
+                  final uri = Uri.tryParse(controller.videoUrl.value);
+                  final isValidUrl = uri != null &&
+                      (uri.scheme == 'http' || uri.scheme == 'https') &&
+                      uri.host.isNotEmpty;
+
+                  return ElevatedButton(
+                    onPressed: isValidUrl
+                        ? () async {
+                            await controller.saveUrlVideo(item.uc);
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isValidUrl
+                          ? Colors.blue.shade900
+                          : Colors.grey.shade400,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                    ),
+                    child: Text(
+                      buttonText,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
+                }),
               ],
-            );
-          },
+            ),
+          ],
         ),
       ),
       isDismissible: true,

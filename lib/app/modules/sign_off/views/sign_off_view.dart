@@ -106,11 +106,11 @@ class SignoffView extends GetView<SignoffController> {
             tableRow(
                 "Sign On Date", controller.signData['sign_on_date_formated']),
             tableRow("Lecturer", controller.signData['full_name']),
-            tableRow("Type Vessel", controller.signData['type_vessel']),
+            // tableRow("Type Vessel", controller.signData['type_vessel']),
             tableRow("Vessel Name", controller.signData['vessel_name']),
             tableRow("Company Name", controller.signData['company_name']),
             tableRow("IMO NUMBER", controller.signData['imo_number']),
-            tableRow("MMSI", controller.signData['mmsi_number']),
+            // tableRow("MMSI", controller.signData['mmsi_number']),
             tableRow("Sign On Foto", ""),
           ],
         ),

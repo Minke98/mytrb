@@ -72,6 +72,12 @@ class TaskApprovalView extends GetView<TaskApprovalController> {
                   otherOptions: OtherOptions(
                     height: MediaQuery.of(context).size.height * 0.4,
                   ),
+                  callbacks: Callbacks(
+                    onFocus: () {
+                      FocusScope.of(context)
+                          .unfocus(); // Menghilangkan fokus dari TextFormField
+                    },
+                  ),
                 ),
                 Obx(() {
                   return controller.quilError.value

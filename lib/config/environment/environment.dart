@@ -3,8 +3,13 @@ class Environment {
   static const apiKey = '6f926d5c19164cdfa95205814242202';
 
   // api urls
-  static const baseUrl = 'http://192.168.1.20';
+  // static String baseUrl = "https://pelaut.dephub.go.id/trsea/trsea-api/api/";
+  // static String refreshUrl =
+  //     "https://pelaut.dephub.go.id/trsea/trsea-api/api/auth/refresh";
+  static const baseUrl = 'http://192.168.1.21';
   static const apiUrl = '$baseUrl/trsea-api/api';
+  // static const baseUrl = 'https://pelaut.dephub.go.id';
+  // static const apiUrl = '$baseUrl/trsea/trsea-api/api';
   static const refreshUrl = '$apiUrl/auth/refresh';
   static const baseline = '$apiUrl/sync/baseline';
   static const checkSeafarer = '$apiUrl/auth/CheckSeafarer';
@@ -36,57 +41,13 @@ class Environment {
   static const syncTaskCheckDelete = '$apiUrl/sync/techtaskcheckdelete';
   static const syncTaskNewsStatus = '$apiUrl/sync/technewsstatus';
   static const syncLogbook = '$apiUrl/sync/logbook';
-  static const regist = '$apiUrl/auth/registration';
-  static const jenisDiklat = '$apiUrl/master/JenisDiklat';
-  static const diklat = '$apiUrl/master/Diklat';
-  static const jadwalDiklat = '$apiUrl/master/JadwalDiklat';
-  static const jadwalPelaksanaan = '$apiUrl/master/ListInfoJadwalPelaksana';
-  static const infoJadwalDiklat = '$apiUrl/master/DetailInfoJadwalDiklat';
-  static const persyaratanDiklat = '$apiUrl/master/PersyaratanDiklat';
-  static const detailInfoJadwalDiklat = '$apiUrl/master/DetailInfoJadwalDiklat';
-  static const uploadPersyaratan = '$apiUrl/persyaratan/DataDiklat';
-  static const dataPersyaratan = '$apiUrl/persyaratan/DataPersyaratan';
-  static const getFormPersyaratan = '$apiUrl/persyaratan/GetFormPersyaratan';
-  static const uploadsDoc = '$apiUrl/persyaratan/UploadsDoc';
-  static const updateDoc = '$apiUrl/persyaratan/UpdateDoc';
-  static const sendDoc = '$apiUrl/persyaratan/SendDoc';
-  static const registDiklat = '$apiUrl/registration/Store';
-  static const registDiklatIII = '$apiUrl/registration/Store';
-  static const registDiklatEndors = '$apiUrl/registration/Store';
-  static const news = '$apiUrl/news/getData';
-  static const newsCertificate = '$apiUrl/certificate/getData';
+  // static const dataKapal = '$apiUrl/vessel/GetDetail';
+  static const dataKapal =
+      'https://pelaut.dephub.go.id/trsea/trsea-api/api/vessel/GetDetail';
   static const oneSignalApiUrl = 'https://onesignal.com/api/v1/notifications';
   static const oneSignalAppId = 'f8f6161c-7908-4cd2-9f3e-1ebc2a8ad21b';
   static const oneSignalRestApiKey =
       'YzVjYTc5YmYtYjBhMi00NTJmLTk3ZjctYmFmODkxNDBjNzg1';
-  static const dataDiklat = '$apiUrl/Reschedule/DataDiklat';
-  static const getForm = '$apiUrl/reschedule/getForm';
-  static const infoKursi = '$apiUrl/kuota/infoKursi';
-  static const billingDetail = '$apiUrl/tagihan/getDetail';
-  static const billing = '$apiUrl/tagihan/getData';
-  static const reschedule = '$apiUrl/reschedule/DataDiklat';
-  static const saveReschedule = '$apiUrl/reschedule/UpdateSchedule';
-  static const urlDocument = '$baseUrl/uploads/document/';
-  static const urlPengumuman = '$baseUrl/uploads/pengumuman/';
-  static const urlPengaduan = '$baseUrl/uploads/pengaduan/';
-  static const urlfoto = '$baseUrl/uploads/image/';
-  static const history = '$apiUrl/history/getData';
-  static const kuesioner = '$baseUrl/3.1/kuesioner/index/';
-  static const biodata = '$apiUrl/person/dataPerson';
-  static const updateBiodata = '$apiUrl/person/updatePerson';
-  static const changeFoto = '$apiUrl/person/updateFoto';
-  static const changePassword = '$apiUrl/person/updateChangePassword';
-  static const getListCertificate = '$apiUrl/senderCert/getData';
-  static const getFormCert = '$apiUrl/senderCert/getForm';
-  static const getListCert = '$apiUrl/senderCert/listCert';
-  static const pengajuanCert = '$apiUrl/senderCert/store';
-  static const getDetailCert = '$apiUrl/senderCert/detailSender';
-  static const updateStatusCert = '$apiUrl/senderCert/updateStatus';
-  static const getListReport = '$apiUrl/pengaduan/getData';
-  static const getTypeReport = '$apiUrl/pengaduan/typeAduan';
-  static const getDiklatReport = '$apiUrl/pengaduan/ListDiklat';
-  static const sendPengaduan = '$apiUrl/pengaduan/storeAduan';
-  static const getDetailPengaduan = '$apiUrl/pengaduan/DetailAduan';
 
   // api fields
   static const key = 'key';
