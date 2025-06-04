@@ -16,10 +16,13 @@ class NewsDetailView extends GetView<NewsController> {
     // Tandai berita sebagai telah dibaca
     controller.setRead(uc);
 
-    return WillPopScope(
-      onWillPop: () async {
-        Get.back(result: 1);
-        return true;
+    return PopScope(
+      canPop: false, // ini penting agar kita bisa kontrol pop secara manual
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          // Pop belum terjadi, kita tangani manual
+          Get.back(result: 1);
+        }
       },
       child: Scaffold(
         appBar: AppBar(title: const Text("News Detail")),

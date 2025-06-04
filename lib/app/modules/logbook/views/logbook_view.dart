@@ -94,9 +94,14 @@ class ListWidget extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Colors.green, // Warna tombol Approval
-                          foregroundColor: Colors.white, // Warna teks
                         ),
-                        child: const Text("Approval"),
+                        child: const Text(
+                          "Approval",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
                       ),
                     const Spacer(),
                     if (item['app_inst_status'] != 1)
@@ -106,9 +111,14 @@ class ListWidget extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Colors.blue.shade900, // Warna tombol Edit
-                          foregroundColor: Colors.white, // Warna teks
                         ),
-                        child: const Text("Edit"),
+                        child: const Text(
+                          "Edit",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
                       ),
                   ],
                 ),

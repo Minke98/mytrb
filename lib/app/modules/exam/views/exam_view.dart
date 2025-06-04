@@ -79,6 +79,7 @@ class ExamView extends GetView<ExamController> {
                     : (exam['major'] == "N" ? "Nautika" : "-");
 
                 Widget temp = Card(
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12), // Rounded Card
                   ),
@@ -172,10 +173,51 @@ class ExamView extends GetView<ExamController> {
 
                                 if (message != "The exam is accessible now.") {
                                   Get.defaultDialog(
-                                    title: "Exam Information",
-                                    content: Text(message),
-                                    textConfirm: "Tutup",
-                                    onConfirm: () => Get.back(),
+                                    backgroundColor: Colors.white,
+                                    title: '',
+                                    titlePadding: EdgeInsets.zero,
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.info_outline,
+                                                color: Colors.blue.shade900,
+                                                size: 26),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              "Exam Information",
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue.shade900,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          message,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        TextButton(
+                                          onPressed: () => Get.back(),
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: Colors.red,
+                                            textStyle:
+                                                const TextStyle(fontSize: 16),
+                                          ),
+                                          child: const Text("Tutup"),
+                                        ),
+                                      ],
+                                    ),
+                                    radius: 12,
                                   );
                                 }
                               }

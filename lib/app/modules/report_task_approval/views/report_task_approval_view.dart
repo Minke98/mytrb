@@ -25,12 +25,18 @@ class ReportTaskApprovalView extends GetView<ReportTaskApprovalController> {
               child: Column(
                 children: [
                   TextFormField(
+                    style: const TextStyle(color: Colors.black),
                     cursorColor: Colors.black,
                     controller: controller.namaInstruktur,
                     decoration: InputDecoration(
                       labelText: "Instructor's Name",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                            color: Colors.black), // Ganti warna fokus
                       ),
                     ),
                     validator: (value) => value!.isEmpty
@@ -144,7 +150,8 @@ class ReportTaskApprovalView extends GetView<ReportTaskApprovalController> {
                                   )
                                 : const Text(
                                     "Save",
-                                    style: TextStyle(fontSize: 14),
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.white),
                                   ),
                           ));
                     },

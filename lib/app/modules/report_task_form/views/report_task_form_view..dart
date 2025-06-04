@@ -19,8 +19,8 @@ class ReportTaskAddFormView extends GetView<ReportTaskAddFormController> {
               : ResponsiveWrapper.of(context).screenWidth;
     }
 
-    return WillPopScope(
-      onWillPop: () async => true,
+    return PopScope(
+      canPop: true,
       child: Scaffold(
         appBar: AppBar(
           title: Text(controller.title.value),
@@ -104,7 +104,7 @@ class ReportTaskAddFormView extends GetView<ReportTaskAddFormController> {
                             minimumSize: const Size.fromHeight(50)),
                         child: const Text(
                           "Save",
-                          style: TextStyle(fontSize: 14),
+                          style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                       ),
                     ),

@@ -39,6 +39,7 @@ class FaqItem extends StatelessWidget {
     final isVisible = false.obs;
 
     return Card(
+      color: Colors.white,
       child: InkWell(
         onTap: () => isVisible.value = !isVisible.value,
         child: Padding(
@@ -48,16 +49,16 @@ class FaqItem extends StatelessWidget {
             children: [
               Text(
                 item['question'],
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5),
               Obx(() => isVisible.value
                   ? Text(
                       item['answer'],
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: const TextStyle(color: Colors.black, fontSize: 13),
                     )
                   : const SizedBox()),
               Align(

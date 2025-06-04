@@ -297,8 +297,11 @@ class ReportTaskAddView extends GetView<ReportTaskAddController> {
                   backgroundColor: Colors.blue.shade900,
                   heroTag: 'menuButton',
                   onPressed: controller.toggleMenuVisibility,
-                  label: const Text('Menu'),
-                  icon: const Icon(Icons.menu),
+                  label: const Text(
+                    'Menu',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                  icon: const Icon(Icons.menu, color: Colors.white),
                 ),
               ),
             if (controller.reportStatus.value != null &&
@@ -320,8 +323,11 @@ class ReportTaskAddView extends GetView<ReportTaskAddController> {
                           'ucSign': controller.ucSign.value
                         });
                       },
-                      label: const Text('Approval'),
-                      icon: const Icon(Icons.person),
+                      label: const Text(
+                        'Approval',
+                        style: TextStyle(fontSize: 14, color: Colors.white),
+                      ),
+                      icon: const Icon(Icons.person, color: Colors.white),
                     ),
                   ),
                 ),
@@ -347,8 +353,17 @@ class ReportTaskAddView extends GetView<ReportTaskAddController> {
                           "month_number": controller.monthNumber.value
                         });
                       },
-                      label: const Text('Add'),
-                      icon: const Icon(Icons.add),
+                      label: const Text(
+                        'Add',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                      icon: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

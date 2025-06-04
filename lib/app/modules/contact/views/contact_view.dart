@@ -20,12 +20,18 @@ class ContactView extends GetView<ContactController> {
               children: [
                 const SizedBox(height: 8),
                 TextFormField(
+                  style: const TextStyle(color: Colors.black),
                   cursorColor: Colors.black,
                   controller: controller.subjectController,
                   decoration: InputDecoration(
                     labelText: "Subject",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide:
+                          BorderSide(color: Colors.black), // Ganti warna fokus
                     ),
                   ),
                   onChanged: (value) => controller.validateForm(),
@@ -34,12 +40,18 @@ class ContactView extends GetView<ContactController> {
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
+                  style: const TextStyle(color: Colors.black),
                   cursorColor: Colors.black,
                   controller: controller.emailController,
                   decoration: InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide:
+                          BorderSide(color: Colors.black), // Ganti warna fokus
                     ),
                   ),
                   onChanged: (value) => controller.validateForm(),
@@ -48,6 +60,7 @@ class ContactView extends GetView<ContactController> {
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
+                  style: const TextStyle(color: Colors.black),
                   cursorColor: Colors.black,
                   controller: controller.pesanController,
                   maxLines: null,
@@ -57,6 +70,11 @@ class ContactView extends GetView<ContactController> {
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide:
+                          BorderSide(color: Colors.black), // Ganti warna fokus
                     ),
                   ),
                   onChanged: (value) => controller.validateForm(),
@@ -95,7 +113,8 @@ class ContactView extends GetView<ContactController> {
                                 )
                               : const Text(
                                   "Save",
-                                  style: TextStyle(fontSize: 14),
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.white),
                                 ),
                         ),
                       );

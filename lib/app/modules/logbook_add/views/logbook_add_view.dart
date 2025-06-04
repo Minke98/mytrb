@@ -88,7 +88,8 @@ class LogBookAddView extends GetView<LogbookAddController> {
                             )
                           : Text(
                               controller.uc.value == null ? "Save" : "Update",
-                              style: const TextStyle(fontSize: 14),
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.white),
                             ),
                     ),
                   );
@@ -111,6 +112,9 @@ class DatePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       return TextFormField(
+        style: const TextStyle(
+          color: Colors.black, // Warna teks input
+        ),
         readOnly: true,
         onTap: () async {
           DateTime? selectedDate = await showDatePicker(
@@ -118,7 +122,28 @@ class DatePicker extends StatelessWidget {
             initialDate: controller.dateObj.value ?? DateTime.now(),
             firstDate: DateTime(DateTime.now().year - 100),
             lastDate: DateTime(DateTime.now().year + 100),
+            builder: (BuildContext context, Widget? child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: ColorScheme.light(
+                    primary: Colors.blue.shade900, // Warna header dan tombol OK
+                    onPrimary: Colors.white, // Warna teks tombol OK
+                    surface: Colors.white, // Background dialog
+                    onSurface: Colors.black, // Warna teks di dialog
+                  ),
+                  dialogBackgroundColor: Colors.white,
+                  textButtonTheme: TextButtonThemeData(
+                    style: TextButton.styleFrom(
+                      foregroundColor:
+                          Colors.blue.shade900, // Tombol BATAL & OK
+                    ),
+                  ),
+                ),
+                child: child!,
+              );
+            },
           );
+
           if (selectedDate != null) {
             controller.dateObj.value = selectedDate;
             controller.dateText.value =
@@ -138,6 +163,10 @@ class DatePicker extends StatelessWidget {
           labelText: "Log Book date",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.black), // Ganti warna fokus
           ),
         ),
       );

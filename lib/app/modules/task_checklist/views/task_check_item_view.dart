@@ -27,6 +27,7 @@ class CheckItem extends GetView<TaskChecklistController> {
   Widget build(BuildContext context) {
     return Obx(
       () => Card(
+        color: Colors.white,
         child: InkWell(
           onTap: () async {
             if (!item.checked.value && allowModify) {
@@ -154,7 +155,10 @@ class CheckItem extends GetView<TaskChecklistController> {
                 },
                 child: const Text(
                   'Instructor Approval Status',
-                  style: TextStyle(fontSize: 13),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -218,7 +222,7 @@ class CheckItem extends GetView<TaskChecklistController> {
                                   ),
                           child: const Text(
                             "Approve",
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(fontSize: 14, color: Colors.white),
                           ),
                         ),
                       ),
@@ -245,7 +249,10 @@ class CheckItem extends GetView<TaskChecklistController> {
                 },
                 child: const Text(
                   'Lecturer Approval Status',
-                  style: TextStyle(fontSize: 13),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -395,7 +402,10 @@ class CheckItem extends GetView<TaskChecklistController> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade900,
                 ),
-                child: const Text("Take Another Photo"),
+                child: const Text(
+                  "Take Another Photo",
+                  style: TextStyle(fontSize: 13, color: Colors.white),
+                ),
               ),
           ],
         ));
@@ -425,7 +435,10 @@ class CheckItem extends GetView<TaskChecklistController> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.shade900,
                     ),
-                    child: const Text("Take Another Photo"),
+                    child: const Text(
+                      "Take Another Photo",
+                      style: TextStyle(fontSize: 13, color: Colors.white),
+                    ),
                   ),
               ],
             ));
@@ -467,7 +480,10 @@ class CheckItem extends GetView<TaskChecklistController> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue.shade900,
               ),
-              child: const Text("Take Another Photo"),
+              child: const Text(
+                "Take Another Photo",
+                style: TextStyle(fontSize: 13, color: Colors.white),
+              ),
             ),
         ],
       ));
@@ -510,9 +526,7 @@ class CheckItem extends GetView<TaskChecklistController> {
               ),
               child: const Text(
                 "Edit URL Video",
-                // style: TextStyle(
-                //   color: item.isApproved == 1 ? Colors.black54 : Colors.white,
-                // ),
+                style: TextStyle(fontSize: 13, color: Colors.white),
               ),
             ),
         ],
@@ -535,6 +549,7 @@ class CheckItem extends GetView<TaskChecklistController> {
   void showUploadPhotoDialog(File imageFile) {
     Get.dialog(
       AlertDialog(
+        backgroundColor: Colors.white,
         title: const Text("The Result of the Photo"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -561,7 +576,10 @@ class CheckItem extends GetView<TaskChecklistController> {
             },
             child: const Text(
               'Send',
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
             ),
           ),
         ],
@@ -606,12 +624,19 @@ class CheckItem extends GetView<TaskChecklistController> {
             ),
             const SizedBox(height: 10),
             TextFormField(
+              cursorColor: Colors.black,
               controller: textController,
+              style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 labelText: "Video URL",
                 hintText: "Enter the video link...",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide:
+                      BorderSide(color: Colors.black), // Ganti warna fokus
                 ),
                 prefixIcon: const Icon(Icons.link),
               ),
@@ -669,7 +694,7 @@ class CheckItem extends GetView<TaskChecklistController> {
                     ),
                     child: Text(
                       buttonText,
-                      style: const TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 14, color: Colors.white),
                     ),
                   );
                 }),
@@ -1182,10 +1207,12 @@ class CheckItem extends GetView<TaskChecklistController> {
         return SlideTransition(
           position: Tween(begin: const Offset(1, 0), end: const Offset(0, 0))
               .animate(animation),
-          child: WillPopScope(
-            onWillPop: () async {
-              controller.notes.text = "";
-              return true;
+          child: PopScope(
+            canPop: true,
+            onPopInvoked: (didPop) {
+              if (didPop) {
+                controller.notes.text = "";
+              }
             },
             child: Dialog(
               child: SingleChildScrollView(

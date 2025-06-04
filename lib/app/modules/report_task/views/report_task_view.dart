@@ -85,6 +85,7 @@ class ReportTaskView extends GetView<ReportTaskController> {
                             // ),
 
                             Card(
+                          color: Colors.white,
                           child: InkWell(
                             onTap: () {
                               Get.toNamed(Routes.REPORT_TASK_ADD, arguments: {

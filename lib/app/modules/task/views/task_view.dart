@@ -40,6 +40,7 @@ class TaskView extends GetView<TaskController> {
                   itemBuilder: (BuildContext context, int index) {
                     var item = controller.competency[index];
                     return Card(
+                      color: Colors.white,
                       child: InkWell(
                         onTap: () {
                           Get.toNamed(Routes.TASK_SUB, arguments: {

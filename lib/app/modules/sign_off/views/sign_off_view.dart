@@ -25,6 +25,7 @@ class SignoffView extends GetView<SignoffController> {
             child: Column(
               children: [
                 Card(
+                  color: Colors.white,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -52,6 +53,7 @@ class SignoffView extends GetView<SignoffController> {
                 ),
                 mySpacer(),
                 Card(
+                  color: Colors.white,
                   elevation: 8,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -246,6 +248,7 @@ class SignoffView extends GetView<SignoffController> {
 
   Widget _signOffForm(BuildContext context) {
     return Container(
+      // color: Colors.white,
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -97,7 +97,8 @@ class SignOnView extends GetView<SignController> {
                               )
                             : const Text(
                                 "Sign On",
-                                style: TextStyle(fontSize: 14),
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
                               ),
                       );
                     }),
@@ -118,6 +119,9 @@ class SignOnView extends GetView<SignController> {
 
   Widget dateInput(BuildContext context) {
     return TextFormField(
+      style: const TextStyle(
+        color: Colors.black, // Warna teks input
+      ),
       readOnly: true,
       onTap: () => controller.pickDate(context),
       controller: controller.dateController,
@@ -134,6 +138,7 @@ class SignOnView extends GetView<SignController> {
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
           borderSide: BorderSide(color: Colors.black), // Ganti warna fokus
         ),
       ),
@@ -319,6 +324,9 @@ class SignOnView extends GetView<SignController> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        style: const TextStyle(
+                          color: Colors.black, // Warna teks input
+                        ),
                         controller: controller.noRegistrasiController,
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -327,6 +335,8 @@ class SignOnView extends GetView<SignController> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           focusedBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
                             borderSide: BorderSide(
                                 color: Colors.black), // Ganti warna fokus
                           ),
@@ -389,12 +399,20 @@ class SignOnView extends GetView<SignController> {
                         backgroundColor: Colors.blue.shade900,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              8), // Tambahan jika ingin sudut melengkung
+                        ),
+                        foregroundColor: Colors.white, // Warna teks
                       ),
                       child: const Text("Cari"),
                     ),
                   ],
                 )
               : TextFormField(
+                  style: const TextStyle(
+                    color: Colors.black, // Warna teks input
+                  ),
                   controller: controller.noRegistrasiController,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
@@ -403,6 +421,7 @@ class SignOnView extends GetView<SignController> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       borderSide:
                           BorderSide(color: Colors.black), // Ganti warna fokus
                     ),
@@ -416,6 +435,9 @@ class SignOnView extends GetView<SignController> {
                 ),
           const SizedBox(height: 16),
           TextFormField(
+            style: const TextStyle(
+              color: Colors.black, // Warna teks input
+            ),
             controller: controller.imoNumberController,
             cursorColor: Colors.black,
             enabled: !isIndonesia,
@@ -425,6 +447,7 @@ class SignOnView extends GetView<SignController> {
                 borderRadius: BorderRadius.circular(10),
               ),
               focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 borderSide:
                     BorderSide(color: Colors.black), // Ganti warna fokus
               ),
@@ -438,6 +461,9 @@ class SignOnView extends GetView<SignController> {
           ),
           const SizedBox(height: 16),
           TextFormField(
+            style: const TextStyle(
+              color: Colors.black, // Warna teks input
+            ),
             controller: controller.namaKapalController,
             cursorColor: Colors.black,
             enabled: !isIndonesia,
@@ -447,6 +473,7 @@ class SignOnView extends GetView<SignController> {
                 borderRadius: BorderRadius.circular(10),
               ),
               focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 borderSide:
                     BorderSide(color: Colors.black), // Ganti warna fokus
               ),
@@ -460,6 +487,9 @@ class SignOnView extends GetView<SignController> {
           ),
           const SizedBox(height: 16),
           TextFormField(
+            style: const TextStyle(
+              color: Colors.black, // Warna teks input
+            ),
             controller: controller.namaPerusahaanController,
             cursorColor: Colors.black,
             enabled: !isIndonesia,
@@ -469,6 +499,7 @@ class SignOnView extends GetView<SignController> {
                 borderRadius: BorderRadius.circular(10),
               ),
               focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 borderSide:
                     BorderSide(color: Colors.black), // Ganti warna fokus
               ),

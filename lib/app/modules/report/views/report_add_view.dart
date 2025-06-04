@@ -35,6 +35,7 @@ class ReportAddView extends GetView<ReportAddController> {
 
   Widget locationButton(BuildContext context, int monthNumber, String ucSign) {
     return Card(
+      color: Colors.white,
       child: InkWell(
         onTap: () {
           log("NAVIGATE to REPORT_ROUTE: uc_sign=$ucSign, month_number=$monthNumber");
@@ -61,6 +62,7 @@ class ReportAddView extends GetView<ReportAddController> {
 
   Widget tugasButton(BuildContext context, int monthNumber, String ucSign) {
     return Card(
+      color: Colors.white,
       child: InkWell(
         onTap: () {
           Get.toNamed(Routes.REPORT_TASK,

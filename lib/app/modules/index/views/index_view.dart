@@ -37,8 +37,8 @@ class IndexView extends GetView<IndexController> {
           await authController.fetchUserData(userUc);
         }
       },
-      child: WillPopScope(
-        onWillPop: () async => false,
+      child: PopScope(
+        canPop: false,
         child: SafeArea(
           child: Scaffold(
             body: Column(
@@ -309,7 +309,7 @@ class IndexView extends GetView<IndexController> {
               ),
               child: const Text(
                 "Sign Off",
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(fontSize: 14, color: Colors.white),
               ),
             ),
           ),
@@ -969,18 +969,51 @@ class IndexView extends GetView<IndexController> {
 
   Future<void> confirmLogout() async {
     Get.defaultDialog(
-      title: "Log out",
+      backgroundColor: Colors.white,
+      title: "Logout",
+      titleStyle: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+        color: Colors.black,
+      ),
       middleText: "Are you sure you want to log out?",
+      middleTextStyle: const TextStyle(
+        fontSize: 16,
+        color: Colors.black87,
+      ),
+      barrierDismissible: false,
+      radius: 15,
       actions: [
-        TextButton(
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue.shade800,
+            minimumSize: const Size(100, 40),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
           onPressed: () {
             authController.logout();
+            Get.back();
           },
-          child: const Text("Yes"),
+          child: const Text(
+            "Yes",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
-        TextButton(
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            minimumSize: const Size(100, 40),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
           onPressed: () => Get.back(),
-          child: const Text("Cancel"),
+          child: const Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ],
     );

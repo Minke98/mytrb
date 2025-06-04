@@ -12,8 +12,8 @@ class LoginView extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: false,
       child: SafeArea(
         child: Scaffold(
             resizeToAvoidBottomInset: true,
@@ -136,7 +136,8 @@ class LoginView extends GetView<AuthController> {
                                             : const Text(
                                                 "Login",
                                                 style: TextStyle(
-                                                    color: Colors.white),
+                                                    color: Colors.white,
+                                                    fontSize: 14),
                                               ),
                                       ),
                                     )),

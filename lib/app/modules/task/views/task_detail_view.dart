@@ -10,28 +10,19 @@ class TaskUserDetail extends GetView<TaskController> {
   TableRow _buildTableRow(String title, String value) {
     return TableRow(children: [
       Padding(
-        padding: const EdgeInsets.only(bottom: 8.0, right: 4),
+        padding: const EdgeInsets.only(bottom: 8.0),
         child: Text(
           title,
           style: const TextStyle(fontSize: 14),
         ),
       ),
-      const Padding(
-        padding: EdgeInsets.only(right: 4),
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            ":",
-            style: TextStyle(fontSize: 14),
-          ),
-        ),
+      const Text(
+        ":",
+        style: TextStyle(fontSize: 14),
       ),
-      Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: Text(
-          value,
-          style: const TextStyle(fontSize: 14),
-        ),
+      Text(
+        value,
+        style: const TextStyle(fontSize: 14),
       ),
     ]);
   }
@@ -41,6 +32,7 @@ class TaskUserDetail extends GetView<TaskController> {
     return Obx(() {
       if (controller.isLoading.value) {
         return const Card(
+          color: Colors.white,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 50),
             child: Center(
@@ -53,13 +45,14 @@ class TaskUserDetail extends GetView<TaskController> {
       log("state ${controller.userData}");
 
       return Card(
+        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Table(
             columnWidths: const {
-              0: FlexColumnWidth(3),
-              1: FlexColumnWidth(1),
-              2: FlexColumnWidth(8),
+              0: FlexColumnWidth(4),
+              1: FlexColumnWidth(0.3),
+              2: FlexColumnWidth(7.7),
             },
             children: [
               _buildTableRow(

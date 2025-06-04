@@ -109,43 +109,41 @@ class ProfileController extends GetxController {
   }
 
   Future<void> updateProfile() async {
-  isLoading.value = true;  // Tampilkan loading indikator
-  EasyLoading.show(status: 'Memperbarui profil...');
+    isLoading.value = true; // Tampilkan loading indikator
+    EasyLoading.show(status: 'Memperbarui profil...');
 
-  final prefs = await SharedPreferences.getInstance();
-  String? uc = prefs.getString('userUc');
+    final prefs = await SharedPreferences.getInstance();
+    String? uc = prefs.getString('userUc');
 
-  if (uc == null) {
-    errorMessage.value = "Profile Tidak Dapat Ditemukan";
-    EasyLoading.showError("Profile Tidak Dapat Ditemukan");
-  } else {
-    File? imageFile = image.value != null ? File(image.value!.path) : null;
-
-    Map res = await profileRepository.updateUser(
-      email: emailController.text,
-      foto: imageFile,
-      password: oldPasswordController.text,
-      newpassword: newPasswordController.text,
-    );
-
-    if (res['status'] == true) {
-      userData.value = await UserRepository.getLocalUser(uc: uc);
-      _setUserData();
-      isEditing.value = true;
-
-      EasyLoading.showSuccess("Profil berhasil diperbarui");
-      Get.offAndToNamed(Routes.INDEX);  // Arahkan ke halaman index jika sukses
+    if (uc == null) {
+      errorMessage.value = "Profile Tidak Dapat Ditemukan";
+      EasyLoading.showError("Profile Tidak Dapat Ditemukan");
     } else {
-      errorMessage.value = res['message'];
-      EasyLoading.showError(res['message']);  // Tampilkan pesan error
+      File? imageFile = image.value != null ? File(image.value!.path) : null;
+
+      Map res = await profileRepository.updateUser(
+        email: emailController.text,
+        foto: imageFile,
+        password: oldPasswordController.text,
+        newpassword: newPasswordController.text,
+      );
+
+      if (res['status'] == true) {
+        userData.value = await UserRepository.getLocalUser(uc: uc);
+        _setUserData();
+        isEditing.value = true;
+
+        EasyLoading.showSuccess("Profil berhasil diperbarui");
+        Get.offAndToNamed(Routes.INDEX); // Arahkan ke halaman index jika sukses
+      } else {
+        errorMessage.value = res['message'];
+        EasyLoading.showError(res['message']); // Tampilkan pesan error
+      }
     }
+
+    isLoading.value = false;
+    EasyLoading.dismiss(); // Tutup loading indikator
   }
-
-  isLoading.value = false;
-  EasyLoading.dismiss();  // Tutup loading indikator
-}
-
-
 
   Future<void> editProfile() async {
     bool conStatus = await ConnectionTest.check();
@@ -208,5 +206,13 @@ class ProfileController extends GetxController {
         print('No image selected.');
       }
     }
+  }
+
+  bool canPop() {
+    if (isEditing.value) {
+      isEditing.value = false; // Batalkan edit mode jika ada
+      return false; // Blok pop saat sedang edit
+    }
+    return true; // Izinkan pop saat tidak edit
   }
 }

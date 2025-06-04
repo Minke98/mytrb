@@ -40,6 +40,7 @@ class ReportView extends GetView<ReportController> {
         return const Center(child: Text("Unable To Load Data"));
       }
       return Card(
+        color: Colors.white,
         child: Column(
           children: [
             Container(
@@ -115,6 +116,7 @@ class ReportView extends GetView<ReportController> {
       for (int i = 1; i <= controller.bulanCount.value; i++) {
         gridChildren.add(
           Card(
+            color: Colors.white,
             child: InkWell(
               onTap: () {
                 log("NAVIGATE with ${controller.userData['sign_uc']} month: $i");

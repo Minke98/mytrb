@@ -14,64 +14,73 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return Scaffold(
-        appBar: AppBar(title: const Text("Profile")),
-        body: SingleChildScrollView(
-          controller: _scrollController,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  spacer(height: 5),
-                  avatar(context),
-                  controller.isEditing.value
-                      ? changeAvatar(context)
-                      : const SizedBox.shrink(),
-                  spacer(height: 20),
-                  nikField(context),
-                  seaFarerField(context),
-                  fullNameField(context),
-                  genderField(context),
-                  kewarganegaraanField(context),
-                  tempatLahirField(context),
-                  tanggalLahirField(context),
-                  controller.isEditing.value
-                      ? emailField(context)
-                      : const SizedBox.shrink(),
-                  spacer(),
-                  controller.isEditing.value
-                      ? oldPasswordField(context)
-                      : const SizedBox.shrink(),
-                  spacer(),
-                  controller.isEditing.value
-                      ? newPassword(context)
-                      : const SizedBox.shrink(),
-                  spacer(),
-                  controller.isEditing.value
-                      ? confirmPassword(context)
-                      : const SizedBox.shrink(),
-                  spacer(
-                      height:
-                          20), // Beri ruang agar tidak tertutup bottom button
-                ],
+      return PopScope(
+        canPop: true,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            controller.isEditing.value = false;
+            controller.image.value = null;
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(title: const Text("Profile")),
+          body: SingleChildScrollView(
+            controller: _scrollController,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    spacer(height: 5),
+                    avatar(context),
+                    controller.isEditing.value
+                        ? changeAvatar(context)
+                        : const SizedBox.shrink(),
+                    spacer(height: 20),
+                    nikField(context),
+                    seaFarerField(context),
+                    fullNameField(context),
+                    genderField(context),
+                    kewarganegaraanField(context),
+                    tempatLahirField(context),
+                    tanggalLahirField(context),
+                    controller.isEditing.value
+                        ? emailField(context)
+                        : const SizedBox.shrink(),
+                    spacer(),
+                    controller.isEditing.value
+                        ? oldPasswordField(context)
+                        : const SizedBox.shrink(),
+                    spacer(),
+                    controller.isEditing.value
+                        ? newPassword(context)
+                        : const SizedBox.shrink(),
+                    spacer(),
+                    controller.isEditing.value
+                        ? confirmPassword(context)
+                        : const SizedBox.shrink(),
+                    spacer(
+                        height:
+                            20), // Beri ruang agar tidak tertutup bottom button
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-            width: double.infinity,
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // Agar ukuran mengikuti isi
-              children: [
-                controller.isEditing.value
-                    ? saveProfileBtn(context)
-                    : ubahProfileBtn(context),
-              ],
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // Agar ukuran mengikuti isi
+                children: [
+                  controller.isEditing.value
+                      ? saveProfileBtn(context)
+                      : ubahProfileBtn(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -152,7 +161,10 @@ class ProfileView extends GetView<ProfileController> {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Text("Change Profile Photo"),
+        child: const Text(
+          "Change Profile Photo",
+          style: TextStyle(fontSize: 14, color: Colors.white),
+        ),
       ),
     );
   }
@@ -246,6 +258,10 @@ class ProfileView extends GetView<ProfileController> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              borderSide: BorderSide(color: Colors.black), // Ganti warna fokus
+            ),
           ),
           validator: (input) => input!.isValidEmail() ? null : "Email Invalid",
         );
@@ -336,6 +352,10 @@ class ProfileView extends GetView<ProfileController> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.black), // Ganti warna fokus
+          ),
           labelText: "Old Password",
           hintText: "Enter Old Password",
           labelStyle: controller.formTextStyle,
@@ -374,6 +394,10 @@ class ProfileView extends GetView<ProfileController> {
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.black), // Ganti warna fokus
           ),
           labelText: "New Password",
           hintText: "Enter New Password",
@@ -416,6 +440,10 @@ class ProfileView extends GetView<ProfileController> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.black), // Ganti warna fokus
+          ),
           labelText: "Retype Password",
           hintText: "Confirm Password",
           labelStyle: controller.formTextStyle,
@@ -455,7 +483,10 @@ class ProfileView extends GetView<ProfileController> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      child: const Text("Edit Profile"),
+      child: const Text(
+        "Edit Profile",
+        style: TextStyle(fontSize: 14, color: Colors.white),
+      ),
     );
   }
 
@@ -473,7 +504,10 @@ class ProfileView extends GetView<ProfileController> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text("Save"),
+            child: const Text(
+              "Save",
+              style: TextStyle(fontSize: 14, color: Colors.white),
+            ),
           ),
         ),
       ],

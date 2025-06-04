@@ -33,10 +33,16 @@ class TaskApprovalView extends GetView<TaskApprovalController> {
                 TextFormField(
                   cursorColor: Colors.black,
                   controller: controller.namaInstruktur,
+                  style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     labelText: "Instructor's Name",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide:
+                          BorderSide(color: Colors.black), // Ganti warna fokus
                     ),
                   ),
                   validator: (value) => value!.isEmpty
@@ -93,6 +99,7 @@ class TaskApprovalView extends GetView<TaskApprovalController> {
                         child: Row(
                           children: [
                             Radio<int>(
+                              activeColor: Colors.black,
                               value: approval.value,
                               groupValue: controller.selectedApproval.value,
                               onChanged: (int? value) {
@@ -146,13 +153,12 @@ class TaskApprovalView extends GetView<TaskApprovalController> {
                             ),
                           ),
                           child: controller.isSubmitting.value
-                              ? CircularProgressIndicator(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                )
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
                               : const Text(
                                   "Save",
-                                  style: TextStyle(fontSize: 14),
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.white),
                                 ),
                         ));
                   },

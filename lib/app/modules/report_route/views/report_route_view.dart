@@ -32,8 +32,11 @@ class ReportRouteView extends GetView<ReportRouteController> {
               // });
             }
           },
-          label: const Text("Add"),
-          icon: const Icon(Icons.add),
+          label: const Text(
+            "Add",
+            style: TextStyle(fontSize: 14, color: Colors.white),
+          ),
+          icon: const Icon(Icons.add, color: Colors.white),
         );
       }),
       body: Obx(() {
@@ -55,6 +58,7 @@ class ReportRouteView extends GetView<ReportRouteController> {
               child: SizedBox(
                 height: 50,
                 child: Card(
+                  color: Colors.white,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 12,
@@ -100,6 +104,7 @@ class ReportRouteView extends GetView<ReportRouteController> {
           position: Tween(begin: const Offset(1, 0), end: const Offset(0, 0))
               .animate(animation),
           child: Dialog(
+            backgroundColor: Colors.white,
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -109,9 +114,25 @@ class ReportRouteView extends GetView<ReportRouteController> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextFormField(
+                        cursorColor: Colors.black,
+                        style: const TextStyle(color: Colors.black),
                         controller: controller.locationController,
-                        decoration:
-                            const InputDecoration(labelText: "Location Name"),
+                        decoration: const InputDecoration(
+                          labelText: "Location Name",
+                          labelStyle: TextStyle(
+                              color:
+                                  Colors.black), // opsional: ubah warna label
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                                color: Colors.black), // Ganti warna fokus
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.grey), // warna saat tidak fokus
+                          ),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please fill in the location name.";
@@ -139,7 +160,8 @@ class ReportRouteView extends GetView<ReportRouteController> {
                               ),
                               child: const Text(
                                 "Cancel",
-                                style: TextStyle(fontSize: 14),
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
                               ),
                             ),
                           ),
@@ -164,7 +186,8 @@ class ReportRouteView extends GetView<ReportRouteController> {
                               ),
                               child: const Text(
                                 "Save",
-                                style: TextStyle(fontSize: 14),
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
                               ),
                             ),
                           ),

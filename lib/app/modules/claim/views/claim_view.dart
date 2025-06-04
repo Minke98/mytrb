@@ -28,7 +28,7 @@ class ClaimView extends GetView<ClaimController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                seafererCode(context),
+                seafarerCode(context),
                 const SizedBox(height: 10),
                 seafarerButton(context),
                 const SizedBox(height: 40),
@@ -60,10 +60,11 @@ class ClaimView extends GetView<ClaimController> {
                       Get.snackbar(
                         "Claim Successful",
                         "Please Login",
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        colorText: Theme.of(context).colorScheme.onPrimary,
+                        snackPosition: SnackPosition.TOP,
+                        backgroundColor: Colors.blue.shade800,
+                        colorText: Colors.white,
                       );
+
                       Future.delayed(const Duration(seconds: 2), () {
                         Get.offNamed(Routes.LOGIN);
                       });
@@ -79,9 +80,12 @@ class ClaimView extends GetView<ClaimController> {
     );
   }
 
-  Widget seafererCode(BuildContext context) {
+  Widget seafarerCode(BuildContext context) {
     return TextFormField(
       cursorColor: Colors.black,
+      style: const TextStyle(
+        color: Colors.black, // Warna teks input
+      ),
       controller: controller.seafarerController,
       decoration: InputDecoration(
         labelText: "Seafarer",
@@ -89,36 +93,45 @@ class ClaimView extends GetView<ClaimController> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          borderSide: BorderSide(color: Colors.black), // Ganti warna fokus
+        ),
       ),
     );
   }
 
   Widget seafarerButton(BuildContext context) {
-    return Obx(() => ElevatedButton(
-          onPressed: controller.isChecking.value
-              ? null
-              : () {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  controller.checkSeafarer();
-                },
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(55),
-            backgroundColor: controller.isChecking.value
-                ? Colors.grey
-                : Colors.blue.shade800, // Warna biru saat tombol aktif
-            splashFactory: controller.isChecking.value
-                ? NoSplash.splashFactory
-                : InkSplash.splashFactory, // Efek splash saat aktif
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+    return Obx(
+      () => ElevatedButton(
+        onPressed: controller.isChecking.value
+            ? null
+            : () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                controller.checkSeafarer();
+              },
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size.fromHeight(55),
+          backgroundColor: controller.isChecking.value
+              ? Colors.grey
+              : Colors.blue.shade800, // Warna biru saat tombol aktif
+          splashFactory: controller.isChecking.value
+              ? NoSplash.splashFactory
+              : InkSplash.splashFactory, // Efek splash saat aktif
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: controller.isChecking.value
-              ? CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                )
-              : const Text("Check Seafarer"),
-        ));
+        ),
+        child: controller.isChecking.value
+            ? CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.onPrimary,
+              )
+            : const Text(
+                "Check Seafarer",
+                style: TextStyle(color: Colors.white, fontSize: 14),
+              ),
+      ),
+    );
   }
 
   Widget registerForm(BuildContext context) {
@@ -128,28 +141,47 @@ class ClaimView extends GetView<ClaimController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Obx(() => TextFormField(
+                style: const TextStyle(
+                  color: Colors.grey, // Warna teks input
+                ),
                 controller: TextEditingController(text: controller.nama.value),
                 decoration: InputDecoration(
                   labelText: "Name",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderSide:
+                        BorderSide(color: Colors.black), // Ganti warna fokus
+                  ),
                 ),
                 enabled: false,
               )),
           const SizedBox(height: 10),
           Obx(() => TextFormField(
+                style: const TextStyle(
+                  color: Colors.grey, // Warna teks input
+                ),
                 controller: TextEditingController(text: controller.nik.value),
                 decoration: InputDecoration(
                   labelText: "NIK",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderSide:
+                        BorderSide(color: Colors.black), // Ganti warna fokus
+                  ),
                 ),
                 enabled: false,
               )),
           const SizedBox(height: 10),
           TextFormField(
+            style: const TextStyle(
+              color: Colors.black, // Warna teks input
+            ),
             cursorColor: Colors.black,
             keyboardType: TextInputType.emailAddress,
             controller: controller.emailController,
@@ -159,12 +191,20 @@ class ClaimView extends GetView<ClaimController> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide:
+                    BorderSide(color: Colors.black), // Ganti warna fokus
+              ),
             ),
             validator: (input) =>
                 input!.isValidEmail() ? null : "Email Invalid",
           ),
           const SizedBox(height: 10),
           TextFormField(
+            style: const TextStyle(
+              color: Colors.black, // Warna teks input
+            ),
             cursorColor: Colors.black,
             controller: controller.usernameController,
             decoration: InputDecoration(
@@ -172,6 +212,11 @@ class ClaimView extends GetView<ClaimController> {
               hintText: "Input Username (Minimum 5 Characters)",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide:
+                    BorderSide(color: Colors.black), // Ganti warna fokus
               ),
             ),
             validator: (value) {
@@ -181,6 +226,9 @@ class ClaimView extends GetView<ClaimController> {
           ),
           const SizedBox(height: 10),
           TextFormField(
+            style: const TextStyle(
+              color: Colors.black, // Warna teks input
+            ),
             cursorColor: Colors.black,
             obscureText: !controller.passwordVisible.value,
             controller: controller.passwordController,
@@ -202,6 +250,11 @@ class ClaimView extends GetView<ClaimController> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide:
+                    BorderSide(color: Colors.black), // Ganti warna fokus
+              ),
             ),
             validator: (value) {
               return value!.minimumChar(length: 6)
@@ -211,6 +264,9 @@ class ClaimView extends GetView<ClaimController> {
           ),
           const SizedBox(height: 10),
           TextFormField(
+            style: const TextStyle(
+              color: Colors.black, // Warna teks input
+            ),
             cursorColor: Colors.black,
             obscureText: !controller.retypePasswordVisible.value,
             controller: controller.confirmpasswordController,
@@ -231,6 +287,11 @@ class ClaimView extends GetView<ClaimController> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide:
+                    BorderSide(color: Colors.black), // Ganti warna fokus
               ),
             ),
             validator: (value) {
@@ -277,7 +338,10 @@ class ClaimView extends GetView<ClaimController> {
                         controller.claim();
                       }
                     },
-              child: const Text("Claim"),
+              child: const Text(
+                "Claim",
+                style: TextStyle(color: Colors.white, fontSize: 14),
+              ),
             ),
           ),
         ],

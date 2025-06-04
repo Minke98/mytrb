@@ -82,11 +82,17 @@ class LogbookApprovalView extends GetView<LogbookApprovalController> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
+            style: const TextStyle(color: Colors.black),
             controller: controller.namaInstruktur,
             decoration: InputDecoration(
               labelText: "Instructor's Name",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide:
+                    BorderSide(color: Colors.black), // Ganti warna fokus
               ),
             ),
             validator: (value) =>
@@ -100,6 +106,7 @@ class LogbookApprovalView extends GetView<LogbookApprovalController> {
                   child: Row(
                     children: [
                       Radio<int>(
+                        activeColor: Colors.black,
                         value: approval.value,
                         groupValue: controller.selectedApproval.value,
                         onChanged: (int? value) {
@@ -187,7 +194,7 @@ class LogbookApprovalView extends GetView<LogbookApprovalController> {
                         )
                       : const Text(
                           "Save",
-                          style: TextStyle(fontSize: 14),
+                          style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                 ),
               );
