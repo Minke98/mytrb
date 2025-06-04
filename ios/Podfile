@@ -1,15 +1,17 @@
-# Uncomment this line to define a global platform for your project
+# Tentukan platform global untuk proyek
 platform :ios, '12.0'
 
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+# Nonaktifkan analytics CocoaPods agar build Flutter lebih cepat
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
+# Konfigurasi build untuk project Runner
 project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,
   'Release' => :release,
 }
 
+# Ambil lokasi FLUTTER_ROOT dari file konfigurasi yang dihasilkan Flutter
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
@@ -23,24 +25,34 @@ def flutter_root
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
 end
 
+# Sertakan helper dari Flutter
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
+# Setup awal pod Flutter
 flutter_ios_podfile_setup
 
+# Target utama aplikasi Flutter
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  flutter_install_all_ios_pods(File.dirname(File.realpath(__FILE__)))
 end
 
+# Target untuk ekstensi notifikasi OneSignal
 target 'OneSignalNotificationServiceExtension' do
   use_frameworks!
   pod 'OneSignalXCFramework', '>= 5.0.0', '< 6.0'
 end
 
+# Konfigurasi pasca-instalasi pods
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+
+    # Paksa deployment target ke iOS 12.0 agar konsisten
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+    end
   end
 end
