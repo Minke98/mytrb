@@ -26,7 +26,7 @@ class SplashView extends GetWidget<SplashController> {
             const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
       ),
       child: Scaffold(
-        backgroundColor: Colors.grey[800],
+        // backgroundColor: Colors.grey[800],
         body: SafeArea(
           child: Center(
             child: Column(
@@ -40,21 +40,21 @@ class SplashView extends GetWidget<SplashController> {
                       Padding(
                         padding: const EdgeInsets.only(top: 150.0),
                         child: Image.asset(
-                          Environment.stip,
+                          Environment.trsea,
                           height: 180,
                           width: 180,
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'MyTRB',
-                        style: TextStyle(
-                          fontSize: 22,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      // const SizedBox(height: 20),
+                      // const Text(
+                      //   'TRSea',
+                      //   style: TextStyle(
+                      //     fontSize: 22,
+                      //     color: Colors.black,
+                      //     fontWeight: FontWeight.bold,
+                      //   ),
+                      //   textAlign: TextAlign.center,
+                      // ),
                     ],
                   ),
                 ),
@@ -67,10 +67,10 @@ class SplashView extends GetWidget<SplashController> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 30.0),
                         child: Text(
-                          'Sekolah Tinggi Ilmu Pelayaran Jakarta',
+                          'TechnoLabs',
                           style: TextStyle(
                             fontSize: 20,
-                            color: Colors.white,
+                            color: Colors.black,
                           ),
                           textAlign: TextAlign.center,
                         ),

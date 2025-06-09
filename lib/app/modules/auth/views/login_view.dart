@@ -17,7 +17,6 @@ class LoginView extends GetView<AuthController> {
       child: SafeArea(
         child: Scaffold(
             resizeToAvoidBottomInset: true,
-            backgroundColor: Colors.grey[800],
             body: GestureDetector(
               onTap: () {
                 FocusManager.instance.primaryFocus?.unfocus();
@@ -35,7 +34,7 @@ class LoginView extends GetView<AuthController> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  Environment.stip,
+                                  Environment.trsea,
                                   height: 200,
                                   width: 200,
                                 ),
@@ -44,7 +43,7 @@ class LoginView extends GetView<AuthController> {
                                   child: Text(
                                     "Hello There!",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -55,7 +54,7 @@ class LoginView extends GetView<AuthController> {
                                   child: Text(
                                     "Login, please.",
                                     style: TextStyle(
-                                      color: Colors.white70,
+                                      color: Colors.black54,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -71,12 +70,12 @@ class LoginView extends GetView<AuthController> {
                                     style: const TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
                                       hintText: 'Username',
-                                      labelStyle: const TextStyle(
-                                          color: Colors.white70),
-                                      hintStyle: const TextStyle(
-                                          color: Colors.white54),
+                                      labelStyle:
+                                          const TextStyle(color: Colors.black),
+                                      hintStyle:
+                                          const TextStyle(color: Colors.black),
                                       filled: true,
-                                      fillColor: Colors.grey[700],
+                                      fillColor: Colors.grey[200],
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide.none,
@@ -98,12 +97,12 @@ class LoginView extends GetView<AuthController> {
                                     style: const TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
                                       hintText: 'Password',
-                                      labelStyle: const TextStyle(
-                                          color: Colors.white70),
-                                      hintStyle: const TextStyle(
-                                          color: Colors.white54),
+                                      labelStyle:
+                                          const TextStyle(color: Colors.black),
+                                      hintStyle:
+                                          const TextStyle(color: Colors.black),
                                       filled: true,
-                                      fillColor: Colors.grey[700],
+                                      fillColor: Colors.grey[200],
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide.none,
@@ -145,13 +144,12 @@ class LoginView extends GetView<AuthController> {
                                 RichText(
                                   text: TextSpan(
                                     text: "Don't Have an Account Yet?",
-                                    style:
-                                        const TextStyle(color: Colors.white70),
+                                    style: const TextStyle(color: Colors.black),
                                     children: [
                                       TextSpan(
                                         text: " Claim Now",
                                         style: TextStyle(
-                                          color: Colors.blue.shade300,
+                                          color: Colors.blue.shade900,
                                           fontSize: 14,
                                         ),
                                         recognizer: TapGestureRecognizer()
@@ -167,7 +165,7 @@ class LoginView extends GetView<AuthController> {
                                   text: TextSpan(
                                     text: "Forgot Password?",
                                     style: TextStyle(
-                                      color: Colors.blue.shade300,
+                                      color: Colors.blue.shade900,
                                       fontSize: 14,
                                     ),
                                     recognizer: TapGestureRecognizer()

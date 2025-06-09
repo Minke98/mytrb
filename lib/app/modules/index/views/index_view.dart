@@ -119,7 +119,7 @@ class IndexView extends GetView<IndexController> {
           ],
         ).value,
         decoration: BoxDecoration(
-          color: Colors.grey[800],
+          color: Colors.blue.shade900,
           borderRadius: const BorderRadius.vertical(
             bottom: Radius.circular(50),
           ),
@@ -162,7 +162,7 @@ class IndexView extends GetView<IndexController> {
                 top: 20, // Tambah jarak 20 pixel dari atas
               ),
               child: Image.asset(
-                "assets/images/LogoSTIP1.png",
+                "assets/images/logo3.png",
                 width: 200, // Sesuaikan ukuran lebar
                 height: 200, // Sesuaikan ukuran tinggi
               ),
@@ -986,7 +986,7 @@ class IndexView extends GetView<IndexController> {
       actions: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue.shade800,
+            backgroundColor: Colors.blue.shade900,
             minimumSize: const Size(100, 40),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),

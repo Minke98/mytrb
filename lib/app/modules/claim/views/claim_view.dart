@@ -61,7 +61,7 @@ class ClaimView extends GetView<ClaimController> {
                         "Claim Successful",
                         "Please Login",
                         snackPosition: SnackPosition.TOP,
-                        backgroundColor: Colors.blue.shade800,
+                        backgroundColor: Colors.blue.shade900,
                         colorText: Colors.white,
                       );
 
@@ -114,7 +114,7 @@ class ClaimView extends GetView<ClaimController> {
           minimumSize: const Size.fromHeight(55),
           backgroundColor: controller.isChecking.value
               ? Colors.grey
-              : Colors.blue.shade800, // Warna biru saat tombol aktif
+              : Colors.blue.shade900, // Warna biru saat tombol aktif
           splashFactory: controller.isChecking.value
               ? NoSplash.splashFactory
               : InkSplash.splashFactory, // Efek splash saat aktif
@@ -316,7 +316,7 @@ class ClaimView extends GetView<ClaimController> {
                         controller.passwordController.text.isEmpty ||
                         controller.confirmpasswordController.text.isEmpty
                     ? Colors.grey
-                    : Colors.blue.shade800,
+                    : Colors.blue.shade900,
                 splashFactory: controller.emailController.text.isEmpty ||
                         controller.usernameController.text.isEmpty ||
                         controller.passwordController.text.isEmpty ||

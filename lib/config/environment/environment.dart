@@ -3,9 +3,9 @@ import 'package:get_storage/get_storage.dart';
 class Environment {
   static final storage = GetStorage();
   static const baseUrlPUKP =
-      'https://stip.trb.artimu.co.id/trb-api/api/pukp/getData';
+      'https://stip.trsea.artimu.co.id/trb-api/api/pukp/getData';
   static const baseUrlUPT =
-      'https://stip.trb.artimu.co.id/trb-api/api/upt/getData';
+      'https://stip.trsea.artimu.co.id/trb-api/api/upt/getData';
   static String get baseUrl => storage.read('base_url') ?? '';
   static String get apiUrl => '$baseUrl/trb-api/api';
 
@@ -67,7 +67,7 @@ class Environment {
   static const wind = 'assets/vectors/wind.svg';
   static const pressure = 'assets/vectors/pressure.svg';
   static const kemenhub = 'assets/images/logokemenhub.png';
-  static const poltekpelBanten = 'assets/images/logo2.png';
+  static const trsea = 'assets/images/logo2.png';
   static const stip = 'assets/images/LogoSTIP1.png';
   static const weatherAnimation = 'assets/data/weather_animation.json';
 }
