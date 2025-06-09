@@ -106,9 +106,9 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/mytrb1.png"
+  image_path: "assets/images/logo2.png"
   adaptive_icon_background: "#0D47A1"
-  adaptive_icon_foreground: "assets/images/mytrb1.png"
+  adaptive_icon_foreground: "assets/images/logo2.png"
 
 flutter:
   uses-material-design: true

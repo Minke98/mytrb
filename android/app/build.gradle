@@ -29,7 +29,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.stip.mytrb"
+    namespace "com.trsea.technomulti"
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
@@ -47,7 +47,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.stip.mytrb"
+        applicationId "com.trsea.technomulti"
         minSdkVersion 21
         targetSdkVersion 34
         multiDexEnabled true

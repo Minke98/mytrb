@@ -1,61 +1,60 @@
-class Environment {
-  // api key
-  static const apiKey = '6f926d5c19164cdfa95205814242202';
+import 'package:get_storage/get_storage.dart';
 
-  // api urls
-  // static String baseUrl = "https://pelaut.dephub.go.id/trsea/trsea-api/api/";
-  // static String refreshUrl =
-  //     "https://pelaut.dephub.go.id/trsea/trsea-api/api/auth/refresh";
-  // static const baseUrl = 'http://192.168.1.21';
-  // static const apiUrl = '$baseUrl/trsea-api/api';
-  static const baseUrl = 'https://pelaut.dephub.go.id';
-  static const apiUrl = '$baseUrl/trsea/trsea-api/api';
-  static const refreshUrl = '$apiUrl/auth/refresh';
-  static const baseline = '$apiUrl/sync/baseline';
-  static const checkSeafarer = '$apiUrl/auth/CheckSeafarer';
-  static const claim = '$apiUrl/auth/ClaimSeaferer2';
-  static const chatNewMsg = '$apiUrl/chat/newmessage';
-  static const chatUpdate = '$apiUrl/chat/updatestatus';
-  static const chatSend = '$apiUrl/chat/send';
-  static const chatSaveToken = '$apiUrl/chat/savetoken';
-  static const getRoomChat = '$apiUrl/chat/getroom';
-  static const joinLecturerGroup = '$apiUrl/chat/joinLecturerGroup';
-  static const getLecturerGroup = '$apiUrl/chat/getlecturergroup';
-  static const leaveGroup = '$apiUrl/chat/leavegroup';
-  static const contactSend = '$apiUrl/contact/send';
-  static const examinationCourse = '$apiUrl/examination/course';
-  static const examinationGo = '$apiUrl/examination/go';
-  static const getNew = '$apiUrl/news/getnew';
-  static const updateUser = '$apiUrl/auth/updateuser';
-  static const login = '$apiUrl/auth/login';
-  static const authCheck = '$apiUrl/auth/check';
-  static const getUserData = '$apiUrl/auth/userdata';
-  static const journalServer = '$apiUrl/journal/server';
-  static const tabelEndpoint = '$apiUrl/tableendpoint/data';
-  static const syncSign = '$apiUrl/sync/sign';
-  static const syncSignAtt = '$apiUrl/sync/signatt';
-  static const syncReportRoute = '$apiUrl/sync/reportroute';
-  static const syncReportLog = '$apiUrl/sync/reportlog';
-  static const syncReportLogAtt = '$apiUrl/sync/reportlogatt';
-  static const syncTaskCheck = '$apiUrl/sync/techtaskcheck';
-  static const syncTaskCheckDelete = '$apiUrl/sync/techtaskcheckdelete';
-  static const syncTaskNewsStatus = '$apiUrl/sync/technewsstatus';
-  static const syncLogbook = '$apiUrl/sync/logbook';
-  // static const dataKapal = '$apiUrl/vessel/GetDetail';
-  static const dataKapal =
-      'https://pelaut.dephub.go.id/trsea/trsea-api/api/vessel/GetDetail';
+class Environment {
+  static final storage = GetStorage();
+  static const baseUrlPUKP =
+      'https://stip.trb.artimu.co.id/trb-api/api/pukp/getData';
+  static const baseUrlUPT =
+      'https://stip.trb.artimu.co.id/trb-api/api/upt/getData';
+  static String get baseUrl => storage.read('base_url') ?? '';
+  static String get apiUrl => '$baseUrl/trb-api/api';
+
+  static String get refreshUrl => '$apiUrl/auth/refresh';
+  static String get baseline => '$apiUrl/sync/baseline';
+  static String get checkSeafarer => '$apiUrl/auth/CheckSeafarer';
+  static String get claim => '$apiUrl/auth/ClaimSeaferer2';
+  static String get chatNewMsg => '$apiUrl/chat/newmessage';
+  static String get chatUpdate => '$apiUrl/chat/updatestatus';
+  static String get chatSend => '$apiUrl/chat/send';
+  static String get chatSaveToken => '$apiUrl/chat/savetoken';
+  static String get getRoomChat => '$apiUrl/chat/getroom';
+  static String get joinLecturerGroup => '$apiUrl/chat/joinLecturerGroup';
+  static String get getLecturerGroup => '$apiUrl/chat/getlecturergroup';
+  static String get leaveGroup => '$apiUrl/chat/leavegroup';
+  static String get contactSend => '$apiUrl/contact/send';
+  static String get examinationCourse => '$apiUrl/examination/course';
+  static String get examinationGo => '$apiUrl/examination/go';
+  static String get getNew => '$apiUrl/news/getnew';
+  static String get updateUser => '$apiUrl/auth/updateuser';
+  static String get login => '$apiUrl/auth/login';
+  static String get authCheck => '$apiUrl/auth/check';
+  static String get getUserData => '$apiUrl/auth/userdata';
+  static String get journalServer => '$apiUrl/journal/server';
+  static String get tabelEndpoint => '$apiUrl/tableendpoint/data';
+  static String get syncSign => '$apiUrl/sync/sign';
+  static String get syncSignAtt => '$apiUrl/sync/signatt';
+  static String get syncReportRoute => '$apiUrl/sync/reportroute';
+  static String get syncReportLog => '$apiUrl/sync/reportlog';
+  static String get syncReportLogAtt => '$apiUrl/sync/reportlogatt';
+  static String get syncTaskCheck => '$apiUrl/sync/techtaskcheck';
+  static String get syncTaskCheckDelete => '$apiUrl/sync/techtaskcheckdelete';
+  static String get syncTaskNewsStatus => '$apiUrl/sync/technewsstatus';
+  static String get syncLogbook => '$apiUrl/sync/logbook';
+  static String get dataKapal => '$apiUrl/vessel/GetDetail';
+
+  // OneSignal
   static const oneSignalApiUrl = 'https://onesignal.com/api/v1/notifications';
   static const oneSignalAppId = 'f8f6161c-7908-4cd2-9f3e-1ebc2a8ad21b';
   static const oneSignalRestApiKey =
       'YzVjYTc5YmYtYjBhMi00NTJmLTk3ZjctYmFmODkxNDBjNzg1';
 
-  // api fields
+  // API fields
   static const key = 'key';
   static const q = 'q';
   static const days = 'days';
   static const lang = 'lang';
 
-  // assets
+  // Assets
   static const logo = 'assets/images/app_icon.png';
   static const welcome = 'assets/images/welcome.png';
   static const world = 'assets/images/world.png';
@@ -70,6 +69,5 @@ class Environment {
   static const kemenhub = 'assets/images/logokemenhub.png';
   static const poltekpelBanten = 'assets/images/logo2.png';
   static const stip = 'assets/images/LogoSTIP1.png';
-
   static const weatherAnimation = 'assets/data/weather_animation.json';
 }

@@ -151,7 +151,7 @@ class MyApp extends StatelessWidget {
       builder: (context, widget) {
         return ResponsiveWrapper.builder(
           GetMaterialApp(
-            title: 'mytrb',
+            title: 'TRSea',
             useInheritedMediaQuery: true,
             debugShowCheckedModeBanner: false,
             defaultTransition: Transition.fade,

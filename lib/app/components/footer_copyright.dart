@@ -9,7 +9,7 @@ class FooterCopyright extends StatelessWidget {
   Widget build(BuildContext context) {
     const int yearOld = 2025; // Tahun awal
     final int year = DateTime.now().year; // Tahun saat ini
-    const String companyName = 'MyTRB - STIP Jakarta'; // Nama perusahaan
+    const String companyName = 'TRSea - TechnoLabs'; // Nama perusahaan
 
     // Logika kondisi
     final String copyrightText = (yearOld == year)

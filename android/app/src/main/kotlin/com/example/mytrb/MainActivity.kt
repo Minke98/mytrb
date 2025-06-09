@@ -1,4 +1,4 @@
-package com.stip.mytrb
+package com.trsea.technomulti
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

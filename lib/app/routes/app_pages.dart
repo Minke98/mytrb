@@ -8,6 +8,8 @@ import 'package:mytrb/app/modules/claim/bindings/claim_binding.dart';
 import 'package:mytrb/app/modules/claim/views/claim_view.dart';
 import 'package:mytrb/app/modules/contact/bindings/contact_binding.dart';
 import 'package:mytrb/app/modules/contact/views/contact_view.dart';
+import 'package:mytrb/app/modules/credential/bindings/credential_binding.dart';
+import 'package:mytrb/app/modules/credential/views/credential_view.dart';
 import 'package:mytrb/app/modules/exam/bindings/exam_binding.dart';
 import 'package:mytrb/app/modules/exam/views/exam_view.dart';
 import 'package:mytrb/app/modules/exam/views/exam_web_view.dart';
@@ -78,6 +80,11 @@ class AppPages {
       name: _Paths.MAINTENANCE,
       page: () => const MaintenanceView(),
       binding: SplashBinding(),
+    ),
+    GetPage(
+      name: _Paths.CREDENTIAL,
+      page: () => const CredentialView(),
+      binding: CredentialBinding(),
     ),
     GetPage(
       name: _Paths.LOGIN,
