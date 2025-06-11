@@ -31,7 +31,7 @@ class CredentialController extends GetxController {
     isLoadingPukp.value = true;
 
     await BaseClient.safeApiCall(
-      Environment.baseUrlPUKP,
+      Environment.pukp,
       RequestType.get,
       onSuccess: (response) {
         if (response.data['status'] == 200) {
@@ -61,7 +61,7 @@ class CredentialController extends GetxController {
     uptList.clear();
 
     await BaseClient.safeApiCall(
-      Environment.baseUrlUPT,
+      Environment.upt,
       RequestType.get,
       queryParameters: {'uc_pukp': ucPukp},
       onSuccess: (response) {
@@ -85,10 +85,9 @@ class CredentialController extends GetxController {
   }
 
   Future<void> submitConfiguration() async {
-    final pukpUc = selectedPukp.value?.uc;
     final uptUc = selectedUpt.value?.uc; // Ambil uc dari Upt
 
-    if (pukpUc == null || pukpUc.isEmpty || uptUc == null || uptUc.isEmpty) {
+    if (uptUc == null || uptUc.isEmpty) {
       Get.snackbar('Error', 'Silakan pilih PUKP dan UPT');
       return;
     }
@@ -96,16 +95,15 @@ class CredentialController extends GetxController {
     EasyLoading.show(status: 'Menyimpan...');
 
     await BaseClient.safeApiCall(
-      Environment.baseUrl,
-      RequestType.post,
-      data: {
-        'uc_pukp': pukpUc,
+      Environment.setupDB,
+      RequestType.get,
+      queryParameters: {
         'uc_upt': uptUc,
       },
       onSuccess: (response) {
         EasyLoading.dismiss();
         if (response.data['status'] == 200) {
-          final urlApi = response.data['url_api'];
+          final urlApi = response.data['data']['url_api'];
           storage.write('base_url_api', urlApi);
           Get.offAllNamed('/login');
         } else {

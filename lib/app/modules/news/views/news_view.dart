@@ -115,7 +115,7 @@ class NewsPreview extends StatelessWidget {
                         style: DefaultTextStyle.of(context).style,
                         children: [
                           const TextSpan(
-                            text: "MyTRB News - ",
+                            text: "TRSea News - ",
                             style: TextStyle(
                                 fontWeight: FontWeight.w700, fontSize: 12),
                           ),

@@ -50,7 +50,7 @@ class NewsDetailView extends GetView<NewsController> {
                   ),
                   children: [
                     const TextSpan(
-                      text: "MyTRB News - ",
+                      text: "TRSea News - ",
                       style: TextStyle(fontWeight: FontWeight.w700),
                     ),
                     TextSpan(text: desc),

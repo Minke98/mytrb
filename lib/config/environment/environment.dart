@@ -2,13 +2,11 @@ import 'package:get_storage/get_storage.dart';
 
 class Environment {
   static final storage = GetStorage();
-  static const baseUrlPUKP =
-      'https://stip.trsea.artimu.co.id/trb-api/api/pukp/getData';
-  static const baseUrlUPT =
-      'https://stip.trsea.artimu.co.id/trb-api/api/upt/getData';
-  static String get baseUrl => storage.read('base_url') ?? '';
+  static const baseUrlMain = 'https://stip.trsea.artimu.co.id';
+  static const apiUrlMain = '$baseUrlMain/trb-api/api';
+  static String get baseUrl =>
+      (storage.read('base_url_api') ?? '').replaceAll(RegExp(r'/+$'), '');
   static String get apiUrl => '$baseUrl/trb-api/api';
-
   static String get refreshUrl => '$apiUrl/auth/refresh';
   static String get baseline => '$apiUrl/sync/baseline';
   static String get checkSeafarer => '$apiUrl/auth/CheckSeafarer';
@@ -41,6 +39,9 @@ class Environment {
   static String get syncTaskNewsStatus => '$apiUrl/sync/technewsstatus';
   static String get syncLogbook => '$apiUrl/sync/logbook';
   static String get dataKapal => '$apiUrl/vessel/GetDetail';
+  static const pukp = '$apiUrlMain/pukp/getData';
+  static const upt = '$apiUrlMain/upt/getData';
+  static const setupDB = '$apiUrlMain/configuration/setupDB';
 
   // OneSignal
   static const oneSignalApiUrl = 'https://onesignal.com/api/v1/notifications';

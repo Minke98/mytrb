@@ -497,7 +497,7 @@ class AppRepository {
                     m['check_latitude'],
                     m['check_longitude'],
                     m['check_time'],
-                    m['app_inst_status'],
+                    m['app_inst_status'] ?? 0,
                     m['app_inst_name'],
                     m['app_inst_comment'],
                     m['app_inst_local_photo'],
@@ -601,34 +601,35 @@ class AppRepository {
         EasyLoading.show(status: "Getting Logbook");
         if (data.containsKey('tech_logbook') && getBaseline == true) {
           for (Map m in data['tech_logbook']) {
-            // stream.add("Sync Tech Logbook");
             List<Map> findLogbook = await db.rawQuery(
-                """ select * from tech_logbook where uc = ? limit 1""",
-                [m['uc']]);
+                """SELECT * FROM tech_logbook WHERE uc = ? OR local_uc = ? LIMIT 1""",
+                [m['uc'], m['local_uc']]); // <- CEK DUA-DUANYA
+
             if (findLogbook.isEmpty) {
-              await db.rawInsert("""insert into tech_logbook values (
-                ?,?,?,?,
-                ?,?,?,?,
-                ?,?,?,?,
-                ?,?
+              await db.rawInsert("""INSERT INTO tech_logbook VALUES (
+                  ?,?,?,?,
+                  ?,?,?,?,
+                  ?,?,?,?,
+                  ?,?
                 )""", [
-                m['local_uc'],
-                m['uc'],
-                m['uc_sign'],
-                m['log_date'],
-                m['log_activity'],
-                m['check_latitude'],
-                m['check_longitude'],
-                m['app_inst_status'],
-                m['app_inst_name'],
-                m['app_inst_comment'],
-                m['app_inst_photo'],
-                m['app_inst_photo_remote'],
-                m['app_inst_time'],
-                m['device_id']
+                m['local_uc'] ?? "",
+                m['uc'] ?? "",
+                m['uc_sign'] ?? "",
+                m['log_date'] ?? "",
+                m['log_activity'] ?? "",
+                m['check_latitude'] ?? 0,
+                m['check_longitude'] ?? 0,
+                m['app_inst_status'] ?? 0,
+                m['app_inst_name'] ?? "",
+                m['app_inst_comment'] ?? "",
+                m['app_inst_photo'] ?? "",
+                m['app_inst_photo_remote'] ?? "",
+                m['app_inst_time'] ?? "",
+                m['device_id'] ?? "",
               ]);
             }
           }
+
           finalResult['tech_logbook'] = true;
         }
 

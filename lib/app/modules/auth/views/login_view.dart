@@ -16,6 +16,7 @@ class LoginView extends GetView<AuthController> {
       canPop: false,
       child: SafeArea(
         child: Scaffold(
+            backgroundColor: Colors.white,
             resizeToAvoidBottomInset: true,
             body: GestureDetector(
               onTap: () {
@@ -67,7 +68,8 @@ class LoginView extends GetView<AuthController> {
                                       AutofillHints.username
                                     ],
                                     controller: controller.usernameController,
-                                    style: const TextStyle(color: Colors.white),
+                                    cursorColor: Colors.black,
+                                    style: const TextStyle(color: Colors.black),
                                     decoration: InputDecoration(
                                       hintText: 'Username',
                                       labelStyle:
@@ -94,7 +96,8 @@ class LoginView extends GetView<AuthController> {
                                     obscureText: true,
                                     enableSuggestions: false,
                                     autocorrect: false,
-                                    style: const TextStyle(color: Colors.white),
+                                    cursorColor: Colors.black,
+                                    style: const TextStyle(color: Colors.black),
                                     decoration: InputDecoration(
                                       hintText: 'Password',
                                       labelStyle:

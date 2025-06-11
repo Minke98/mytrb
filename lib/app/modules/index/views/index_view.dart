@@ -649,7 +649,7 @@ class IndexView extends GetView<IndexController> {
   Widget profileDialogAvatar(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-      color: Colors.grey[800],
+      color: Colors.blue.shade900,
       width: double.infinity,
       child: Column(
         mainAxisSize: MainAxisSize.min, // Memastikan ukuran menyesuaikan isi
@@ -902,7 +902,7 @@ class IndexView extends GetView<IndexController> {
                                 style: const TextStyle(fontSize: 12),
                                 children: [
                                   const TextSpan(
-                                    text: "MyTRB News - ",
+                                    text: "TRSea News - ",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black),

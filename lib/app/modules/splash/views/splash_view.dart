@@ -26,7 +26,7 @@ class SplashView extends GetWidget<SplashController> {
             const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
       ),
       child: Scaffold(
-        // backgroundColor: Colors.grey[800],
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: Center(
             child: Column(
