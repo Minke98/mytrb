@@ -1,5 +1,5 @@
 # Tentukan platform global untuk proyek
-platform :ios, '12.0'
+platform :ios, '15.0'
 
 # Nonaktifkan analytics CocoaPods agar build Flutter lebih cepat
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -42,6 +42,8 @@ end
 # Target untuk ekstensi notifikasi OneSignal
 target 'OneSignalNotificationServiceExtension' do
   use_frameworks!
+  inherit! :search_paths # Tambahkan ini untuk hindari siklus dependensi
+
   pod 'OneSignalXCFramework', '>= 5.0.0', '< 6.0'
 end
 
@@ -50,9 +52,11 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
 
-    # Paksa deployment target ke iOS 12.0 agar konsisten
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+
+      # Opsional: bantu cegah masalah di chip Apple Silicon (M1/M2)
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
     end
   end
 end
