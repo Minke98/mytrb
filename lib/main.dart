@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
-// import 'package:mytrb/app/Repository/news_repository.dart';
 import 'package:mytrb/app/modules/auth/controllers/auth_controller.dart';
 import 'package:mytrb/app/modules/index/controllers/index_controller.dart';
 import 'package:mytrb/app/modules/news/controllers/news_controller.dart';
@@ -54,6 +53,14 @@ class MyApp extends StatelessWidget {
 
       try {
         final data = event.notification.additionalData;
+        if (Get.isRegistered<NewsController>()) {
+          NewsController newsController = Get.find<NewsController>();
+          await newsController.fetchNewsData();
+        }
+        if (Get.isRegistered<IndexController>()) {
+          IndexController indexController = Get.find<IndexController>();
+          await indexController.initializeHome();
+        }
         if (data == null) {
           log("OneSignal: No additional data found");
           EasyLoading.dismiss();
@@ -66,53 +73,40 @@ class MyApp extends StatelessWidget {
         if (type != null) {
           switch (type) {
             case 'news':
-              if (Get.isRegistered<NewsController>()) {
+              if (uc != null && Get.isRegistered<NewsController>()) {
                 NewsController newsController = Get.find<NewsController>();
 
-                await newsController.fetchNewsData();
+                var selectedNews = newsController.newsList.firstWhereOrNull(
+                  (news) => news['uc'] == uc,
+                );
 
-                // Tambahkan IndexController jika sudah terdaftar
-                if (Get.isRegistered<IndexController>()) {
-                  IndexController indexController = Get.find<IndexController>();
-                  await indexController.initializeHome();
-                }
-
-                if (uc != null) {
-                  var selectedNews = newsController.newsList.firstWhereOrNull(
-                    (news) => news['uc'] == uc,
-                  );
-
-                  if (selectedNews != null) {
-                    EasyLoading.dismiss();
-                    var status =
-                        await Get.toNamed(Routes.NEWS_DETAIL, arguments: {
-                      "uc": selectedNews['uc'],
-                      "title": selectedNews['title'],
-                      "created_at": selectedNews['created_at_formated'],
-                      "description": selectedNews['descriptionfull'],
-                    })?.then((value) async {
-                      // Jika kembali dari halaman NEWS_DETAIL, jalankan initializeHome
-                      if (Get.isRegistered<IndexController>()) {
-                        IndexController indexController =
-                            Get.find<IndexController>();
-                        await indexController.initializeHome();
-                      }
-                      return value;
-                    });
-
-                    if (status is int && status == 1) {
-                      newsController.markAsRead(uc);
+                if (selectedNews != null) {
+                  EasyLoading.dismiss();
+                  var status =
+                      await Get.toNamed(Routes.NEWS_DETAIL, arguments: {
+                    "uc": selectedNews['uc'],
+                    "title": selectedNews['title'],
+                    "created_at": selectedNews['created_at_formated'],
+                    "description": selectedNews['descriptionfull'],
+                  })?.then((value) async {
+                    if (Get.isRegistered<IndexController>()) {
+                      IndexController indexController =
+                          Get.find<IndexController>();
+                      await indexController.initializeHome();
                     }
-                  } else {
-                    EasyLoading.dismiss(); // Dismiss sebelum navigasi
-                    Get.toNamed(Routes.NEWS);
+                    return value;
+                  });
+
+                  if (status is int && status == 1) {
+                    newsController.markAsRead(uc);
                   }
                 } else {
-                  EasyLoading.dismiss(); // Dismiss sebelum navigasi
+                  EasyLoading.dismiss();
                   Get.toNamed(Routes.NEWS);
                 }
               } else {
-                log("OneSignal: NewsController not registered");
+                EasyLoading.dismiss();
+                Get.toNamed(Routes.NEWS);
               }
               break;
 
@@ -121,7 +115,7 @@ class MyApp extends StatelessWidget {
                 AuthController authController = Get.find<AuthController>();
                 var authResult = await authController.checkAuth();
 
-                EasyLoading.dismiss(); // Dismiss sebelum navigasi
+                EasyLoading.dismiss();
                 if (authResult) {
                   Get.toNamed(Routes.LOGIN);
                 } else {
@@ -139,7 +133,7 @@ class MyApp extends StatelessWidget {
         log("OneSignal Error: $e");
       }
 
-      EasyLoading.dismiss(); // Pastikan dismiss tetap dipanggil jika ada error
+      EasyLoading.dismiss();
     });
 
     return ScreenUtilInit(

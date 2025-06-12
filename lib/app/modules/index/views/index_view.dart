@@ -409,9 +409,7 @@ class IndexView extends GetView<IndexController> {
             IconButton(
               padding: EdgeInsets.zero,
               onPressed: () async {
-                controller.openWhatsAppGroup();
-                // await Get.toNamed(Routes.CHAT);
-                // controller.initializeHome();
+                authController.openWhatsAppGroup();
               },
               icon: Icon(
                 Icons.chat,
@@ -1029,7 +1027,8 @@ class IndexView extends GetView<IndexController> {
           children: [
             Icon(icon, size: 25, color: Colors.black),
             const SizedBox(width: 10),
-            Text(label, style: TextStyle(color: Colors.black, fontSize: 14)),
+            Text(label,
+                style: const TextStyle(color: Colors.black, fontSize: 14)),
           ],
         ),
       ),
