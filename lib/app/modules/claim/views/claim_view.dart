@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/components/constant.dart';
 import 'package:mytrb/app/modules/claim/controllers/claim_controller.dart';
-import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:validators/sanitizers.dart';
 
@@ -52,26 +51,7 @@ class ClaimView extends GetView<ClaimController> {
                   }
                   return const SizedBox.shrink();
                 }),
-
-                // Success Snackbar & Redirect
-                Obx(() {
-                  if (controller.isSuccess.value) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      Get.snackbar(
-                        "Claim Successful",
-                        "Please Login",
-                        snackPosition: SnackPosition.TOP,
-                        backgroundColor: Colors.blue.shade900,
-                        colorText: Colors.white,
-                      );
-
-                      Future.delayed(const Duration(seconds: 2), () {
-                        Get.offNamed(Routes.LOGIN);
-                      });
-                    });
-                  }
-                  return const SizedBox.shrink();
-                }),
+               
               ],
             ),
           ),
