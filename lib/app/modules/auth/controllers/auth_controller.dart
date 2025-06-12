@@ -5,11 +5,14 @@ import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/app_repository.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
 import 'package:mytrb/app/routes/app_pages.dart';
+import 'package:mytrb/app/services/base_client.dart';
+import 'package:mytrb/config/environment/environment.dart';
 import 'package:mytrb/utils/auth_biometric.dart';
 import 'package:mytrb/utils/connection.dart';
 import 'package:mytrb/utils/dialog.dart';
 import 'package:mytrb/utils/get_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthController extends GetxController {
   final UserRepository userRepository;
@@ -168,6 +171,61 @@ class AuthController extends GetxController {
 
     isCheckingAuth.value = false;
     return true;
+  }
+
+  Future<void> openWhatsAppGroup() async {
+    bool isConnected = await ConnectionUtils.checkInternetConnection();
+    if (!isConnected) {
+      EasyLoading.dismiss();
+      ConnectionUtils().showNoInternetDialog(
+        "Apologies, the login process requires an internet connection.",
+      );
+      return;
+    }
+
+    bool isFastConnection = await ConnectionUtils.isConnectionFast();
+    if (!isFastConnection) {
+      EasyLoading.dismiss();
+      ConnectionUtils().showNoInternetDialog(
+        "Apologies, the login process requires a stable internet connection.",
+        isSlowConnection: true,
+      );
+      return;
+    }
+    final userchat = user['data'];
+    final seafarerCode = userchat?['seafarer_code'];
+    final ucTrbSchedule = userchat?['uc_trb_schedule'];
+
+    if (seafarerCode == null || ucTrbSchedule == null) {
+      Get.snackbar("Error", "Data peserta belum lengkap.");
+      return;
+    }
+
+    EasyLoading.show(status: 'Membuka grup...');
+
+    await BaseClient.safeApiCall(
+      Environment.chat,
+      RequestType.get,
+      queryParameters: {
+        'seafarer_code': seafarerCode,
+        'uc_trb_schedule': ucTrbSchedule,
+      },
+      onSuccess: (response) async {
+        EasyLoading.dismiss();
+        final groupUrl = response.data['url_wa'];
+        final uri = Uri.parse(groupUrl);
+
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          Get.snackbar("Error", "Tidak dapat membuka WhatsApp");
+        }
+      },
+      onError: (error) {
+        EasyLoading.dismiss();
+        Get.snackbar("Error", error.message);
+      },
+    );
   }
 
   void showAuthDialog(String message) {

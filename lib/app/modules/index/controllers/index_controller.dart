@@ -64,7 +64,6 @@ class IndexController extends GetxController {
     var getSignStatus =
         await signRepository.getStatus(seafarerCode: user["seafarer_code"]);
     bool needSync = await Repository.isNeedSync();
-    // List<Map<String, dynamic>> getNews = await NewsRepository.getNewNews();
     List<Map> getNews =
         await NewsRepository.getNews(itemCount: 5, characterMax: 120);
 
