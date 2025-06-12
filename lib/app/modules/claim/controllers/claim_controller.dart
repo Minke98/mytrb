@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:mytrb/app/Repository/user_repository.dart';
+import 'package:mytrb/app/routes/app_pages.dart';
 import 'package:mytrb/utils/dialog.dart';
 import 'package:mytrb/utils/get_device_id.dart';
 
@@ -34,18 +35,18 @@ class ClaimController extends GetxController with GetTickerProviderStateMixin {
   @override
   void onInit() {
     super.onInit();
-    animasiControl = AnimationController(
-      vsync: this, // Pastikan GetTickerProviderStateMixin digunakan
-      duration: const Duration(milliseconds: 500),
-    );
+    // animasiControl = AnimationController(
+    //   vsync: this, // Pastikan GetTickerProviderStateMixin digunakan
+    //   duration: const Duration(milliseconds: 500),
+    // );
 
-    animation = Tween<Offset>(
-      begin: const Offset(0.0, 0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: animasiControl,
-      curve: Curves.easeInOut,
-    ));
+    // animation = Tween<Offset>(
+    //   begin: const Offset(0.0, 0.5),
+    //   end: Offset.zero,
+    // ).animate(CurvedAnimation(
+    //   parent: animasiControl,
+    //   curve: Curves.easeInOut,
+    // ));
   }
 
   Future<void> claim() async {
@@ -67,8 +68,7 @@ class ClaimController extends GetxController with GetTickerProviderStateMixin {
     isLoading.value = false;
 
     if (res['status'] == true) {
-      isSuccess.value = true;
-      animasiControl.forward(); // Jalankan animasi saat sukses
+      onClaimSuccess();
     } else {
       errorMessage.value = res['message'];
       MyDialog.showErrorSnackbarRegist(
@@ -108,6 +108,22 @@ class ClaimController extends GetxController with GetTickerProviderStateMixin {
     isSuccess.value = false;
     errorMessage.value = '';
     animasiControl.reset(); // Reset animasi saat reset klaim
+  }
+
+  void onClaimSuccess() {
+    EasyLoading.dismiss();
+
+    Get.snackbar(
+      "Claim Successful",
+      "Please login",
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.blue.shade900,
+      colorText: Colors.white,
+    );
+
+    Future.delayed(const Duration(seconds: 2), () {
+      Get.offNamed(Routes.LOGIN);
+    });
   }
 
   @override
