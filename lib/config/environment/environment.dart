@@ -39,6 +39,7 @@ class Environment {
   static String get syncTaskNewsStatus => '$apiUrl/sync/technewsstatus';
   static String get syncLogbook => '$apiUrl/sync/logbook';
   static String get dataKapal => '$apiUrl/vessel/GetDetail';
+  static String get chat => '$apiUrl/schedule/getGroup';
   static const pukp = '$apiUrlMain/pukp/getData';
   static const upt = '$apiUrlMain/upt/getData';
   static const setupDB = '$apiUrlMain/configuration/setupDB';

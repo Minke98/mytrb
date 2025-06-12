@@ -409,9 +409,7 @@ class IndexView extends GetView<IndexController> {
             IconButton(
               padding: EdgeInsets.zero,
               onPressed: () async {
-                controller.openWhatsAppGroup();
-                // await Get.toNamed(Routes.CHAT);
-                // controller.initializeHome();
+                authController.openWhatsAppGroup();
               },
               icon: Icon(
                 Icons.chat,
